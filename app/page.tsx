@@ -637,7 +637,7 @@ export default function Home() {
   const resetLorem = () => { setLoremCount(3); setLoremLang("latin"); generateLorem(3, "latin"); };
   useEffect(() => { generateLorem(); }, [loremCount, loremLang]);
 
-  const [transInputText, setTransInputText] = useState("Hello world! Welcome to NexaKit1.");
+  const [transInputText, setTransInputText] = useState("Hello world! Welcome to NexaKit.");
   const [transOutputText, setTransOutputText] = useState("");
   const [transFrom, setTransFrom] = useState("en");
   const [transTo, setTransTo] = useState("es");
@@ -941,7 +941,7 @@ export default function Home() {
             {activeTool === "home" && (
               <div className="flex flex-col gap-8 animate-in fade-in duration-300">
                 <div className="text-center py-6 md:py-10">
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">NexaKit</span></h1>
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">NexaKit1</span></h1>
                   <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 29 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
                 </div>
                 
