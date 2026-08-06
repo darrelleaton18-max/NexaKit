@@ -183,6 +183,7 @@ const navGroups = [
       { id: "username-gen", label: "Random Username Gen" },
       { id: "number-gen", label: "Random Number Gen" },
       { id: "wheel-gen", label: "Spinning Decision Wheel" },
+      { id: "fact-gen", label: "Random Fact Generator" },
       { id: "random-picker", label: "Unbiased Random Picker" },
     ],
   },
@@ -706,7 +707,7 @@ export default function Home() {
   const [qrText, setQrText] = useState("https://example.com");
   const [qrSrc, setQrSrc] = useState("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://example.com");
 
-  const [jsonInput, setJsonInput] = useState('{"name": "NexaKit", "status": "active", "tools": 28}');
+  const [jsonInput, setJsonInput] = useState('{"name": "NexaKit", "status": "active", "tools": 29}');
   const [jsonOutput, setJsonOutput] = useState("");
   const formatJson = (space: number) => {
     try {
@@ -795,6 +796,36 @@ export default function Home() {
     return `${color} ${start}% ${end}%`;
   }).join(", ");
 
+  const factsList = [
+    "Honey never spoils; archaeologists have found 3,000-year-old edible honey in ancient Egyptian tombs.",
+    "Bananas are botanical berries, but strawberries are not.",
+    "A day on Venus is longer than a year on Venus.",
+    "Wombat poop is cube-shaped to prevent it from rolling away.",
+    "Octopuses have three hearts, nine brains, and blue blood.",
+    "The Eiffel Tower can grow up to 15 cm (6 inches) taller during the summer due to thermal expansion.",
+    "A group of flamingos is officially known as a 'flamboyance'.",
+    "Cleopatra lived closer in time to the Apollo 11 Moon landing than to the construction of the Great Pyramid of Giza.",
+    "Sharks existed before trees—sharks are over 400 million years old, while trees evolved around 350 million years ago.",
+    "Nintendo was originally founded in 1889 as a hanafuda playing card company in Kyoto, Japan.",
+    "Sloths can hold their breath underwater for up to 40 minutes, which is longer than dolphins.",
+    "There are roughly 3 trillion trees on Earth, compared to about 100 billion stars in the Milky Way galaxy.",
+    "Sea otters hold hands while sleeping to keep from drifting apart in ocean currents.",
+    "Scotland has over 420 distinct words and terms for 'snow'.",
+    "The heart of a shrimp is located inside its head.",
+    "An average cumulus cloud weighs around 1.1 million pounds (500,000 kg).",
+    "Venus is the only planet in our solar system that rotates clockwise.",
+    "Cows have best friends and experience measurable stress when separated from them.",
+    "The Alaskan Wood Frog can freeze solid during winter and thaw back to life in spring.",
+    "Pigeons can be trained to distinguish between paintings by Monet and Picasso."
+  ];
+
+  const [currentFact, setCurrentFact] = useState("Click the button below to reveal a mind-blowing random fact!");
+
+  const getRandomFact = () => {
+    const randomIndex = Math.floor(Math.random() * factsList.length);
+    setCurrentFact(factsList[randomIndex]);
+  };
+
   const formatGBP = (val: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(val);
 
   return (
@@ -861,7 +892,7 @@ export default function Home() {
 
             {/* KPI Badge */}
             <span className="text-xs font-bold text-slate-400 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap hidden lg:block">
-              28 Utilities Suite
+              29 Utilities Suite
             </span>
           </div>
         </div>
@@ -884,7 +915,7 @@ export default function Home() {
               <div className="flex flex-col gap-8 animate-in fade-in duration-300">
                 <div className="text-center py-6 md:py-10">
                   <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">NexaKit</span></h1>
-                  <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 28 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
+                  <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 29 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -899,7 +930,7 @@ export default function Home() {
                             className="text-left px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-sky-300 font-semibold text-sm transition-all border border-transparent hover:border-blue-200 dark:hover:border-blue-800/50 flex items-center justify-between group"
                           >
                             {tool.label}
-                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7-7"></path></svg>
+                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                           </button>
                         ))}
                       </div>
@@ -1667,6 +1698,24 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* RANDOM: Random Fact Generator */}
+            {activeTool === "fact-gen" && (
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+                <h2 className="text-2xl font-bold mb-1 dark:text-white">Random Fact Generator</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Discover fascinating, quirky, and surprising trivia with every click.</p>
+                
+                <div className="bg-blue-50/70 dark:bg-slate-800/80 border border-blue-200 dark:border-slate-700 p-8 rounded-2xl mb-6 flex items-center justify-center min-h-[140px] shadow-inner">
+                  <p className="text-xl font-medium text-slate-800 dark:text-slate-100 max-w-2xl leading-relaxed italic">
+                    "{currentFact}"
+                  </p>
+                </div>
+                
+                <button onClick={getRandomFact} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg shadow-sm transition-all transform active:scale-95">
+                  Get Another Fact
+                </button>
               </div>
             )}
 
