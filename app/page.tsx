@@ -704,9 +704,6 @@ export default function Home() {
     setPwdOutput(res);
   };
 
-  const [qrText, setQrText] = useState("https://example.com");
-  const [qrSrc, setQrSrc] = useState("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://example.com");
-
   const [jsonInput, setJsonInput] = useState('{"name": "NexaKit", "status": "active", "tools": 29}');
   const [jsonOutput, setJsonOutput] = useState("");
   const formatJson = (space: number) => {
@@ -725,6 +722,38 @@ export default function Home() {
       setB64Output(mode === "encode" ? btoa(b64Input) : atob(b64Input));
     } catch {
       setB64Output("Error: Invalid string for base64 operation.");
+    }
+  };
+
+  // 📷 QR Maker State
+  const [qrText, setQrText] = useState("https://example.com");
+  const [qrSrc, setQrSrc] = useState("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://example.com");
+  const [qrDownloading, setQrDownloading] = useState(false);
+
+  const downloadQRCode = async () => {
+    setQrDownloading(true);
+    try {
+      const response = await fetch(qrSrc);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "NexaKit-QRCode.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      // Fallback if cross-origin resource sharing (CORS) acts up
+      const link = document.createElement("a");
+      link.href = qrSrc;
+      link.download = "NexaKit-QRCode.png";
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      setQrDownloading(false);
     }
   };
 
@@ -930,7 +959,7 @@ export default function Home() {
                             className="text-left px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-sky-300 font-semibold text-sm transition-all border border-transparent hover:border-blue-200 dark:hover:border-blue-800/50 flex items-center justify-between group"
                           >
                             {tool.label}
-                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7-7"></path></svg>
                           </button>
                         ))}
                       </div>
@@ -1584,9 +1613,24 @@ export default function Home() {
               <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">QR Code Generator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Instantly generate a scannable QR code from any URL or text input.</p>
+                
                 <input type="text" value={qrText} onChange={(e) => setQrText(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-4 dark:text-white" />
-                <button onClick={() => setQrSrc(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`)} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-6">Generate QR Code</button>
-                <div className="flex justify-center"><img src={qrSrc} alt="QR Code" className="p-3 border border-slate-200 dark:border-slate-700 bg-white rounded-lg" /></div>
+                
+                <div className="flex flex-col sm:flex-row justify-center gap-3 mb-6">
+                  <button onClick={() => setQrSrc(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrText)}`)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition-colors">
+                    Generate QR Code
+                  </button>
+                  <button onClick={downloadQRCode} disabled={qrDownloading} className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-400 text-white font-bold px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+                    {qrDownloading ? "Downloading..." : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Download PNG
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                <div className="flex justify-center"><img src={qrSrc} alt="QR Code" className="p-3 border border-slate-200 dark:border-slate-700 bg-white rounded-lg" crossOrigin="anonymous" /></div>
               </div>
             )}
 
