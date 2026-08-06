@@ -941,8 +941,8 @@ export default function Home() {
             {activeTool === "home" && (
               <div className="flex flex-col gap-8 animate-in fade-in duration-300">
                 <div className="text-center py-6 md:py-10">
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">Nexa1Kit</span></h1>
-                  <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 29 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">NexaKit</span></h1>
+                  <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 1 29 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
