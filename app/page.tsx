@@ -175,6 +175,14 @@ const navGroups = [
       { id: "base64", label: "Base64 Encoder / Decoder" },
       { id: "password-gen", label: "Key & Password Generator" },
       { id: "qr-maker", label: "QR Code Generator" },
+    ],
+  },
+  {
+    group: "🎲 Random & Fun",
+    tools: [
+      { id: "username-gen", label: "Random Username Gen" },
+      { id: "number-gen", label: "Random Number Gen" },
+      { id: "wheel-gen", label: "Spinning Decision Wheel" },
       { id: "random-picker", label: "Unbiased Random Picker" },
     ],
   },
@@ -698,10 +706,7 @@ export default function Home() {
   const [qrText, setQrText] = useState("https://example.com");
   const [qrSrc, setQrSrc] = useState("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://example.com");
 
-  const [pickerInput, setPickerInput] = useState("");
-  const [pickerResult, setPickerResult] = useState("None");
-
-  const [jsonInput, setJsonInput] = useState('{"name": "NexaKit", "status": "active", "tools": 25}');
+  const [jsonInput, setJsonInput] = useState('{"name": "NexaKit", "status": "active", "tools": 28}');
   const [jsonOutput, setJsonOutput] = useState("");
   const formatJson = (space: number) => {
     try {
@@ -721,6 +726,74 @@ export default function Home() {
       setB64Output("Error: Invalid string for base64 operation.");
     }
   };
+
+  // ==========================================
+  // 6. RANDOM & FUN TOOLS STATE
+  // ==========================================
+
+  const [pickerInput, setPickerInput] = useState("");
+  const [pickerResult, setPickerResult] = useState("None");
+
+  const [usernameOutput, setUsernameOutput] = useState("Click Generate");
+  const generateUsername = () => {
+    const adjectives = ["Cool", "Happy", "Fast", "Smart", "Brave", "Mighty", "Clever", "Swift", "Fierce", "Wild", "Cosmic", "Neon", "Cyber", "Quantum"];
+    const nouns = ["Tiger", "Dragon", "Eagle", "Falcon", "Shark", "Wolf", "Bear", "Lion", "Panther", "Fox", "Ninja", "Rider", "Pilot", "Ghost"];
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    const num = Math.floor(Math.random() * 9999);
+    setUsernameOutput(`${adj}${noun}${num}`);
+  };
+
+  const [numMin, setNumMin] = useState<number | "">(1);
+  const [numMax, setNumMax] = useState<number | "">(100);
+  const [numCount, setNumCount] = useState<number | "">(1);
+  const [numResult, setNumResult] = useState("");
+  const generateNumbers = () => {
+    const min = Number(numMin) || 0;
+    const max = Number(numMax) || 100;
+    const count = Math.max(1, Math.min(100, Number(numCount) || 1));
+    if (min > max) return setNumResult("Min must be less than Max");
+    let res = [];
+    for (let i = 0; i < count; i++) {
+      res.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+    setNumResult(res.join(", "));
+  };
+
+  const [wheelInput, setWheelInput] = useState("Pizza\nBurgers\nTacos\nSushi");
+  const [wheelRotation, setWheelRotation] = useState(0);
+  const [wheelWinner, setWheelWinner] = useState("");
+  const [isSpinning, setIsSpinning] = useState(false);
+  const wheelOptions = wheelInput.split("\n").filter((o) => o.trim() !== "");
+
+  const spinWheel = () => {
+    if (wheelOptions.length < 2 || isSpinning) return;
+    setIsSpinning(true);
+    setWheelWinner("");
+    
+    const spins = Math.floor(Math.random() * 5) + 5; 
+    const randomDegree = Math.floor(Math.random() * 360);
+    const totalRotation = wheelRotation + (spins * 360) + randomDegree;
+    
+    setWheelRotation(totalRotation);
+
+    setTimeout(() => {
+      const actualDeg = totalRotation % 360;
+      const sliceSize = 360 / wheelOptions.length;
+      const normalizedDeg = (360 - actualDeg) % 360;
+      const winningIndex = Math.floor(normalizedDeg / sliceSize);
+      setWheelWinner(wheelOptions[winningIndex]);
+      setIsSpinning(false);
+    }, 3000); 
+  };
+
+  const wheelColors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#14b8a6", "#f97316"];
+  const gradientStops = wheelOptions.map((opt, i) => {
+    const start = (i * 100) / wheelOptions.length;
+    const end = ((i + 1) * 100) / wheelOptions.length;
+    const color = wheelColors[i % wheelColors.length];
+    return `${color} ${start}% ${end}%`;
+  }).join(", ");
 
   const formatGBP = (val: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(val);
 
@@ -788,7 +861,7 @@ export default function Home() {
 
             {/* KPI Badge */}
             <span className="text-xs font-bold text-slate-400 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap hidden lg:block">
-              25 Utilities Suite
+              28 Utilities Suite
             </span>
           </div>
         </div>
@@ -811,7 +884,7 @@ export default function Home() {
               <div className="flex flex-col gap-8 animate-in fade-in duration-300">
                 <div className="text-center py-6 md:py-10">
                   <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">NexaKit</span></h1>
-                  <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 25 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
+                  <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 28 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -826,7 +899,7 @@ export default function Home() {
                             className="text-left px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-sky-300 font-semibold text-sm transition-all border border-transparent hover:border-blue-200 dark:hover:border-blue-800/50 flex items-center justify-between group"
                           >
                             {tool.label}
-                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7-7"></path></svg>
                           </button>
                         ))}
                       </div>
@@ -1486,11 +1559,122 @@ export default function Home() {
               </div>
             )}
 
-            {/* DEV: Random Picker */}
+            {/* RANDOM: Random Username Generator */}
+            {activeTool === "username-gen" && (
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+                <h2 className="text-2xl font-bold mb-1 dark:text-white">Random Username Generator</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Generate cool, unique usernames for gaming, social media, and forums.</p>
+                
+                <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-8 rounded-xl mb-6 flex items-center justify-center min-h-[120px]">
+                  <span className="text-4xl font-black text-blue-600 dark:text-sky-400 tracking-tight">{usernameOutput}</span>
+                </div>
+                
+                <button onClick={generateUsername} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg shadow-sm">
+                  Generate Username
+                </button>
+              </div>
+            )}
+
+            {/* RANDOM: Random Number Generator */}
+            {activeTool === "number-gen" && (
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <h2 className="text-2xl font-bold mb-1 dark:text-white">Random Number Generator</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Generate a single random number or a sequence within a specific range.</p>
+                
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div>
+                    <label className="block text-xs font-bold mb-2 dark:text-slate-300">Min Value</label>
+                    <input type="number" value={numMin} onChange={(e) => setNumMin(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-2 dark:text-slate-300">Max Value</label>
+                    <input type="number" value={numMax} onChange={(e) => setNumMax(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold mb-2 dark:text-slate-300">How Many?</label>
+                    <input type="number" min="1" max="100" value={numCount} onChange={(e) => setNumCount(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
+                  </div>
+                </div>
+
+                <button onClick={generateNumbers} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg mb-6 w-full md:w-auto">
+                  Generate Numbers
+                </button>
+
+                <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 min-h-[100px] flex items-center justify-center">
+                  <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all text-center">
+                    {numResult || "Ready to roll..."}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* RANDOM: Spinning Wheel */}
+            {activeTool === "wheel-gen" && (
+              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <h2 className="text-2xl font-bold mb-1 dark:text-white">Spinning Decision Wheel</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Input your choices and spin the wheel to let fate decide.</p>
+                
+                <div className="flex flex-col md:flex-row gap-8 items-center">
+                  <div className="w-full md:w-1/3">
+                    <label className="block text-xs font-bold mb-2 dark:text-slate-300">Wheel Options (One per line)</label>
+                    <textarea 
+                      value={wheelInput} 
+                      onChange={(e) => setWheelInput(e.target.value)} 
+                      className="w-full h-64 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-4 dark:text-white whitespace-pre-wrap resize-none" 
+                    />
+                    <button 
+                      onClick={spinWheel} 
+                      disabled={isSpinning || wheelOptions.length < 2}
+                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold px-6 py-3 rounded-lg shadow-sm transition-colors"
+                    >
+                      {isSpinning ? "Spinning..." : "SPIN THE WHEEL!"}
+                    </button>
+                  </div>
+                  
+                  <div className="w-full md:w-2/3 flex flex-col items-center justify-center">
+                    <div className="relative mb-6">
+                      {/* Downward pointing arrow indicating the winner */}
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[25px] border-t-slate-800 dark:border-t-white drop-shadow-md"></div>
+                      
+                      {/* CSS Conic Gradient Wheel */}
+                      <div 
+                        className="w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-slate-800 dark:border-white relative overflow-hidden shadow-lg transition-transform ease-out"
+                        style={{ 
+                          background: `conic-gradient(${gradientStops})`,
+                          transform: `rotate(${wheelRotation}deg)`,
+                          transitionDuration: isSpinning ? "3000ms" : "0ms"
+                        }}
+                      >
+                        {/* Overlay text for slices */}
+                        {wheelOptions.map((opt, i) => {
+                          const rotation = (i * 360) / wheelOptions.length + (360 / wheelOptions.length) / 2;
+                          return (
+                            <div key={i} className="absolute inset-0 flex items-start justify-center origin-center" style={{ transform: `rotate(${rotation}deg)` }}>
+                              <span className="mt-6 font-bold text-white drop-shadow-md truncate w-24 text-center text-sm">{opt}</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="h-12 flex items-center justify-center">
+                      {wheelWinner && !isSpinning && (
+                        <div className="animate-in zoom-in duration-300 flex flex-col items-center">
+                          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Winner</span>
+                          <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 px-6 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-200 dark:border-emerald-800">{wheelWinner}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* RANDOM: Random Picker */}
             {activeTool === "random-picker" && (
               <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Unbiased Random Picker</h2>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Input a list of options and let the tool pick one at random.</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Input a list of options and let the tool pick one at random without visuals.</p>
                 <textarea value={pickerInput} onChange={(e) => setPickerInput(e.target.value)} placeholder={"Option 1\nOption 2"} className="w-full h-36 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-4 dark:text-white" />
                 <button onClick={() => { const opts = pickerInput.split("\n").filter(Boolean); setPickerResult(opts.length ? opts[Math.floor(Math.random() * opts.length)] : "No options!"); }} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-6">Pick Option</button>
                 <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg flex justify-between font-bold"><span className="dark:text-slate-300">Selected:</span><span className="text-blue-600 dark:text-sky-400">{pickerResult}</span></div>
