@@ -223,7 +223,6 @@ export default function Home() {
     
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        // Stop measuring the layout if we are on legal pages
         if (activeTool === "privacy" || activeTool === "terms") {
             setAdLayout([]);
             continue;
@@ -744,7 +743,6 @@ export default function Home() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      // Fallback if cross-origin resource sharing (CORS) acts up
       const link = document.createElement("a");
       link.href = qrSrc;
       link.download = "NexaKit-QRCode.png";
@@ -876,8 +874,8 @@ export default function Home() {
             <span>Nexa<span className="text-sky-400">Kit</span></span>
           </a>
           
-          {/* Main Navbar Links */}
-          <nav className="flex-1 flex justify-center items-center gap-4 md:gap-8 h-16 hidden md:flex">
+          {/* Main Navbar Links (Desktop only) */}
+          <nav className="flex-1 justify-center items-center gap-4 md:gap-8 h-16 hidden lg:flex">
             {navGroups.map((g, idx) => (
               <div key={idx} className="relative group h-full flex items-center cursor-pointer">
                 {/* Navbar Tab */}
@@ -936,15 +934,15 @@ export default function Home() {
         <AdColumn side="left" layout={adLayout} />
 
         {/* Center Main Content Container */}
-        <main ref={mainRef} className="flex-1 flex flex-col p-6 md:p-10 w-full max-w-5xl mx-auto min-w-0">
+        <main ref={mainRef} className="flex-1 flex flex-col p-4 md:p-10 w-full max-w-5xl mx-auto min-w-0">
           
           <div className="flex-1">
             {/* TOOL 0: HOME DASHBOARD */}
             {activeTool === "home" && (
               <div className="flex flex-col gap-8 animate-in fade-in duration-300">
                 <div className="text-center py-6 md:py-10">
-                  <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">NexaKit</span></h1>
-                  <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 29 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Welcome to <span className="text-blue-600 dark:text-sky-400">NexaKit</span></h1>
+                  <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 29 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -959,7 +957,7 @@ export default function Home() {
                             className="text-left px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-sky-300 font-semibold text-sm transition-all border border-transparent hover:border-blue-200 dark:hover:border-blue-800/50 flex items-center justify-between group"
                           >
                             {tool.label}
-                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7-7"></path></svg>
+                            <svg className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                           </button>
                         ))}
                       </div>
@@ -1032,22 +1030,24 @@ export default function Home() {
             {/* TOOL 1: UK INCOME TAX CALCULATOR */}
             {activeTool === "tax-calculator" && (
               <div className="flex flex-col gap-6">
-                <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
-                  <div className="flex justify-between items-start mb-6">
+                <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                     <div>
                       <h2 className="text-2xl font-bold dark:text-white">UK Income Tax & Take-Home Calculator</h2>
                       <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Advanced salary tax breakdown with Region, Pension Type, Allowances & NI Letters.</p>
                     </div>
-                    <button onClick={resetTaxCalculator} className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold px-3 py-2 rounded-lg">Reset All</button>
+                    <button onClick={resetTaxCalculator} className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold px-3 py-2 rounded-lg shrink-0">Reset All</button>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                     <div className="lg:col-span-2">
                       <label className="block text-xs font-bold mb-2 dark:text-slate-300">Salary Amount</label>
-                      <div className="flex gap-2">
-                        <span className="p-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold dark:text-slate-300">£</span>
-                        <input type="number" value={salary} onChange={(e) => setSalary(e.target.value === "" ? "" : Number(e.target.value))} className="flex-1 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-white" placeholder="0" />
-                        <select value={salaryPeriod} onChange={(e) => setSalaryPeriod(e.target.value as any)} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg font-medium dark:text-white">
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="flex flex-1 gap-2">
+                          <span className="p-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold dark:text-slate-300 flex items-center justify-center">£</span>
+                          <input type="number" value={salary} onChange={(e) => setSalary(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 dark:text-white" placeholder="0" />
+                        </div>
+                        <select value={salaryPeriod} onChange={(e) => setSalaryPeriod(e.target.value as any)} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg font-medium dark:text-white w-full sm:w-auto">
                           <option value="year">per Year</option><option value="month">per Month</option><option value="week">per Week</option><option value="day">per Day</option><option value="hour">per Hour</option>
                         </select>
                       </div>
@@ -1122,9 +1122,9 @@ export default function Home() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-blue-700 dark:text-sky-400 uppercase tracking-wider">Take-Home (Yearly)</span><span className="block text-3xl font-extrabold text-blue-900 dark:text-sky-200 mt-1">{formatGBP(taxData.net)}</span></div>
-                    <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Take-Home (Monthly)</span><span className="block text-3xl font-extrabold text-emerald-900 dark:text-emerald-200 mt-1">{formatGBP(taxData.net / 12)}</span></div>
-                    <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Total Deductions</span><span className="block text-3xl font-extrabold text-slate-800 dark:text-slate-200 mt-1">{formatGBP(taxData.deductions)}</span></div>
+                    <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-blue-700 dark:text-sky-400 uppercase tracking-wider">Take-Home (Yearly)</span><span className="block text-2xl md:text-3xl font-extrabold text-blue-900 dark:text-sky-200 mt-1 break-all">{formatGBP(taxData.net)}</span></div>
+                    <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Take-Home (Monthly)</span><span className="block text-2xl md:text-3xl font-extrabold text-emerald-900 dark:text-emerald-200 mt-1 break-all">{formatGBP(taxData.net / 12)}</span></div>
+                    <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Total Deductions</span><span className="block text-2xl md:text-3xl font-extrabold text-slate-800 dark:text-slate-200 mt-1 break-all">{formatGBP(taxData.deductions)}</span></div>
                   </div>
 
                   <div className="overflow-x-auto">
@@ -1176,7 +1176,7 @@ export default function Home() {
 
             {/* FINANCIAL: Live Currency Converter */}
             {activeTool === "currency-converter" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Live Currency Converter</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert global currencies with real-time exchange rates.</p>
                 
@@ -1195,7 +1195,6 @@ export default function Home() {
                     </select>
                   </div>
 
-                  {/* Swap Button */}
                   <button
                     onClick={() => {
                       const temp = currFrom;
@@ -1220,7 +1219,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <div className="flex flex-col gap-1">
                     <span className="text-sm font-bold text-slate-600 dark:text-slate-300">Converted Value:</span>
                     {currRate && !currLoading && (
@@ -1229,7 +1228,7 @@ export default function Home() {
                       </span>
                     )}
                   </div>
-                  <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400">
+                  <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all">
                     {currLoading ? "Fetching rate..." : `${currResult || "0.00"} ${currTo}`}
                   </span>
                 </div>
@@ -1238,28 +1237,28 @@ export default function Home() {
 
             {/* FINANCIAL: Loan / Mortgage Calculator */}
             {activeTool === "loan-calc" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Mortgage & Loan Repayment Calculator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Calculate monthly repayments, total interest, and the true cost of your mortgage or loan.</p>
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Loan Amount (£)</label><input type="number" value={loanAmount} onChange={(e) => setLoanAmount(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Interest Rate (%)</label><input type="number" step="0.1" value={loanInterest} onChange={(e) => setLoanInterest(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Term (Years)</label><input type="number" value={loanYears} onChange={(e) => setLoanYears(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-4 rounded-xl text-center"><span className="text-xs text-blue-600 dark:text-sky-400 font-bold">MONTHLY PAYMENT</span><span className="block text-2xl font-black text-blue-900 dark:text-sky-200 mt-1">{formatGBP(loanData.monthly)}</span></div>
-                  <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-center"><span className="text-xs text-slate-600 dark:text-slate-400 font-bold">TOTAL REPAID</span><span className="block text-2xl font-black text-slate-800 dark:text-slate-200 mt-1">{formatGBP(loanData.totalPay)}</span></div>
-                  <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 p-4 rounded-xl text-center"><span className="text-xs text-amber-600 dark:text-amber-400 font-bold">TOTAL INTEREST</span><span className="block text-2xl font-black text-amber-900 dark:text-amber-200 mt-1">{formatGBP(loanData.interest)}</span></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-4 rounded-xl text-center"><span className="text-xs text-blue-600 dark:text-sky-400 font-bold">MONTHLY PAYMENT</span><span className="block text-xl md:text-2xl font-black text-blue-900 dark:text-sky-200 mt-1 break-all">{formatGBP(loanData.monthly)}</span></div>
+                  <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-center"><span className="text-xs text-slate-600 dark:text-slate-400 font-bold">TOTAL REPAID</span><span className="block text-xl md:text-2xl font-black text-slate-800 dark:text-slate-200 mt-1 break-all">{formatGBP(loanData.totalPay)}</span></div>
+                  <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 p-4 rounded-xl text-center"><span className="text-xs text-amber-600 dark:text-amber-400 font-bold">TOTAL INTEREST</span><span className="block text-xl md:text-2xl font-black text-amber-900 dark:text-amber-200 mt-1 break-all">{formatGBP(loanData.interest)}</span></div>
                 </div>
               </div>
             )}
 
             {/* FINANCIAL: Compound Interest Calculator */}
             {activeTool === "compound-calc" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Compound Interest Calculator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Project future investment growth using compound interest formulas.</p>
-                <div className="grid grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Initial (£)</label><input type="number" value={ciPrincipal} onChange={(e) => setCiPrincipal(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Annual Rate (%)</label><input type="number" value={ciRate} onChange={(e) => setCiRate(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Years</label><input type="number" value={ciYears} onChange={(e) => setCiYears(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
@@ -1270,19 +1269,19 @@ export default function Home() {
                     </select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-4 rounded-xl text-center"><span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">FUTURE BALANCE</span><span className="block text-3xl font-black text-emerald-900 dark:text-emerald-200 mt-1">{formatGBP(ciData.total)}</span></div>
-                  <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-4 rounded-xl text-center"><span className="text-xs text-blue-600 dark:text-sky-400 font-bold">INTEREST EARNED</span><span className="block text-3xl font-black text-blue-900 dark:text-sky-200 mt-1">{formatGBP(ciData.interest)}</span></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-4 rounded-xl text-center"><span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">FUTURE BALANCE</span><span className="block text-2xl md:text-3xl font-black text-emerald-900 dark:text-emerald-200 mt-1 break-all">{formatGBP(ciData.total)}</span></div>
+                  <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-4 rounded-xl text-center"><span className="text-xs text-blue-600 dark:text-sky-400 font-bold">INTEREST EARNED</span><span className="block text-2xl md:text-3xl font-black text-blue-900 dark:text-sky-200 mt-1 break-all">{formatGBP(ciData.interest)}</span></div>
                 </div>
               </div>
             )}
 
             {/* MATH: Percentage Calculator */}
             {activeTool === "pct-calc" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Percentage Calculator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Easily calculate percentages, ratios, and percentage differences.</p>
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <div>
                     <label className="block text-xs font-bold mb-2 dark:text-slate-300">Calculation Type</label>
                     <select value={pctMode} onChange={(e) => setPctMode(e.target.value as any)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white">
@@ -1294,52 +1293,52 @@ export default function Home() {
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Value X</label><input type="number" value={pctValA} onChange={(e) => setPctValA(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Value Y</label><input type="number" value={pctValB} onChange={(e) => setPctValB(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                 </div>
-                <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                   <span className="text-sm font-bold text-slate-600 dark:text-slate-300">Calculated Output:</span>
-                  <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400">{calculatePercentage().toFixed(2)}{pctMode !== "pctOf" ? "%" : ""}</span>
+                  <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all">{calculatePercentage().toFixed(2)}{pctMode !== "pctOf" ? "%" : ""}</span>
                 </div>
               </div>
             )}
 
             {/* MATH: Unit Converter */}
             {activeTool === "unit-converter" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Metric / Unit Converter</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert weights, measurements, and volumes between metric and imperial units.</p>
                 <div className="mb-4"><label className="block text-xs font-bold mb-2 dark:text-slate-300">Value</label><input type="number" value={unitVal} onChange={(e) => setUnitVal(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">From</label><select value={unitFrom} onChange={(e) => setUnitFrom(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white"><option value="kg">Kilograms (kg)</option><option value="g">Grams (g)</option><option value="lbs">Pounds (lbs)</option><option value="oz">Ounces (oz)</option></select></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">To</label><select value={unitTo} onChange={(e) => setUnitTo(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white"><option value="lbs">Pounds (lbs)</option><option value="kg">Kilograms (kg)</option><option value="g">Grams (g)</option><option value="oz">Ounces (oz)</option></select></div>
                 </div>
-                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg flex justify-between items-center border border-slate-200 dark:border-slate-700"><span className="text-sm font-semibold dark:text-slate-300">Result:</span><span className="text-xl font-mono font-bold dark:text-sky-400">{convertUnits()} {unitTo}</span></div>
+                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border border-slate-200 dark:border-slate-700"><span className="text-sm font-semibold dark:text-slate-300">Result:</span><span className="text-xl font-mono font-bold dark:text-sky-400 break-all">{convertUnits()} {unitTo}</span></div>
               </div>
             )}
 
             {/* MATH: Statistics Calculator */}
             {activeTool === "stats-calc" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Statistics & Average Calculator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Instantly find the sum, mean, median, minimum, and maximum of any dataset.</p>
                 <textarea value={statsInput} onChange={(e) => setStatsInput(e.target.value)} className="w-full h-24 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-6 dark:text-white" placeholder="Enter numbers separated by spaces or commas" />
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">MEAN (AVERAGE)</span><span className="block text-2xl font-bold text-blue-600 dark:text-sky-400 mt-1">{statsData.mean.toFixed(2)}</span></div>
-                  <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">MEDIAN</span><span className="block text-2xl font-bold text-blue-600 dark:text-sky-400 mt-1">{statsData.median}</span></div>
-                  <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">SUM</span><span className="block text-2xl font-bold text-blue-600 dark:text-sky-400 mt-1">{statsData.sum}</span></div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">MEAN (AVERAGE)</span><span className="block text-xl font-bold text-blue-600 dark:text-sky-400 mt-1 break-all">{statsData.mean.toFixed(2)}</span></div>
+                  <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">MEDIAN</span><span className="block text-xl font-bold text-blue-600 dark:text-sky-400 mt-1 break-all">{statsData.median}</span></div>
+                  <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">SUM</span><span className="block text-xl font-bold text-blue-600 dark:text-sky-400 mt-1 break-all">{statsData.sum}</span></div>
                 </div>
               </div>
             )}
 
             {/* MATH: Prime Number Generator */}
             {activeTool === "prime-gen" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Prime Number Generator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Generate a list of prime numbers up to your specified limit.</p>
-                <div className="flex gap-4 items-end mb-6">
-                  <div className="flex-1">
+                <div className="flex flex-col sm:flex-row gap-4 items-end mb-6">
+                  <div className="flex-1 w-full">
                     <label className="block text-xs font-bold mb-2 dark:text-slate-300">Upper Limit (Max 100,000)</label>
                     <input type="number" value={primeLimit} onChange={(e) => setPrimeLimit(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
                   </div>
-                  <button onClick={generatePrimes} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg">Generate Primes</button>
+                  <button onClick={generatePrimes} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg">Generate Primes</button>
                 </div>
                 <textarea readOnly value={primeResult} placeholder="Primes will appear here..." className="w-full h-48 p-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 font-mono text-sm leading-relaxed dark:text-white" />
               </div>
@@ -1347,14 +1346,14 @@ export default function Home() {
 
             {/* MATH: Base Converter */}
             {activeTool === "base-converter" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Number Base Converter</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert numbers between Binary, Octal, Decimal, and Hexadecimal bases.</p>
                 <div className="mb-4">
                   <label className="block text-xs font-bold mb-2 dark:text-slate-300">Input Value</label>
                   <input type="text" value={baseInput} onChange={(e) => setBaseInput(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg font-mono uppercase dark:text-white" />
                 </div>
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div>
                     <label className="block text-xs font-bold mb-2 dark:text-slate-300">Convert From</label>
                     <select value={baseFrom} onChange={(e) => setBaseFrom(Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg font-medium dark:text-white">
@@ -1377,11 +1376,11 @@ export default function Home() {
 
             {/* TIME: Stopwatch */}
             {activeTool === "stopwatch" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Precision Stopwatch</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">A highly accurate digital stopwatch with millisecond precision.</p>
-                <div className="text-5xl font-mono font-bold my-8 dark:text-white">{formatStopwatch()}</div>
-                <div className="flex justify-center gap-3">
+                <div className="text-4xl md:text-5xl font-mono font-bold my-8 dark:text-white">{formatStopwatch()}</div>
+                <div className="flex flex-wrap justify-center gap-3">
                   <button onClick={() => setSwRunning(true)} className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg">Start</button>
                   <button onClick={() => setSwRunning(false)} className="bg-slate-600 text-white font-semibold px-6 py-2 rounded-lg">Pause</button>
                   <button onClick={() => { setSwRunning(false); setSwTime(0); }} className="bg-red-500 text-white font-semibold px-6 py-2 rounded-lg">Reset</button>
@@ -1391,14 +1390,14 @@ export default function Home() {
 
             {/* TIME: Countdown Timer */}
             {activeTool === "countdown" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Countdown Timer</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Set a custom timer that counts down to zero in minutes and seconds.</p>
                 <div className="flex justify-center items-center gap-3 my-4">
                   <input type="number" value={cdInputMin} onChange={(e) => setCdInputMin(e.target.value === "" ? "" : Number(e.target.value))} className="p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded w-24 text-center font-bold dark:text-white" />
                   <span className="text-sm font-semibold dark:text-slate-300">Minutes</span>
                 </div>
-                <div className="text-5xl font-mono font-bold my-6 dark:text-white">{Math.floor(cdTime / 60).toString().padStart(2, "0")}:{(cdTime % 60).toString().padStart(2, "0")}</div>
+                <div className="text-4xl md:text-5xl font-mono font-bold my-6 dark:text-white">{Math.floor(cdTime / 60).toString().padStart(2, "0")}:{(cdTime % 60).toString().padStart(2, "0")}</div>
                 <div className="flex justify-center gap-3">
                   <button onClick={startCountdown} className="bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg">Start</button>
                   <button onClick={() => setCdRunning(false)} className="bg-slate-600 text-white font-semibold px-6 py-2 rounded-lg">Pause</button>
@@ -1408,14 +1407,14 @@ export default function Home() {
 
             {/* TIME: Date Difference Calc */}
             {activeTool === "date-diff" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Date Difference Calculator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Find the exact number of days, weeks, and months between two dates.</p>
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Start Date</label><input type="date" value={dateA} onChange={(e) => setDateA(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">End Date</label><input type="date" value={dateB} onChange={(e) => setDateB(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-4 rounded-xl text-center"><span className="text-xs font-bold text-blue-600 dark:text-sky-400">DAYS</span><span className="block text-2xl font-bold text-blue-900 dark:text-sky-200 mt-1">{dateDiffData.days}</span></div>
                   <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-center"><span className="text-xs font-bold text-slate-600 dark:text-slate-400">WEEKS</span><span className="block text-2xl font-bold text-slate-800 dark:text-slate-200 mt-1">{dateDiffData.weeks}</span></div>
                   <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-4 rounded-xl text-center"><span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">MONTHS</span><span className="block text-2xl font-bold text-emerald-900 dark:text-emerald-200 mt-1">{dateDiffData.months}</span></div>
@@ -1425,11 +1424,11 @@ export default function Home() {
 
             {/* TIME: Age Calculator */}
             {activeTool === "age-calc" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Age Calculator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Calculate precise age in years, months, and days from a birthdate.</p>
                 <div className="mb-6"><label className="block text-xs font-bold mb-2 dark:text-slate-300">Date of Birth</label><input type="date" value={dob} onChange={(e) => setDob(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-4 rounded-xl text-center"><span className="text-xs font-bold text-blue-600 dark:text-sky-400">YEARS</span><span className="block text-3xl font-black text-blue-900 dark:text-sky-200 mt-1">{ageData.years}</span></div>
                   <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl text-center"><span className="text-xs font-bold text-slate-600 dark:text-slate-400">MONTHS</span><span className="block text-3xl font-black text-slate-800 dark:text-slate-200 mt-1">{ageData.months}</span></div>
                   <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-4 rounded-xl text-center"><span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">DAYS</span><span className="block text-3xl font-black text-emerald-900 dark:text-emerald-200 mt-1">{ageData.days}</span></div>
@@ -1439,11 +1438,11 @@ export default function Home() {
 
             {/* TIME: Timezone Converter */}
             {activeTool === "timezone" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">World Clock & Timezone Converter</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Compare local time against major global timezones like London, New York, Tokyo, and Sydney.</p>
                 <div className="mb-6"><label className="block text-xs font-bold mb-2 dark:text-slate-300">Local Time</label><input type="time" value={baseTime} onChange={(e) => setBaseTime(e.target.value)} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg font-bold dark:text-white" /></div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">LONDON (BST/GMT)</span><span className="block text-xl font-mono font-bold text-slate-800 dark:text-slate-200 mt-1">{tzData.London}</span></div>
                   <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">NEW YORK (EST)</span><span className="block text-xl font-mono font-bold text-slate-800 dark:text-slate-200 mt-1">{tzData.NewYork}</span></div>
                   <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-700"><span className="text-xs font-bold text-slate-500 dark:text-slate-400">TOKYO (JST)</span><span className="block text-xl font-mono font-bold text-slate-800 dark:text-slate-200 mt-1">{tzData.Tokyo}</span></div>
@@ -1454,27 +1453,27 @@ export default function Home() {
 
             {/* TEXT: Word Counter */}
             {activeTool === "word-counter" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Word & Character Counter</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Count the total number of characters and words in your text.</p>
                 <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Type or paste text..." className="w-full h-36 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-6 dark:text-white" />
-                <div className="grid grid-cols-2 gap-4"><div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg text-center font-bold dark:text-slate-200">Characters <span className="block text-2xl text-blue-600 dark:text-sky-400">{text.length}</span></div><div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg text-center font-bold dark:text-slate-200">Words <span className="block text-2xl text-blue-600 dark:text-sky-400">{text.trim() ? text.trim().split(/\s+/).length : 0}</span></div></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg text-center font-bold dark:text-slate-200">Characters <span className="block text-2xl text-blue-600 dark:text-sky-400">{text.length}</span></div><div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg text-center font-bold dark:text-slate-200">Words <span className="block text-2xl text-blue-600 dark:text-sky-400">{text.trim() ? text.trim().split(/\s+/).length : 0}</span></div></div>
               </div>
             )}
 
             {/* TEXT: Case Converter */}
             {activeTool === "case-converter" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Text Case Converter</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Quickly reformat text to uppercase, lowercase, or title case.</p>
                 <textarea value={caseText} onChange={(e) => setCaseText(e.target.value)} placeholder="Enter text..." className="w-full h-36 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-6 dark:text-white" />
-                <div className="flex gap-3"><button onClick={() => convertCase("upper")} className="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg">UPPERCASE</button><button onClick={() => convertCase("lower")} className="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg">lowercase</button><button onClick={() => convertCase("title")} className="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg">Title Case</button></div>
+                <div className="flex flex-wrap gap-3"><button onClick={() => convertCase("upper")} className="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg">UPPERCASE</button><button onClick={() => convertCase("lower")} className="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg">lowercase</button><button onClick={() => convertCase("title")} className="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg">Title Case</button></div>
               </div>
             )}
 
             {/* TEXT: List Sorter & Deduplicator */}
             {activeTool === "list-tools" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">List Sorter & Deduplicator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Alphabetize, reverse, and remove duplicates from your lists instantly.</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1499,10 +1498,10 @@ export default function Home() {
 
             {/* TEXT: Find & Replace */}
             {activeTool === "find-replace" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Find & Replace Text</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Search for specific words or phrases and replace them across your text.</p>
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-xs font-bold mb-2 dark:text-slate-300">Find string</label>
                     <input type="text" value={frFind} onChange={(e) => setFrFind(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" placeholder="e.g. apple" />
@@ -1528,17 +1527,17 @@ export default function Home() {
 
             {/* TEXT: Dummy Lorem */}
             {activeTool === "lorem-gen" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
-                <div className="flex justify-between items-start mb-6">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                   <div>
                     <h2 className="text-2xl font-bold mb-1 dark:text-white">Dummy Lorem Generator</h2>
                     <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Generate dummy placeholder text for mockups and UI designs in multiple languages.</p>
                   </div>
                   <button onClick={resetLorem} className="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold px-3 py-2 rounded-lg">Reset</button>
                 </div>
-                <div className="flex gap-4 items-end mb-4"><input type="number" min="1" max="50" value={loremCount} onChange={(e) => setLoremCount(Number(e.target.value))} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg w-24 dark:text-white" />
-                  <select value={loremLang} onChange={(e) => setLoremLang(e.target.value)} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg flex-1 dark:text-white"><option value="latin">Latin</option><option value="english">English</option><option value="spanish">Spanish</option><option value="french">French</option><option value="german">German</option></select>
-                  <button onClick={() => generateLorem()} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-lg">Generate</button>
+                <div className="flex flex-col sm:flex-row gap-4 items-end mb-4"><input type="number" min="1" max="50" value={loremCount} onChange={(e) => setLoremCount(Number(e.target.value))} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg w-full sm:w-24 dark:text-white" />
+                  <select value={loremLang} onChange={(e) => setLoremLang(e.target.value)} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg w-full sm:flex-1 dark:text-white"><option value="latin">Latin</option><option value="english">English</option><option value="spanish">Spanish</option><option value="french">French</option><option value="german">German</option></select>
+                  <button onClick={() => generateLorem()} className="w-full sm:w-auto bg-blue-600 text-white font-bold px-6 py-3 rounded-lg">Generate</button>
                 </div>
                 <textarea readOnly value={loremOutput} className="w-full h-44 p-3 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-lg dark:text-white" />
               </div>
@@ -1546,29 +1545,29 @@ export default function Home() {
 
             {/* TEXT: Language Converter */}
             {activeTool === "lang-converter" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Language Converter & Translator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Translate blocks of text between English, Spanish, French, and German.</p>
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Source</label><select value={transFrom} onChange={(e) => setTransFrom(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white"><option value="en">English</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option></select></div>
                   <div><label className="block text-xs font-bold mb-2 dark:text-slate-300">Target</label><select value={transTo} onChange={(e) => setTransTo(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white"><option value="es">Spanish</option><option value="en">English</option><option value="fr">French</option><option value="de">German</option></select></div>
                 </div>
                 <div className="mb-4"><textarea value={transInputText} onChange={(e) => setTransInputText(e.target.value)} className="w-full h-28 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" /></div>
-                <button onClick={translateText} disabled={transLoading} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-6 disabled:bg-slate-400">{transLoading ? "Translating..." : "Translate Text"}</button>
+                <button onClick={translateText} disabled={transLoading} className="w-full sm:w-auto bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-6 disabled:bg-slate-400">{transLoading ? "Translating..." : "Translate Text"}</button>
                 <div className="w-full min-h-[100px] p-3 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 rounded-lg dark:text-white">{transOutputText}</div>
               </div>
             )}
 
             {/* DEV: JSON Formatter & Minify */}
             {activeTool === "json-formatter" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">JSON Formatter & Minifier</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Format, prettify, or minify your raw JSON data.</p>
                 
                 <label className="block text-xs font-bold mb-2 dark:text-slate-300">Raw JSON Input</label>
                 <textarea value={jsonInput} onChange={(e) => setJsonInput(e.target.value)} className="w-full h-40 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg font-mono text-sm mb-4 dark:text-white" />
                 
-                <div className="flex gap-3 mb-6">
+                <div className="flex flex-wrap gap-3 mb-6">
                   <button onClick={() => formatJson(2)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg">Prettify JSON</button>
                   <button onClick={() => formatJson(0)} className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-4 py-2 rounded-lg">Minify JSON</button>
                 </div>
@@ -1580,14 +1579,14 @@ export default function Home() {
 
             {/* DEV: Base64 Encoder / Decoder */}
             {activeTool === "base64" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Base64 Encoder / Decoder</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Encode raw strings into Base64 or decode Base64 back into readable text.</p>
                 
                 <label className="block text-xs font-bold mb-2 dark:text-slate-300">Input String</label>
                 <textarea value={b64Input} onChange={(e) => setB64Input(e.target.value)} className="w-full h-32 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-4 dark:text-white" />
                 
-                <div className="flex gap-3 mb-6">
+                <div className="flex flex-wrap gap-3 mb-6">
                   <button onClick={() => processBase64("encode")} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-lg">Encode to Base64</button>
                   <button onClick={() => processBase64("decode")} className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-6 py-2 rounded-lg">Decode from Base64</button>
                 </div>
@@ -1599,18 +1598,18 @@ export default function Home() {
 
             {/* DEV: Key Generator */}
             {activeTool === "password-gen" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Key & Password Generator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Generate secure, randomized passwords or API keys with custom requirements.</p>
                 <div className="mb-4"><label className="block text-xs font-bold mb-2 dark:text-slate-300">Length: {pwdLength}</label><input type="range" min="6" max="64" value={pwdLength} onChange={(e) => setPwdLength(Number(e.target.value))} className="w-full" /></div>
-                <button onClick={generatePassword} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-4">Generate Key</button>
+                <button onClick={generatePassword} className="w-full sm:w-auto bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-4">Generate Key</button>
                 <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg font-mono break-all dark:text-white">{pwdOutput || "Click Generate"}</div>
               </div>
             )}
 
             {/* DEV: QR Maker */}
             {activeTool === "qr-maker" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">QR Code Generator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Instantly generate a scannable QR code from any URL or text input.</p>
                 
@@ -1630,18 +1629,18 @@ export default function Home() {
                   </button>
                 </div>
                 
-                <div className="flex justify-center"><img src={qrSrc} alt="QR Code" className="p-3 border border-slate-200 dark:border-slate-700 bg-white rounded-lg" crossOrigin="anonymous" /></div>
+                <div className="flex justify-center"><img src={qrSrc} alt="QR Code" className="p-3 border border-slate-200 dark:border-slate-700 bg-white rounded-lg max-w-full h-auto" crossOrigin="anonymous" /></div>
               </div>
             )}
 
             {/* RANDOM: Random Username Generator */}
             {activeTool === "username-gen" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Random Username Generator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Generate cool, unique usernames for gaming, social media, and forums.</p>
                 
-                <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-8 rounded-xl mb-6 flex items-center justify-center min-h-[120px]">
-                  <span className="text-4xl font-black text-blue-600 dark:text-sky-400 tracking-tight">{usernameOutput}</span>
+                <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-6 md:p-8 rounded-xl mb-6 flex items-center justify-center min-h-[120px]">
+                  <span className="text-2xl sm:text-3xl md:text-4xl font-black text-blue-600 dark:text-sky-400 tracking-tight break-all">{usernameOutput}</span>
                 </div>
                 
                 <button onClick={generateUsername} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg shadow-sm">
@@ -1652,11 +1651,11 @@ export default function Home() {
 
             {/* RANDOM: Random Number Generator */}
             {activeTool === "number-gen" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Random Number Generator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Generate a single random number or a sequence within a specific range.</p>
                 
-                <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                   <div>
                     <label className="block text-xs font-bold mb-2 dark:text-slate-300">Min Value</label>
                     <input type="number" value={numMin} onChange={(e) => setNumMin(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
@@ -1671,12 +1670,12 @@ export default function Home() {
                   </div>
                 </div>
 
-                <button onClick={generateNumbers} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg mb-6 w-full md:w-auto">
+                <button onClick={generateNumbers} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg mb-6 w-full sm:w-auto">
                   Generate Numbers
                 </button>
 
                 <div className="bg-slate-100 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 min-h-[100px] flex items-center justify-center">
-                  <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all text-center">
+                  <span className="text-xl md:text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all text-center">
                     {numResult || "Ready to roll..."}
                   </span>
                 </div>
@@ -1685,7 +1684,7 @@ export default function Home() {
 
             {/* RANDOM: Spinning Wheel */}
             {activeTool === "wheel-gen" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Spinning Decision Wheel</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Input your choices and spin the wheel to let fate decide.</p>
                 
@@ -1695,7 +1694,7 @@ export default function Home() {
                     <textarea 
                       value={wheelInput} 
                       onChange={(e) => setWheelInput(e.target.value)} 
-                      className="w-full h-64 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-4 dark:text-white whitespace-pre-wrap resize-none" 
+                      className="w-full h-48 md:h-64 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-4 dark:text-white whitespace-pre-wrap resize-none" 
                     />
                     <button 
                       onClick={spinWheel} 
@@ -1708,10 +1707,8 @@ export default function Home() {
                   
                   <div className="w-full md:w-2/3 flex flex-col items-center justify-center">
                     <div className="relative mb-6">
-                      {/* Downward pointing arrow indicating the winner */}
                       <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[25px] border-t-slate-800 dark:border-t-white drop-shadow-md"></div>
                       
-                      {/* CSS Conic Gradient Wheel */}
                       <div 
                         className="w-64 h-64 md:w-80 md:h-80 rounded-full border-4 border-slate-800 dark:border-white relative overflow-hidden shadow-lg transition-transform ease-out"
                         style={{ 
@@ -1720,7 +1717,6 @@ export default function Home() {
                           transitionDuration: isSpinning ? "3000ms" : "0ms"
                         }}
                       >
-                        {/* Overlay text for slices */}
                         {wheelOptions.map((opt, i) => {
                           const rotation = (i * 360) / wheelOptions.length + (360 / wheelOptions.length) / 2;
                           return (
@@ -1736,7 +1732,7 @@ export default function Home() {
                       {wheelWinner && !isSpinning && (
                         <div className="animate-in zoom-in duration-300 flex flex-col items-center">
                           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Winner</span>
-                          <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 px-6 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-200 dark:border-emerald-800">{wheelWinner}</span>
+                          <span className="text-xl md:text-2xl font-black text-emerald-600 dark:text-emerald-400 px-6 py-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-200 dark:border-emerald-800 text-center break-all">{wheelWinner}</span>
                         </div>
                       )}
                     </div>
@@ -1747,17 +1743,17 @@ export default function Home() {
 
             {/* RANDOM: Random Fact Generator */}
             {activeTool === "fact-gen" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 text-center">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Random Fact Generator</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Discover fascinating, quirky, and surprising trivia with every click.</p>
                 
-                <div className="bg-blue-50/70 dark:bg-slate-800/80 border border-blue-200 dark:border-slate-700 p-8 rounded-2xl mb-6 flex items-center justify-center min-h-[140px] shadow-inner">
-                  <p className="text-xl font-medium text-slate-800 dark:text-slate-100 max-w-2xl leading-relaxed italic">
+                <div className="bg-blue-50/70 dark:bg-slate-800/80 border border-blue-200 dark:border-slate-700 p-6 md:p-8 rounded-2xl mb-6 flex items-center justify-center min-h-[140px] shadow-inner">
+                  <p className="text-lg md:text-xl font-medium text-slate-800 dark:text-slate-100 max-w-2xl leading-relaxed italic">
                     "{currentFact}"
                   </p>
                 </div>
                 
-                <button onClick={getRandomFact} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg shadow-sm transition-all transform active:scale-95">
+                <button onClick={getRandomFact} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg shadow-sm transition-all transform active:scale-95">
                   Get Another Fact
                 </button>
               </div>
@@ -1765,12 +1761,12 @@ export default function Home() {
 
             {/* RANDOM: Random Picker */}
             {activeTool === "random-picker" && (
-              <div className="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+              <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
                 <h2 className="text-2xl font-bold mb-1 dark:text-white">Unbiased Random Picker</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Input a list of options and let the tool pick one at random without visuals.</p>
                 <textarea value={pickerInput} onChange={(e) => setPickerInput(e.target.value)} placeholder={"Option 1\nOption 2"} className="w-full h-36 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg mb-4 dark:text-white" />
-                <button onClick={() => { const opts = pickerInput.split("\n").filter(Boolean); setPickerResult(opts.length ? opts[Math.floor(Math.random() * opts.length)] : "No options!"); }} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-6">Pick Option</button>
-                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg flex justify-between font-bold"><span className="dark:text-slate-300">Selected:</span><span className="text-blue-600 dark:text-sky-400">{pickerResult}</span></div>
+                <button onClick={() => { const opts = pickerInput.split("\n").filter(Boolean); setPickerResult(opts.length ? opts[Math.floor(Math.random() * opts.length)] : "No options!"); }} className="w-full sm:w-auto bg-blue-600 text-white font-bold px-6 py-3 rounded-lg mb-6">Pick Option</button>
+                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 font-bold"><span className="dark:text-slate-300">Selected:</span><span className="text-blue-600 dark:text-sky-400 break-all">{pickerResult}</span></div>
               </div>
             )}
           </div>
@@ -1791,7 +1787,7 @@ export default function Home() {
       {/* SITE FOOTER                                */}
       {/* ========================================== */}
       <footer className="w-full bg-slate-900 border-t-4 border-slate-800 text-slate-400 py-8 text-center text-sm mt-auto relative z-50">
-        <div className="flex justify-center gap-8 mb-3">
+        <div className="flex flex-wrap justify-center gap-6 md:gap-8 mb-3 px-4">
           <button onClick={() => setActiveTool("home")} className="hover:text-white transition">Home Dashboard</button>
           <button onClick={() => setActiveTool("privacy")} className="hover:text-white transition">Privacy Policy</button>
           <button onClick={() => setActiveTool("terms")} className="hover:text-white transition">Terms of Service</button>
