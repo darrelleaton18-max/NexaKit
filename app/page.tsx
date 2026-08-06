@@ -637,7 +637,7 @@ export default function Home() {
   const resetLorem = () => { setLoremCount(3); setLoremLang("latin"); generateLorem(3, "latin"); };
   useEffect(() => { generateLorem(); }, [loremCount, loremLang]);
 
-  const [transInputText, setTransInputText] = useState("Hello world! Welcome to NexaKit1.");
+  const [transInputText, setTransInputText] = useState("Hello world! Welcome to NexaKit12.");
   const [transOutputText, setTransOutputText] = useState("");
   const [transFrom, setTransFrom] = useState("en");
   const [transTo, setTransTo] = useState("es");
