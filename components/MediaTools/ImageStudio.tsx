@@ -2,31 +2,23 @@
 
 import { useState, useRef } from "react";
 
-export default function ImageTools({ activeTool, isDark }: { activeTool: string, isDark: boolean }) {
-  if (activeTool !== "image-tools") {
-    return null;
-  }
+export default function ImageStudio({ activeTool, isDark }: { activeTool: string, isDark: boolean }) {
+  if (activeTool !== "image-tools") return null;
 
-  // ==========================================
-  // 1. IMAGE STUDIO STATE
-  // ==========================================
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [imgName, setImgName] = useState("image");
   const [imgWidth, setImgWidth] = useState<number>(0);
   const [imgHeight, setImgHeight] = useState<number>(0);
   
-  // Adjustment Sliders State
   const [targetColor, setTargetColor] = useState("#ffffff");
   const [tolerance, setTolerance] = useState(15);
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
   
-  // Output & Export State
   const [outputFormat, setOutputFormat] = useState("image/png");
   const [quality, setQuality] = useState(90);
   const [processedImg, setProcessedImg] = useState<string | null>(null);
   
-  // Base64 State
   const [showBase64, setShowBase64] = useState(false);
   const [finalBase64, setFinalBase64] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -34,9 +26,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // ==========================================
-  // 2. CORE FUNCTIONS
-  // ==========================================
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -72,7 +61,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
     setShowBase64(false);
   };
 
-  // Master function for all stacked image edits & filters
   const applyEdit = (action: string) => {
     if (!processedImg || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -84,7 +72,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
       canvas.width = action === "resize" ? (imgWidth || img.width) : img.width;
       canvas.height = action === "resize" ? (imgHeight || img.height) : img.height;
 
-      // Handle Transformations, Filters & Effects
       if (action === "rotate") {
         canvas.width = img.height;
         canvas.height = img.width;
@@ -100,7 +87,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
         ctx.scale(1, -1);
         ctx.drawImage(img, 0, 0);
       } else {
-        // Build dynamic CSS filter string combining brightness & contrast with active filters
         let filterStr = `brightness(${brightness}%) contrast(${contrast}%)`;
         if (action === "grayscale") filterStr += " grayscale(100%)";
         if (action === "invert") filterStr += " invert(100%)";
@@ -109,9 +95,8 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
         
         ctx.filter = filterStr;
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        ctx.filter = "none"; // reset filter context
+        ctx.filter = "none"; 
 
-        // Handle Mathematical Background Removal
         if (action === "transparent") {
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const data = imageData.data;
@@ -125,7 +110,7 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
             const r = data[i], g = data[i + 1], b = data[i + 2];
             const distance = Math.sqrt(Math.pow(r - rT, 2) + Math.pow(g - gT, 2) + Math.pow(b - bT, 2));
             if ((distance / 441.67) * 100 <= tolerance) {
-              data[i + 3] = 0; // Set pixel Alpha to 0
+              data[i + 3] = 0; 
             }
           }
           ctx.putImageData(imageData, 0, 0);
@@ -140,9 +125,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
     img.src = processedImg;
   };
 
-  // ==========================================
-  // 3. EXPORT & DOWNLOAD FUNCTIONS
-  // ==========================================
   const generateFinalImage = (callback: (dataUrl: string) => void) => {
     if (!processedImg || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -222,9 +204,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-        {/* ========================================== */}
-        {/* LEFT COLUMN: EDITING CONTROLS              */}
-        {/* ========================================== */}
         <div className="space-y-6">
           <div>
             <label className="block text-xs font-bold mb-2 dark:text-slate-300">1. Upload Image (PNG, JPG, WebP)</label>
@@ -285,9 +264,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
           </button>
         </div>
 
-        {/* ========================================== */}
-        {/* RIGHT COLUMN: PREVIEW & OUTPUT             */}
-        {/* ========================================== */}
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center">
             <label className="block text-xs font-bold dark:text-slate-300">Output Preview</label>
@@ -336,7 +312,6 @@ export default function ImageTools({ activeTool, isDark }: { activeTool: string,
             </div>
           </div>
 
-          {/* Base64 Output Textarea */}
           {showBase64 && finalBase64 && (
             <div className="animate-in fade-in zoom-in-95 duration-200 flex flex-col gap-2">
               <div className="flex justify-between items-center px-1">
