@@ -2,17 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 
-// Import all of our newly extracted tool components!
+// Example of how the imports at the top of app/page.tsx should look:
 import FinancialTools from "../components/FinancialTools";
 import MathTools from "../components/MathTools";
 import TimeDateTools from "../components/TimeDateTools";
 import TextTools from "../components/TextTools";
 import DevTools from "../components/DevTools";
 import RandomTools from "../components/RandomTools";
-import ImageTools from "../components/ImageTools";
-import JpgTools from "../components/JpgTools";
-import GifTools from "../components/GifTools";
-
+import MediaTools from "../components/MediaTools";
 // ==========================================
 // 💵 LAZY LOADED DYNAMIC AD COMPONENTS
 // ==========================================
@@ -424,9 +421,7 @@ export default function Home() {
             <TextTools activeTool={activeTool} />
             <DevTools activeTool={activeTool} />
             <RandomTools activeTool={activeTool} />
-            <ImageTools activeTool={activeTool} isDark={isDark} />
-            <JpgTools activeTool={activeTool} isDark={isDark} />
-            <GifTools activeTool={activeTool} isDark={isDark} />
+            <MediaTools activeTool={activeTool} isDark={isDark} />
 
           </div>
           
