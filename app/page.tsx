@@ -51,18 +51,49 @@ const LazyAd = ({ index, type }: { index: number; type: AdSize }) => {
   const [isVisible, setIsVisible] = useState(false);
   const adRef = useRef<HTMLDivElement>(null);
 
+  // ==========================================
+  // 🌍 GOOGLE TRANSLATE WIDGET INITIALIZATION
+  // ==========================================
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
+    // Prevent duplicate scripts from loading on re-renders
+    if (document.getElementById("google-translate-script")) return;
+
+    // AUTO-TRANSLATE MAGIC: Read the browser's language and set the Google cookie
+    const userLang = navigator.language.split('-')[0];
+    if (!document.cookie.includes('googtrans=')) {
+      document.cookie = `googtrans=/en/${userLang}; path=/`;
+    }
+
+    // Define the global callback for Google to execute
+    (window as any).googleTranslateElementInit = () => {
+      new (window as any).google.translate.TranslateElement(
+        { 
+          pageLanguage: 'en',
+          autoDisplay: false,
+        },
+        'google_translate_element'
+      );
+    };
+
+    // Inject the script into the document
+    const script = document.createElement("script");
+    script.id = "google-translate-script";
+    script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    script.async = true;
+    document.body.appendChild(script);
+
+    // UI Hack: Rename "Select Language" to "English" for native users
+    const fixUI = setInterval(() => {
+      const select = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
+      if (select && select.options[0]) {
+        if (select.options[0].text === 'Select Language' || select.options[0].value === '') {
+          select.options[0].text = 'English';
         }
-      },
-      { rootMargin: "200px" } 
-    );
-    if (adRef.current) observer.observe(adRef.current);
-    return () => observer.disconnect();
+        clearInterval(fixUI);
+      }
+    }, 500);
+
+    return () => clearInterval(fixUI);
   }, []);
 
   if (type === "banner") {
@@ -960,10 +991,9 @@ export default function Home() {
             <style dangerouslySetInnerHTML={{__html: `
               .skiptranslate > iframe.skiptranslate { display: none !important; }
               body { top: 0px !important; }
-              /* Hide the Google logo and extra text to prevent squashing */
-              .goog-te-gadget { color: transparent !important; font-size: 0px; display: flex; align-items: center; margin-top: 2px; }
-              .goog-te-gadget img { display: none !important; }
-              .goog-te-gadget .goog-logo-link { display: none !important; }
+              /* Hide the Google logo and ALL extra text */
+              .goog-te-gadget { color: transparent !important; font-size: 0px !important; display: flex; align-items: center; margin-top: 2px; }
+              .goog-te-gadget img, .goog-te-gadget span { display: none !important; }
               .goog-te-combo { color: #334155; background-color: #f8fafc; padding: 6px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; border: 1px solid #cbd5e1; cursor: pointer; margin: 0 !important; }
               .dark .goog-te-combo { color: #cbd5e1; background-color: #1e293b; border-color: #334155; }
             `}} />
