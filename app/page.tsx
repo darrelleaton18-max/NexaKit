@@ -525,7 +525,7 @@ export default function Home() {
   
   const [swTime, setSwTime] = useState(0);
   const [swRunning, setSwRunning] = useState(false);
-  const swRef = useRef<NodeJS.Timeout | null>(null);
+  const swRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (swRunning) {
@@ -545,7 +545,7 @@ export default function Home() {
   const [cdInputMin, setCdInputMin] = useState<number | "">(5);
   const [cdTime, setCdTime] = useState(300);
   const [cdRunning, setCdRunning] = useState(false);
-  const cdRef = useRef<NodeJS.Timeout | null>(null);
+  const cdRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (cdRunning && cdTime > 0) {
@@ -936,6 +936,11 @@ export default function Home() {
         {/* Center Main Content Container */}
         <main ref={mainRef} className="flex-1 flex flex-col p-4 md:p-10 w-full max-w-5xl mx-auto min-w-0">
           
+          {/* ========================================== */}
+          {/* TOP LAZY-LOADED AD BANNER                  */}
+          {/* ========================================== */}
+          <LazyAd index={98} type="banner" />
+
           <div className="flex-1">
             {/* TOOL 0: HOME DASHBOARD */}
             {activeTool === "home" && (
