@@ -219,6 +219,13 @@ export default function Home() {
     // Prevent duplicate scripts from loading on re-renders
     if (document.getElementById("google-translate-script")) return;
 
+    // AUTO-TRANSLATE MAGIC: Read the browser's language and set the Google cookie
+    const userLang = navigator.language.split('-')[0];
+    // If they aren't using English, and haven't manually chosen a language yet, force the translation
+    if (userLang !== 'en' && !document.cookie.includes('googtrans=')) {
+      document.cookie = `googtrans=/en/${userLang}; path=/`;
+    }
+
     // Define the global callback for Google to execute
     (window as any).googleTranslateElementInit = () => {
       new (window as any).google.translate.TranslateElement(
@@ -947,22 +954,25 @@ export default function Home() {
           </nav>
 
           {/* Right Header Controls */}
-          <div className="flex items-center gap-3 ml-auto lg:ml-6">
+          <div className="flex items-center gap-3 ml-auto lg:ml-6 shrink-0">
             
             {/* 🌍 Google Translate Widget & Custom CSS Fixes */}
             <style dangerouslySetInnerHTML={{__html: `
               .skiptranslate > iframe.skiptranslate { display: none !important; }
               body { top: 0px !important; }
-              .goog-te-gadget { color: transparent !important; font-size: 0px; display: flex; align-items: center; }
-              .goog-te-gadget .goog-te-combo { color: #334155; background-color: #f8fafc; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; border: 1px solid #cbd5e1; cursor: pointer; margin: 0; }
-              .dark .goog-te-gadget .goog-te-combo { color: #cbd5e1; background-color: #1e293b; border-color: #334155; }
+              /* Hide the Google logo and extra text to prevent squashing */
+              .goog-te-gadget { color: transparent !important; font-size: 0px; display: flex; align-items: center; margin-top: 2px; }
+              .goog-te-gadget img { display: none !important; }
+              .goog-te-gadget .goog-logo-link { display: none !important; }
+              .goog-te-combo { color: #334155; background-color: #f8fafc; padding: 6px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; border: 1px solid #cbd5e1; cursor: pointer; margin: 0 !important; }
+              .dark .goog-te-combo { color: #cbd5e1; background-color: #1e293b; border-color: #334155; }
             `}} />
-            <div id="google_translate_element" className="mt-1 hidden sm:block"></div>
+            <div id="google_translate_element" className="hidden sm:block"></div>
 
             {/* Theme Toggle Button */}
             <button
               onClick={() => setIsDark(!isDark)}
-              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 dark:text-sky-300 transition-all flex items-center justify-center focus:outline-none"
+              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-400 dark:text-sky-300 transition-all flex items-center justify-center focus:outline-none shrink-0"
               title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {isDark ? (
@@ -971,11 +981,6 @@ export default function Home() {
                 <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
               )}
             </button>
-
-            {/* KPI Badge */}
-            <span className="text-xs font-bold text-slate-400 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap hidden lg:block">
-              29 Utilities Suite
-            </span>
           </div>
         </div>
       </header>
