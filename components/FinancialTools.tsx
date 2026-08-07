@@ -192,12 +192,17 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
   // 2. CURRENCY CONVERTER & CHART STATE
   // ==========================================
   const [currAmount, setCurrAmount] = useState<number | "">(100);
-  const [currFrom, setCurrFrom] = useState("USD");
+  const [currFrom, setCurrFrom] = useState("GBP");
   const [currTo, setCurrTo] = useState("EUR");
   const [currResult, setCurrResult] = useState<string | null>(null);
   const [currRate, setCurrRate] = useState<number | null>(null);
   const [currLoading, setCurrLoading] = useState(false);
   
+  // NEW: Update Verification State
+  const [lastUpdate, setLastUpdate] = useState<string | null>(null);
+  const [nextUpdate, setNextUpdate] = useState<string | null>(null);
+  const [isUpToDate, setIsUpToDate] = useState<boolean>(true);
+
   // Historical Chart State
   const [chartData, setChartData] = useState<{date: string, rate: number}[]>([]);
   const [chartPeriod, setChartPeriod] = useState<"1M" | "6M" | "1Y">("1Y");
@@ -221,6 +226,14 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
       setCurrRate(latestRate);
       setCurrResult((amt * latestRate).toFixed(2));
 
+      // NEW: Parse API UTC Timestamps and mathematically verify if it has refreshed
+      if (data.time_last_update_utc && data.time_next_update_unix) {
+        setLastUpdate(new Date(data.time_last_update_utc).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }));
+        setNextUpdate(new Date(data.time_next_update_utc).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }));
+        // If current time is past the scheduled next update time, it means the API is pending a refresh
+        setIsUpToDate(Date.now() < (data.time_next_update_unix * 1000));
+      }
+
       // 2. Fetch 1 Year Historical Data (Frankfurter API)
       const endDate = new Date().toISOString().split('T')[0];
       const startDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -232,12 +245,11 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
         const mapped = Object.entries(histData.rates).map(([date, rates]: any) => ({
           date, rate: rates[currTo]
         }));
-        // Push the very latest rate to the end of the array for a perfect match
         mapped.push({ date: endDate, rate: latestRate });
         setChartData(mapped);
       }
     } catch {
-      // Fallback: If API fails or is rate-limited, generate realistic fake data so UI never breaks
+      // Fallback: Generate realistic dummy data if API limit hit
       const fakeData = [];
       const now = new Date();
       let lastRate = currRate || 1;
@@ -253,10 +265,8 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
     }
   };
 
-  // Re-fetch when currencies change
   useEffect(() => { convertCurrency(); }, [currAmount, currFrom, currTo]);
 
-  // Chart Rendering Logic
   const getFilteredChartData = () => {
     if (!chartData.length) return [];
     const days = chartPeriod === "1M" ? 30 : chartPeriod === "6M" ? 180 : 365;
@@ -272,10 +282,9 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
     const max = Math.max(...dataToUse.map(d => d.rate));
     const range = max - min || 1;
     
-    // Scale points to fit a 500x200 SVG ViewBox
     const points = dataToUse.map((d, i) => {
       const x = (i / (dataToUse.length - 1)) * 500;
-      const y = 180 - ((d.rate - min) / range) * 140; // 20px padding top/bottom
+      const y = 180 - ((d.rate - min) / range) * 140;
       return { x, y, date: d.date, rate: d.rate };
     });
 
@@ -326,16 +335,13 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
                 <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
               </linearGradient>
             </defs>
-            {/* Y-Axis Grid Lines */}
             <line x1="0" y1="40" x2="500" y2="40" stroke="currentColor" className="text-slate-100 dark:text-slate-800" strokeDasharray="4 4" />
             <line x1="0" y1="110" x2="500" y2="110" stroke="currentColor" className="text-slate-100 dark:text-slate-800" strokeDasharray="4 4" />
             <line x1="0" y1="180" x2="500" y2="180" stroke="currentColor" className="text-slate-100 dark:text-slate-800" strokeDasharray="4 4" />
             
-            {/* Fill & Line */}
             <path d={fillD} fill="url(#chartGradient)" />
             <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinejoin="round" />
             
-            {/* Hover Crosshair & Dot */}
             {chartHover && (
               <>
                 <line x1={chartHover.x} y1="0" x2={chartHover.x} y2="200" stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4" />
@@ -344,7 +350,6 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
             )}
           </svg>
 
-          {/* Interactive Tooltip */}
           {chartHover && (
             <div 
               className="absolute pointer-events-none bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-xl whitespace-nowrap z-10 transform -translate-x-1/2 -translate-y-full"
@@ -405,7 +410,6 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
               </div>
             </div>
 
-            {/* Universal Income Inputs */}
             <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-200 dark:border-slate-700 mb-6 space-y-4">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Primary Income</h3>
@@ -431,7 +435,6 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
               </div>
             </div>
 
-            {/* US Engine Specifics */}
             {taxCountry === "US" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="space-y-4">
@@ -476,7 +479,6 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
               </div>
             )}
 
-            {/* UK Engine Specifics */}
             {taxCountry === "UK" && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
                 
@@ -550,7 +552,6 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
               </div>
             )}
 
-            {/* Universal Outputs */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-blue-700 dark:text-sky-400 uppercase tracking-wider">Take-Home (Yearly)</span><span className="block text-2xl md:text-3xl font-extrabold text-blue-900 dark:text-sky-200 mt-1 break-all">{formatMoney(taxData.net)}</span></div>
               <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 p-5 rounded-xl text-center"><span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Take-Home (Monthly)</span><span className="block text-2xl md:text-3xl font-extrabold text-emerald-900 dark:text-emerald-200 mt-1 break-all">{formatMoney(taxData.net / 12)}</span></div>
@@ -613,11 +614,11 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
         </div>
       )}
 
-      {/* REMAINDER OF EXISTING TOOLS UNCHANGED */}
       {activeTool === "currency-converter" && (
         <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
           <h2 className="text-2xl font-bold mb-1 dark:text-white">Live Currency Converter</h2>
           <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert global currencies with real-time exchange rates.</p>
+          
           <div className="flex flex-col md:flex-row items-end gap-3 mb-6">
             <div className="flex-1 w-full">
               <label className="block text-xs font-bold mb-2 dark:text-slate-300">Amount</label>
@@ -631,7 +632,6 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
               </select>
             </div>
 
-            {/* Restored Swap Button */}
             <button
               onClick={() => {
                 const temp = currFrom;
@@ -653,20 +653,32 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
               </select>
             </div>
           </div>
+
           <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div className="flex flex-col gap-1">
               <span className="text-sm font-bold text-slate-600 dark:text-slate-300">Converted Value:</span>
               {currRate && !currLoading && (
-                <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400">
-                  Rate: 1 {currFrom} = {currRate.toFixed(4)} {currTo}
-                </span>
+                <>
+                  <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400">
+                    Rate: 1 {currFrom} = {currRate.toFixed(4)} {currTo}
+                  </span>
+                  {lastUpdate && (
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 leading-tight block">
+                      <span className="font-semibold text-slate-500">Updated:</span> {lastUpdate} <br/>
+                      <span className="font-semibold text-slate-500">Next Check:</span> {nextUpdate}
+                      <span className={`ml-2 font-bold ${isUpToDate ? 'text-emerald-500' : 'text-amber-500'}`}>
+                        ({isUpToDate ? '✓ Verified Fresh' : '⚠ Pending API Refresh'})
+                      </span>
+                    </span>
+                  )}
+                </>
               )}
             </div>
             <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all">
               {currLoading ? "Fetching..." : `${currResult || "0.00"} ${currTo}`}
             </span>
           </div>
-          {/* New XE-Style Interactive SVG Chart */}
+          
           {renderChart()}
         </div>
       )}
