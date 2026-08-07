@@ -213,6 +213,32 @@ export default function Home() {
   }, [isDark]);
 
   // ==========================================
+  // 🌍 GOOGLE TRANSLATE WIDGET INITIALIZATION
+  // ==========================================
+  useEffect(() => {
+    // Prevent duplicate scripts from loading on re-renders
+    if (document.getElementById("google-translate-script")) return;
+
+    // Define the global callback for Google to execute
+    (window as any).googleTranslateElementInit = () => {
+      new (window as any).google.translate.TranslateElement(
+        { 
+          pageLanguage: 'en',
+          autoDisplay: false,
+        },
+        'google_translate_element'
+      );
+    };
+
+    // Inject the script into the document
+    const script = document.createElement("script");
+    script.id = "google-translate-script";
+    script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  // ==========================================
   // 📏 PAGE SIZE AD OPTIMIZATION ALGORITHM
   // ==========================================
   const mainRef = useRef<HTMLElement>(null);
@@ -385,6 +411,24 @@ export default function Home() {
   const [currResult, setCurrResult] = useState<string | null>(null);
   const [currRate, setCurrRate] = useState<number | null>(null);
   const [currLoading, setCurrLoading] = useState(false);
+
+  // Auto-detect user location for currency
+  useEffect(() => {
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.currency) {
+          // Verify the detected currency is in our supported list
+          const isSupported = currencyList.some((c) => c.code === data.currency);
+          if (isSupported) {
+            setCurrFrom(data.currency);
+            // If they are in the US, swap the 'To' currency to EUR so it doesn't say USD to USD
+            if (data.currency === "USD") setCurrTo("EUR"); 
+          }
+        }
+      })
+      .catch(() => console.log("Location fetch failed, keeping default."));
+  }, []);
 
   const convertCurrency = async () => {
     const amt = Number(currAmount) || 0;
@@ -904,6 +948,17 @@ export default function Home() {
 
           {/* Right Header Controls */}
           <div className="flex items-center gap-3 ml-auto lg:ml-6">
+            
+            {/* 🌍 Google Translate Widget & Custom CSS Fixes */}
+            <style dangerouslySetInnerHTML={{__html: `
+              .skiptranslate > iframe.skiptranslate { display: none !important; }
+              body { top: 0px !important; }
+              .goog-te-gadget { color: transparent !important; font-size: 0px; display: flex; align-items: center; }
+              .goog-te-gadget .goog-te-combo { color: #334155; background-color: #f8fafc; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; border: 1px solid #cbd5e1; cursor: pointer; margin: 0; }
+              .dark .goog-te-gadget .goog-te-combo { color: #cbd5e1; background-color: #1e293b; border-color: #334155; }
+            `}} />
+            <div id="google_translate_element" className="mt-1 hidden sm:block"></div>
+
             {/* Theme Toggle Button */}
             <button
               onClick={() => setIsDark(!isDark)}
