@@ -11,8 +11,9 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
   const [hoursPerWeek, setHoursPerWeek] = useState<number | "">(40);
   const [bonus, setBonus] = useState<number | "">(0);
 
+  // UK Specific State
   const [region, setRegion] = useState<"rUK" | "scotland">("rUK");
-  const [taxYear, setTaxYear] = useState("2024/25");
+  const [taxYear, setTaxYear] = useState("2026/27");
   const [taxCodeInput, setTaxCodeInput] = useState("");
   const [isMarriedUK, setIsMarriedUK] = useState(false);
   const [isBlind, setIsBlind] = useState(false);
@@ -25,6 +26,8 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
   const [wageExtras, setWageExtras] = useState<number | "">(0);
   const [benefitsInKind, setBenefitsInKind] = useState<number | "">(0);
 
+  // US Specific State
+  const [usTaxYear, setUsTaxYear] = useState("2026");
   const [usFilingStatus, setUsFilingStatus] = useState<"single" | "married_joint" | "married_sep" | "hoh">("single");
   const [usStateTaxPct, setUsStateTaxPct] = useState<number | "">(4.5); 
   const [usLocalTaxPct, setUsLocalTaxPct] = useState<number | "">(0); 
@@ -35,10 +38,10 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
 
   const resetTaxCalculator = () => {
     setSalary(65000); setSalaryPeriod("year"); setHoursPerWeek(40); setBonus(0);
-    setRegion("rUK"); setTaxYear("2024/25"); setTaxCodeInput(""); setIsMarriedUK(false); setIsBlind(false);
+    setRegion("rUK"); setTaxYear("2026/27"); setTaxCodeInput(""); setIsMarriedUK(false); setIsBlind(false);
     setNiCategory("A"); setStudentLoan("none"); setPensionValue(5); setPensionUnit("%"); setPensionType("salSac");
     setRentalIncome(0); setWageExtras(0); setBenefitsInKind(0);
-    setUsFilingStatus("single"); setUsStateTaxPct(4.5); setUsLocalTaxPct(0); setUs401kPct(5); 
+    setUsTaxYear("2026"); setUsFilingStatus("single"); setUsStateTaxPct(4.5); setUsLocalTaxPct(0); setUs401kPct(5); 
     setUsHealthIns(0); setUsItemized(0); setUsDependents(0);
   };
 
@@ -59,10 +62,12 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
       const preTaxDeductions = _401k + healthIns;
       const agi = Math.max(0, totalAnnualGross - preTaxDeductions); 
       
+      // Note: Standard Deductions should be updated manually per tax year
       let standardDeduction = usFilingStatus === "married_joint" ? 29200 : usFilingStatus === "hoh" ? 21900 : 14600;
       const deductionToUse = Math.max(standardDeduction, Number(usItemized) || 0);
       const taxableIncome = Math.max(0, agi - deductionToUse);
 
+      // Note: Federal Tax Brackets should be updated manually per tax year
       let federalTax = 0, rem = taxableIncome;
       if (usFilingStatus === "single" || usFilingStatus === "married_sep") {
         const b1 = Math.min(rem, 11600); federalTax += b1 * 0.10; rem -= b1;
@@ -124,6 +129,7 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
         grossForTax = Math.max(0, totalGrossIncome - annualPension);
       }
 
+      // Note: Allowances should be updated manually per tax year
       let baseAllowance = 12570, customCode = taxCodeInput.trim().toUpperCase(), isFlatCode = false, flatTaxRate = 0;
       if (customCode) {
         if (customCode === "BR") { isFlatCode = true; flatTaxRate = 0.20; }
@@ -145,6 +151,7 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
         if (grossForTax > 100000) baseAllowance = Math.max(0, baseAllowance - (grossForTax - 100000) / 2);
       }
 
+      // Note: Tax Bands should be updated manually per tax year
       let incomeTax = 0, rem = Math.max(0, grossForTax - baseAllowance);
       if (isFlatCode) {
         incomeTax = grossForTax * flatTaxRate;
@@ -227,11 +234,21 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-2">IRS Filing Details</h3>
-              <div>
-                <label className="block text-xs font-bold mb-2 dark:text-slate-300">Filing Status</label>
-                <select value={usFilingStatus} onChange={(e) => setUsFilingStatus(e.target.value as any)} className="w-full p-2.5 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white">
-                  <option value="single">Single</option><option value="married_joint">Married Filing Jointly</option><option value="married_sep">Married Filing Separately</option><option value="hoh">Head of Household</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold mb-2 dark:text-slate-300">Tax Year</label>
+                  <select value={usTaxYear} onChange={(e) => setUsTaxYear(e.target.value)} className="w-full p-2.5 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white">
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold mb-2 dark:text-slate-300">Filing Status</label>
+                  <select value={usFilingStatus} onChange={(e) => setUsFilingStatus(e.target.value as any)} className="w-full p-2.5 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white">
+                    <option value="single">Single</option><option value="married_joint">Married Filing Jointly</option><option value="married_sep">Married Filing Separately</option><option value="hoh">Head of Household</option>
+                  </select>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -275,7 +292,10 @@ export default function IncomeTaxCalculator({ activeTool }: { activeTool: string
                 <div>
                   <label className="block text-xs font-bold mb-2 dark:text-slate-300">Tax Year</label>
                   <select value={taxYear} onChange={(e) => setTaxYear(e.target.value)} className="w-full p-2.5 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white">
-                    <option value="2024/25">2024 / 2025</option><option value="2023/24">2023 / 2024</option>
+                    <option value="2026/27">2026 / 2027</option>
+                    <option value="2025/26">2025 / 2026</option>
+                    <option value="2024/25">2024 / 2025</option>
+                    <option value="2023/24">2023 / 2024</option>
                   </select>
                 </div>
                 <div>
