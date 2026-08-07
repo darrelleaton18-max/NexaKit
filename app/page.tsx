@@ -10,6 +10,8 @@ import TextTools from "../components/TextTools";
 import DevTools from "../components/DevTools";
 import RandomTools from "../components/RandomTools";
 import ImageTools from "../components/ImageTools";
+import JpgTools from "../components/JpgTools";
+import GifTools from "../components/GifTools";
 
 // ==========================================
 // 💵 LAZY LOADED DYNAMIC AD COMPONENTS
@@ -179,11 +181,13 @@ const navGroups = [
     ],
   },
   {
-    group: "🖼️ Media",
-    tools: [
-      { id: "image-tools", label: "PNG & Image Studio" },
-    ],
-  },
+  group: "🖼️ Media",
+  tools: [
+    { id: "image-tools", label: "PNG & Image Studio" },
+    { id: "jpg-tools", label: "JPEG Optimizer" },
+    { id: "gif-tools", label: "GIF Converter" },
+  ],
+},
 ];
 
 export default function Home() {
@@ -421,6 +425,8 @@ export default function Home() {
             <DevTools activeTool={activeTool} />
             <RandomTools activeTool={activeTool} />
             <ImageTools activeTool={activeTool} isDark={isDark} />
+            <JpgTools activeTool={activeTool} isDark={isDark} />
+            <GifTools activeTool={activeTool} isDark={isDark} />
 
           </div>
           
