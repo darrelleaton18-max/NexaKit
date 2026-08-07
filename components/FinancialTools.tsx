@@ -653,8 +653,19 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
               </select>
             </div>
           </div>
-          <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center"><span className="text-sm font-bold text-slate-600 dark:text-slate-300">Converted Value:</span><span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400">{currLoading ? "Fetching..." : `${currResult || "0.00"} ${currTo}`}</span></div>
-          
+          <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-slate-600 dark:text-slate-300">Converted Value:</span>
+              {currRate && !currLoading && (
+                <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400">
+                  Rate: 1 {currFrom} = {currRate.toFixed(4)} {currTo}
+                </span>
+              )}
+            </div>
+            <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all">
+              {currLoading ? "Fetching..." : `${currResult || "0.00"} ${currTo}`}
+            </span>
+          </div>
           {/* New XE-Style Interactive SVG Chart */}
           {renderChart()}
         </div>
