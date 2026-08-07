@@ -619,9 +619,39 @@ export default function FinancialTools({ activeTool }: { activeTool: string }) {
           <h2 className="text-2xl font-bold mb-1 dark:text-white">Live Currency Converter</h2>
           <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert global currencies with real-time exchange rates.</p>
           <div className="flex flex-col md:flex-row items-end gap-3 mb-6">
-            <div className="flex-1 w-full"><label className="block text-xs font-bold mb-2 dark:text-slate-300">Amount</label><input type="number" value={currAmount} onChange={(e) => setCurrAmount(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium" /></div>
-            <div className="flex-1 w-full"><label className="block text-xs font-bold mb-2 dark:text-slate-300">From Currency</label><select value={currFrom} onChange={(e) => setCurrFrom(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">{currencyList.map((c) => (<option key={`from-${c.code}`} value={c.code}>{c.name}</option>))}</select></div>
-            <div className="flex-1 w-full"><label className="block text-xs font-bold mb-2 dark:text-slate-300">To Currency</label><select value={currTo} onChange={(e) => setCurrTo(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">{currencyList.map((c) => (<option key={`to-${c.code}`} value={c.code}>{c.name}</option>))}</select></div>
+            <div className="flex-1 w-full">
+              <label className="block text-xs font-bold mb-2 dark:text-slate-300">Amount</label>
+              <input type="number" value={currAmount} onChange={(e) => setCurrAmount(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium" />
+            </div>
+            
+            <div className="flex-1 w-full">
+              <label className="block text-xs font-bold mb-2 dark:text-slate-300">From Currency</label>
+              <select value={currFrom} onChange={(e) => setCurrFrom(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">
+                {currencyList.map((c) => (<option key={`from-${c.code}`} value={c.code}>{c.name}</option>))}
+              </select>
+            </div>
+
+            {/* Restored Swap Button */}
+            <button
+              onClick={() => {
+                const temp = currFrom;
+                setCurrFrom(currTo);
+                setCurrTo(temp);
+              }}
+              className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-sky-400 transition-colors shrink-0 self-stretch md:self-end flex items-center justify-center"
+              title="Swap Currencies"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+            </button>
+
+            <div className="flex-1 w-full">
+              <label className="block text-xs font-bold mb-2 dark:text-slate-300">To Currency</label>
+              <select value={currTo} onChange={(e) => setCurrTo(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">
+                {currencyList.map((c) => (<option key={`to-${c.code}`} value={c.code}>{c.name}</option>))}
+              </select>
+            </div>
           </div>
           <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center"><span className="text-sm font-bold text-slate-600 dark:text-slate-300">Converted Value:</span><span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400">{currLoading ? "Fetching..." : `${currResult || "0.00"} ${currTo}`}</span></div>
           
