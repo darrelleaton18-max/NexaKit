@@ -120,7 +120,7 @@ const AdColumn = ({ side, layout }: { side: "left" | "right"; layout: AdSize[] }
 // ==========================================
 const navGroups = [
   {
-    group: "💰 Financial Tools",
+    group: "💰 Finance",
     tools: [
       { id: "tax-calculator", label: "Income Tax Calculator" },
       { id: "currency-converter", label: "Live Currency Converter" },
@@ -129,7 +129,7 @@ const navGroups = [
     ],
   },
   {
-    group: "🧮 Math & Numbers",
+    group: "🧮 Math",
     tools: [
       { id: "pct-calc", label: "Percentage Calculator" },
       { id: "unit-converter", label: "Metric / Unit Converter" },
@@ -139,7 +139,7 @@ const navGroups = [
     ],
   },
   {
-    group: "⏱️ Time & Date",
+    group: "⏱️ Time",
     tools: [
       { id: "stopwatch", label: "Precision Stopwatch" },
       { id: "countdown", label: "Countdown Timer" },
@@ -149,7 +149,7 @@ const navGroups = [
     ],
   },
   {
-    group: "📝 Text & Lists",
+    group: "📝 Text",
     tools: [
       { id: "word-counter", label: "Word & Character Counter" },
       { id: "case-converter", label: "Text Case Converter" },
@@ -160,7 +160,7 @@ const navGroups = [
     ],
   },
   {
-    group: "🛠️ Dev & JSON Tools",
+    group: "🛠️ Dev",
     tools: [
       { id: "json-formatter", label: "JSON Formatter / Minify" },
       { id: "base64", label: "Base64 Encoder / Decoder" },
@@ -169,7 +169,7 @@ const navGroups = [
     ],
   },
   {
-    group: "🎲 Random & Fun",
+    group: "🎲 Random",
     tools: [
       { id: "username-gen", label: "Random Username Gen" },
       { id: "number-gen", label: "Random Number Gen" },
@@ -179,7 +179,7 @@ const navGroups = [
     ],
   },
   {
-    group: "🖼️ Media & Images",
+    group: "🖼️ Media",
     tools: [
       { id: "image-tools", label: "PNG & Image Studio" },
     ],
@@ -274,12 +274,12 @@ export default function Home() {
             <span>Nexa<span className="text-sky-400">Kit</span></span>
           </a>
           
-          <nav className="flex-1 justify-center items-center gap-4 md:gap-8 h-16 hidden lg:flex">
+          <nav className="flex-1 justify-center items-center gap-2 xl:gap-6 h-16 hidden lg:flex">
             {navGroups.map((g, idx) => (
               <div key={idx} className="relative group h-full flex items-center cursor-pointer">
-                <div className="text-sm font-semibold text-slate-300 group-hover:text-white transition flex items-center gap-1">
+                <div className="text-[12px] xl:text-sm font-semibold text-slate-300 group-hover:text-white transition flex items-center gap-1 whitespace-nowrap">
                   {g.group}
-                  <svg className="w-4 h-4 opacity-70 group-hover:opacity-100 transition transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  <svg className="w-3.5 h-3.5 xl:w-4 xl:h-4 opacity-70 group-hover:opacity-100 transition transform group-hover:rotate-180 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
                 
                 <div className="absolute top-[64px] left-1/2 transform -translate-x-1/2 hidden group-hover:flex flex-col bg-slate-800 border border-slate-700 rounded-b-lg shadow-xl min-w-[260px] overflow-hidden z-[100] py-2">
