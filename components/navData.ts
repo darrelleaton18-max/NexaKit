@@ -58,20 +58,23 @@ export const navGroups = [
   {
     group: "🛠️ Dev",
     tools: [
-      { id: "json-formatter", label: "JSON Formatter / Minify" },
+      { id: "json-format", label: "JSON Formatter / Minify" }, // ID Fixed
       { id: "base64", label: "Base64 Encoder / Decoder" },
-      { id: "password-gen", label: "Key & Password Generator" },
-      { id: "qr-maker", label: "QR Code Generator" },
+      { id: "url-encode", label: "URL Encoder & Decoder" }, // Added from earlier
+      { id: "hash-gen", label: "Secure Hash Generator" }, // Added from earlier
+      { id: "color-conv", label: "Color Space Converter" }, // Added from earlier
+      { id: "qr-maker", label: "QR Code Generator" }, // Missing tool added
     ],
   },
   {
     group: "🎲 Random",
     tools: [
-      { id: "username-gen", label: "Random Username Gen" },
-      { id: "number-gen", label: "Random Number Gen" },
-      { id: "wheel-gen", label: "Spinning Decision Wheel" },
-      { id: "fact-gen", label: "Random Fact Generator" },
-      { id: "random-picker", label: "Unbiased Random Picker" },
+      { id: "password-gen", label: "Secure Password Generator" }, // Moved from Dev
+      { id: "num-gen", label: "Random Number Gen" }, // ID Fixed
+      { id: "uuid-gen", label: "UUID / GUID Generator" }, // Added from earlier
+      { id: "dice-coin", label: "Dice Roller & Coin Flip" }, // Added from earlier
+      { id: "username-gen", label: "Random Username Gen" }, // Missing tool added
+      { id: "wheel-gen", label: "Spinning Decision Wheel" }, // Missing tool added
     ],
   },
   {

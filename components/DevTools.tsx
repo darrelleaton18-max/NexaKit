@@ -5,6 +5,7 @@ import Base64Tools from "./DevTools/Base64Tools";
 import UrlEncoder from "./DevTools/UrlEncoder";
 import HashGenerator from "./DevTools/HashGenerator";
 import ColorConverter from "./DevTools/ColorConverter";
+import QrGenerator from "./DevTools/QrGenerator";
 
 export default function DevTools({ activeTool }: { activeTool: string }) {
   return (
@@ -14,6 +15,7 @@ export default function DevTools({ activeTool }: { activeTool: string }) {
       <UrlEncoder activeTool={activeTool} />
       <HashGenerator activeTool={activeTool} />
       <ColorConverter activeTool={activeTool} />
+      <QrGenerator activeTool={activeTool} />
     </>
   );
 }
