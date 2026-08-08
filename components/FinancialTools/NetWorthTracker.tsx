@@ -50,7 +50,11 @@ export default function NetWorthTracker({ activeTool }: { activeTool: string }) 
   return (
     <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Net Worth & Asset Tracker</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Your data is securely saved only in your local browser.</p>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mb-3">Track your total assets and liabilities.</p>
+      <div className="flex items-center gap-2 mb-6 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-md w-fit border border-emerald-200 dark:border-emerald-800/50">
+        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+        Data is securely saved in browser memory and persists on page refresh
+      </div>
 
       <div className={`p-6 rounded-xl border mb-8 text-center ${netWorth >= 0 ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30' : 'bg-red-50 border-red-200 dark:bg-red-900/30'}`}>
         <span className="block text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">Total Net Worth</span>
