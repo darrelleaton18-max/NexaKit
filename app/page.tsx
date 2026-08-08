@@ -359,11 +359,12 @@ export default function Home() {
                   <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 30 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                <div className="flex flex-col gap-8">
                   {navGroups.map((group, idx) => (
                     <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
-                      <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">{group.group}</h2>
-                      <div className="flex flex-col gap-2">
+                      <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-5 pb-3 border-b border-slate-100 dark:border-slate-800">{group.group}</h2>
+                      {/* Grid for the buttons inside the full-width card */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {group.tools.map((tool) => (
                           <button
                             key={tool.id}
