@@ -227,6 +227,13 @@ export default function Home() {
   }, [isDark]);
 
   // ==========================================
+  // SCROLL TO TOP ON TOOL CHANGE
+  // ==========================================
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeTool]);
+
+  // ==========================================
   // 📏 PAGE SIZE AD OPTIMIZATION ALGORITHM
   // ==========================================
   const mainRef = useRef<HTMLElement>(null);
