@@ -63,17 +63,17 @@ export default function Home() {
     <div className="flex flex-col gap-10 animate-in fade-in duration-300">
       
       {/* HERO SECTION */}
-      <div className="text-center py-8 md:py-12 bg-gradient-to-b from-slate-100/50 dark:from-slate-900/50 to-transparent rounded-3xl px-4 border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 text-xs font-bold mb-4 border border-blue-200 dark:border-blue-800/50">
+      <div className="text-center py-10 md:py-14 bg-gradient-to-b from-slate-100/50 dark:from-slate-900/50 to-transparent rounded-3xl px-4 border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 text-xs font-bold mb-5 border border-blue-200 dark:border-blue-800/50 shadow-xs">
           <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-sky-400 animate-pulse"></span>
-          30+ Professional Web Utilities • Free & Secure
+          ⚡ 30+ Professional Power Tools • Zero Server Lag
         </div>
         
-        <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
-          Every tool you need, <span className="text-blue-600 dark:text-sky-400">all in one place.</span>
+        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
+          Instant utilities. <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-400 dark:from-sky-400 dark:to-blue-500">Zero friction.</span> Built for speed.
         </h1>
-        <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed">
-          Lightning-fast calculators, text formatters, and data converters processed 100% locally in your browser. No signups, no data storage.
+        <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed font-medium">
+          Instant financial calculators, text formatters, and data workflows running locally in your browser. No bloat, no accounts, and 100% private.
         </p>
 
         {/* Search Bar */}
