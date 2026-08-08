@@ -56,11 +56,11 @@ export default function RollingMarquee() {
             );
           }
 
-          // Static Trust Feature Badge (Non-clickable)
+          // Static Trust Feature Badge (Using the header gradient color!)
           return (
             <div 
               key={idx} 
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-200/60 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 text-xs font-semibold border border-slate-200/80 dark:border-slate-800 whitespace-nowrap cursor-default select-none"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-400 text-white text-xs font-bold shadow-xs whitespace-nowrap cursor-default select-none"
             >
               <span>{item.label}</span>
             </div>
