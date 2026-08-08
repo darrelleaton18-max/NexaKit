@@ -9,6 +9,9 @@ export default function Home() {
         <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 30 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
       </div>
 
+      {/* ========================================== */}
+      {/* FEATURED CARDS                             */}
+      {/* ========================================== */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-2">
         <Link href="/tool/currency-converter" className="group flex flex-col text-left bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="h-36 w-full bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
@@ -23,7 +26,8 @@ export default function Home() {
         </Link>
         <Link href="/tool/qr-maker" className="group flex flex-col text-left bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="h-36 w-full bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1595079676339-1534801ad6cb?auto=format&fit=crop&q=80&w=600&h=300" alt="QR Code Generator" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            {/* NEW QR CODE IMAGE */}
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=600&h=300" alt="QR Code Generator" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <span className="absolute bottom-3 left-4 text-white font-bold tracking-wider uppercase text-[10px] bg-emerald-600/90 px-2 py-1 rounded">Utility</span>
           </div>
@@ -34,7 +38,8 @@ export default function Home() {
         </Link>
         <Link href="/tool/wheel-gen" className="group flex flex-col text-left bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="h-36 w-full bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1611867104332-ceecff8f1c8f?auto=format&fit=crop&q=80&w=600&h=300" alt="Spinning Decision Wheel" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            {/* NEW SPINNING WHEEL IMAGE */}
+            <img src="https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=600&h=300" alt="Spinning Decision Wheel" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <span className="absolute bottom-3 left-4 text-white font-bold tracking-wider uppercase text-[10px] bg-amber-500/90 px-2 py-1 rounded">Fun</span>
           </div>
@@ -45,6 +50,9 @@ export default function Home() {
         </Link>
       </div>
       
+      {/* ========================================== */}
+      {/* TOOL CATEGORIES WITH NEW HOVER ANIMATIONS  */}
+      {/* ========================================== */}
       <div className="flex flex-col gap-8">
         {navGroups.map((group, idx) => (
           <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
@@ -54,10 +62,10 @@ export default function Home() {
                 <Link
                   key={tool.id}
                   href={`/tool/${tool.id}`}
-                  className="text-left px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-sky-300 font-semibold text-sm transition-all border border-transparent hover:border-blue-200 dark:hover:border-blue-800/50 flex items-center justify-between group"
+                  className="text-left px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-sky-300 font-semibold text-sm transition-all duration-300 border border-transparent hover:border-blue-200 dark:hover:border-blue-800/50 flex items-center justify-between group hover:-translate-y-1 hover:shadow-md"
                 >
                   <span className="leading-tight pr-2">{tool.label}</span>
-                  <svg className="w-4 h-4 shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                  <svg className="w-4 h-4 shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                 </Link>
               ))}
             </div>
