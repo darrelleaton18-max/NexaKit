@@ -185,10 +185,14 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
           </div>
 
           <div className="relative w-28 h-28 mb-10" style={{ perspective: '1200px' }}>
-            {/* Scale wrapper handles the "jump" toward the screen */}
+            {/* 
+              FIXED: Added transformStyle: 'preserve-3d' to the scale wrapper 
+              so it passes the 3D depth to the tumbling dice inside!
+            */}
             <div 
-              className="w-full h-full"
+              className="w-full h-full relative"
               style={{
+                transformStyle: 'preserve-3d', 
                 transform: `scale(${diceScale})`,
                 transition: 'transform 1.2s cubic-bezier(0.25, 1, 0.5, 1)'
               }}
