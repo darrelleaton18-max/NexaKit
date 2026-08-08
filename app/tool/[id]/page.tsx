@@ -5,6 +5,23 @@ import TextTools from "../../../components/TextTools";
 import DevTools from "../../../components/DevTools";
 import RandomTools from "../../../components/RandomTools";
 import MediaTools from "../../../components/MediaTools";
+import { navGroups } from "../../../components/navData"; // <-- Import your navigation data
+
+// ==========================================
+// STATIC GENERATION FOR GITHUB PAGES
+// ==========================================
+// This tells Next.js exactly which URLs to build as static HTML files
+export function generateStaticParams() {
+  const allToolIds: { id: string }[] = [];
+  
+  navGroups.forEach((group) => {
+    group.tools.forEach((tool) => {
+      allToolIds.push({ id: tool.id });
+    });
+  });
+
+  return allToolIds;
+}
 
 export default function ToolPage({ params }: { params: { id: string } }) {
   const activeTool = params.id;
@@ -21,8 +38,7 @@ export default function ToolPage({ params }: { params: { id: string } }) {
       {/* 
         Note: The MediaTools component currently requires isDark as a prop. 
         If you want to keep the dark mode checkerboards, you may need to fetch isDark 
-        via context or a client wrapper here. For now, we will pass false or update 
-        MediaTools to read window.matchMedia internally. 
+        via context or a client wrapper here. For now, we pass false.
       */}
       <MediaTools activeTool={activeTool} isDark={false} />
     </div>
