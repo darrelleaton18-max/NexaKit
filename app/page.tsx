@@ -119,24 +119,29 @@ const AdColumn = ({ side, layout }: { side: "left" | "right"; layout: AdSize[] }
 // ==========================================
 const navGroups = [
   {
-  group: "💰 Finance",
-  tools: [
-    { id: "tax-calculator", label: "Income Tax Calculator" },
-    { id: "currency-converter", label: "Currency Converter" },
-    { id: "loan-calc", label: "Mortgage & Loan" },
-    { id: "compound-calc", label: "Compound Interest" },
-    { id: "net-worth", label: "Net Worth Tracker" },
-    { id: "budget-planner", label: "Zero-Based Budget" },
-    { id: "sub-tracker", label: "Subscription Audit" },
-    { id: "debt-dash", label: "Debt Snowball Simulator" },
-    { id: "savings-goal", label: "Emergency Fund Goal" },
-    { id: "envelope-budget", label: "Envelope Budget" },
-    { id: "comp-calc", label: "Total Comp Calculator" },
-    { id: "time-to-buy", label: "Time-to-Buy Planner" },
-    { id: "fee-auditor", label: "Bank Fee Auditor" },
-    { id: "freelance-log", label: "Freelance Expense Log" },
-  ],
-},
+      group: "💰 Calculators",
+      tools: [
+        { id: "tax-calculator", label: "Income Tax Calculator" },
+        { id: "currency-converter", label: "Currency Converter" },
+        { id: "loan-calc", label: "Mortgage & Loan" },
+        { id: "compound-calc", label: "Compound Interest" },
+        { id: "comp-calc", label: "Total Comp Calculator" },
+        { id: "time-to-buy", label: "Time-to-Buy Planner" },
+        { id: "fee-auditor", label: "Bank Fee Auditor" },
+      ],
+    },
+    {
+      group: "📊 Trackers",
+      tools: [
+        { id: "net-worth", label: "Net Worth Tracker" },
+        { id: "budget-planner", label: "Zero-Based Budget" },
+        { id: "sub-tracker", label: "Subscription Audit" },
+        { id: "debt-dash", label: "Debt Snowball Simulator" },
+        { id: "savings-goal", label: "Emergency Fund Goal" },
+        { id: "envelope-budget", label: "Envelope Budget" },
+        { id: "freelance-log", label: "Freelance Expense Log" },
+      ],
+    },
   {
     group: "🧮 Math",
     tools: [
@@ -354,9 +359,9 @@ export default function Home() {
                   <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 30 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
                   {navGroups.map((group, idx) => (
-                    <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+                    <div key={idx} className="break-inside-avoid bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
                       <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">{group.group}</h2>
                       <div className="flex flex-col gap-2">
                         {group.tools.map((tool) => (
