@@ -5,12 +5,11 @@ import TextTools from "../../../components/TextTools";
 import DevTools from "../../../components/DevTools";
 import RandomTools from "../../../components/RandomTools";
 import MediaTools from "../../../components/MediaTools";
-import { navGroups } from "../../../components/navData"; // <-- Import your navigation data
+import { navGroups } from "../../../components/navData";
 
 // ==========================================
 // STATIC GENERATION FOR GITHUB PAGES
 // ==========================================
-// This tells Next.js exactly which URLs to build as static HTML files
 export function generateStaticParams() {
   const allToolIds: { id: string }[] = [];
   
@@ -23,8 +22,13 @@ export function generateStaticParams() {
   return allToolIds;
 }
 
-export default function ToolPage({ params }: { params: { id: string } }) {
-  const activeTool = params.id;
+// ==========================================
+// NEXT.JS 15 ASYNC PARAMS FIX
+// ==========================================
+export default async function ToolPage({ params }: { params: Promise<{ id: string }> }) {
+  // We must explicitly await the params object before using the ID
+  const resolvedParams = await params;
+  const activeTool = resolvedParams.id;
 
   return (
     <div className="animate-in fade-in duration-300">
