@@ -119,14 +119,24 @@ const AdColumn = ({ side, layout }: { side: "left" | "right"; layout: AdSize[] }
 // ==========================================
 const navGroups = [
   {
-    group: "💰 Finance",
-    tools: [
-      { id: "tax-calculator", label: "Income Tax Calculator" },
-      { id: "currency-converter", label: "Live Currency Converter" },
-      { id: "loan-calc", label: "Mortgage / Loan Calc" },
-      { id: "compound-calc", label: "Compound Interest Calc" },
-    ],
-  },
+  group: "💰 Finance",
+  tools: [
+    { id: "tax-calculator", label: "Income Tax Calculator" },
+    { id: "currency-converter", label: "Currency Converter" },
+    { id: "loan-calc", label: "Mortgage & Loan" },
+    { id: "compound-calc", label: "Compound Interest" },
+    { id: "net-worth", label: "Net Worth Tracker" },
+    { id: "budget-planner", label: "Zero-Based Budget" },
+    { id: "sub-tracker", label: "Subscription Audit" },
+    { id: "debt-dash", label: "Debt Snowball Simulator" },
+    { id: "savings-goal", label: "Emergency Fund Goal" },
+    { id: "envelope-budget", label: "Envelope Budget" },
+    { id: "comp-calc", label: "Total Comp Calculator" },
+    { id: "time-to-buy", label: "Time-to-Buy Planner" },
+    { id: "fee-auditor", label: "Bank Fee Auditor" },
+    { id: "freelance-log", label: "Freelance Expense Log" },
+  ],
+},
   {
     group: "🧮 Math",
     tools: [
