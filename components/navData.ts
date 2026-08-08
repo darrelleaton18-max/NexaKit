@@ -1,6 +1,6 @@
 export const navGroups = [
   {
-    group: "💰 Calculators",
+    group: "💰 Finance Calculators",
     tools: [
       { id: "tax-calculator", label: "Income Tax Calculator" },
       { id: "currency-converter", label: "Currency Converter" },
@@ -12,7 +12,7 @@ export const navGroups = [
     ],
   },
   {
-    group: "📊 Trackers",
+    group: "📊 Finance Trackers",
     tools: [
       { id: "net-worth", label: "Net Worth Tracker" },
       { id: "budget-planner", label: "Zero-Based Budget" },
