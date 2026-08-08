@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { navGroups } from "../components/navData";
+import RollingMarquee from "../components/RollingMarquee"; // <-- 1. IMPORT THE MARQUEE
 
 export default function Home() {
   const [region, setRegion] = useState("Global");
@@ -56,7 +57,7 @@ export default function Home() {
   };
 
   // Simplified category name extractor
-const categoryList = ["All", ...navGroups.map(g => g.group.replace(/[^a-zA-Z\s]/g, "").trim())];
+  const categoryList = ["All", ...navGroups.map(g => g.group.replace(/[^a-zA-Z\s]/g, "").trim())];
 
   return (
     <div className="flex flex-col gap-10 animate-in fade-in duration-300">
@@ -76,7 +77,7 @@ const categoryList = ["All", ...navGroups.map(g => g.group.replace(/[^a-zA-Z\s]/
         </p>
 
         {/* Search Bar */}
-        <div className="max-w-xl mx-auto relative">
+        <div className="max-w-xl mx-auto relative mb-6">
           <svg className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           <input 
             type="text"
@@ -94,10 +95,15 @@ const categoryList = ["All", ...navGroups.map(g => g.group.replace(/[^a-zA-Z\s]/
             </button>
           )}
         </div>
+
+        {/* 2. PLACED ROLLING MARQUEE BANNER HERE */}
+        <RollingMarquee />
+
       </div>
 
       {/* ========================================== */}
-      {/* INTERACTIVE CATEGory FILTER PILLS BAR      */}
+      {/* INTERACTIVE CATEGORY FILTER PILLS BAR      */}
+      {/* ========================================== */}
       <div>
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start md:justify-center">
           {categoryList.map((cat, idx) => {
