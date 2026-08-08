@@ -2,26 +2,48 @@
 
 import { useState, useEffect } from "react";
 
+type Deposit = { id: string; date: string; amount: number };
+
 export default function SavingsGoal({ activeTool }: { activeTool: string }) {
   const [mounted, setMounted] = useState(false);
   const [target, setTarget] = useState<number>(10000);
   const [current, setCurrent] = useState<number>(0);
+  const [history, setHistory] = useState<Deposit[]>([]);
+  
   const [addAmount, setAddAmount] = useState<number | "">("");
+  const [addDate, setAddDate] = useState("");
 
   useEffect(() => {
     const savedT = localStorage.getItem("nexakit-save-target");
-    const savedC = localStorage.getItem("nexakit-save-current");
+    const savedH = localStorage.getItem("nexakit-save-history");
+    
     if (savedT) setTarget(Number(savedT));
-    if (savedC) setCurrent(Number(savedC));
+    
+    if (savedH) {
+      const parsedHistory = JSON.parse(savedH);
+      setHistory(parsedHistory);
+      setCurrent(parsedHistory.reduce((sum: number, item: Deposit) => sum + item.amount, 0));
+    } else {
+      // Backwards compatibility: Wrap existing flat savings into a historical deposit
+      const savedC = localStorage.getItem("nexakit-save-current");
+      if (savedC && Number(savedC) > 0) {
+        const initialDeposit = { id: crypto.randomUUID(), date: new Date().toISOString().split('T')[0], amount: Number(savedC) };
+        setHistory([initialDeposit]);
+        setCurrent(Number(savedC));
+      }
+    }
+    
+    setAddDate(new Date().toISOString().split('T')[0]); // Default to today
     setMounted(true);
   }, []);
 
   useEffect(() => {
     if (mounted) {
       localStorage.setItem("nexakit-save-target", target.toString());
+      localStorage.setItem("nexakit-save-history", JSON.stringify(history));
       localStorage.setItem("nexakit-save-current", current.toString());
     }
-  }, [target, current, mounted]);
+  }, [target, history, current, mounted]);
 
   if (activeTool !== "savings-goal" || !mounted) return null;
 
@@ -29,10 +51,23 @@ export default function SavingsGoal({ activeTool }: { activeTool: string }) {
   const formatMoney = (val: number) => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(val);
 
   const handleAdd = () => {
-    if (addAmount) {
-      setCurrent(prev => prev + Number(addAmount));
+    if (addAmount && addDate) {
+      const amountNum = Number(addAmount);
+      const newDeposit = { id: crypto.randomUUID(), date: addDate, amount: amountNum };
+      
+      // Add and sort by date descending (newest first)
+      const newHistory = [newDeposit, ...history].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      setHistory(newHistory);
+      setCurrent(newHistory.reduce((sum, item) => sum + item.amount, 0));
       setAddAmount("");
     }
+  };
+
+  const handleDelete = (id: string) => {
+    const newHistory = history.filter(h => h.id !== id);
+    setHistory(newHistory);
+    setCurrent(newHistory.reduce((sum, item) => sum + item.amount, 0));
   };
 
   return (
@@ -63,19 +98,52 @@ export default function SavingsGoal({ activeTool }: { activeTool: string }) {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div>
           <label className="block text-xs font-bold mb-2 dark:text-slate-300">Update Goal Target (£)</label>
           <input type="number" value={target} onChange={e => setTarget(Number(e.target.value))} className="w-full p-4 text-xl font-bold border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
         </div>
         <div>
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Add to Savings (£)</label>
-          <div className="flex gap-2">
-            <input type="number" value={addAmount} onChange={e => setAddAmount(e.target.value === "" ? "" : Number(e.target.value))} placeholder="e.g. 500" className="w-full p-4 text-xl font-bold border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
-            <button onClick={handleAdd} className="px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors">Deposit</button>
+          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Add to Savings</label>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input type="date" value={addDate} onChange={e => setAddDate(e.target.value)} className="p-4 font-bold border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+            <input type="number" value={addAmount} onChange={e => setAddAmount(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Amount (£)" className="flex-1 w-full p-4 text-xl font-bold border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" />
+            <button onClick={handleAdd} className="px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors">Deposit</button>
           </div>
         </div>
       </div>
+
+      {history.length > 0 && (
+        <div className="animate-in fade-in duration-300">
+          <div className="flex justify-between items-center mb-4 px-2">
+            <h3 className="font-bold dark:text-white">Deposit History</h3>
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{history.length} Transactions</span>
+          </div>
+
+          <div className="overflow-hidden border border-slate-200 dark:border-slate-700 rounded-xl">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th className="p-4 font-semibold">Date</th>
+                  <th className="p-4 font-semibold text-right">Amount</th>
+                  <th className="p-4 font-semibold w-10"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono bg-slate-50 dark:bg-slate-900">
+                {history.map(h => (
+                  <tr key={h.id} className="dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors">
+                    <td className="p-4">{new Date(h.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                    <td className="p-4 text-right font-bold text-emerald-600 dark:text-emerald-400">+{formatMoney(h.amount)}</td>
+                    <td className="p-4 text-right">
+                      <button onClick={() => handleDelete(h.id)} className="text-slate-400 hover:text-red-500 font-bold transition-colors">×</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
