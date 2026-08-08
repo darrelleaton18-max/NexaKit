@@ -12,6 +12,7 @@ const LazyAd = ({ index, type }: { index: number; type: AdSize }) => {
   const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Translate setup logic
     if (document.getElementById("google-translate-script")) return;
     const userLang = navigator.language.split('-')[0];
     if (!document.cookie.includes('googtrans=')) {
@@ -98,8 +99,10 @@ const AdColumn = ({ side, layout }: { side: "left" | "right"; layout: AdSize[] }
 export default function GlobalShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isDark, setIsDark] = useState(false);
-  
-  // Resolve active tool based on URL path
+  const [region, setRegion] = useState("Global");
+  const mainRef = useRef<HTMLElement>(null);
+  const [adLayout, setAdLayout] = useState<AdSize[]>(["standard"]);
+
   let activeTool = "home";
   if (pathname.includes("/tool/")) {
     activeTool = pathname.split("/").pop() || "home";
@@ -109,12 +112,43 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
     activeTool = "terms";
   }
 
+  // ==========================================
+  // INITIALIZATION: DARK MODE & REGION DETECT
+  // ==========================================
   useEffect(() => {
     if (typeof window !== "undefined") {
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       setIsDark(prefersDark);
+
+      // Region Detection using Timezone
+      const savedRegion = localStorage.getItem("nexaRegion");
+      if (savedRegion) {
+        setRegion(savedRegion);
+      } else {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        let detected = "Global";
+        if (tz.startsWith("Europe/London")) detected = "UK";
+        else if (tz.startsWith("America/")) detected = "US";
+        else if (tz.startsWith("Europe/")) detected = "EU";
+        
+        setRegion(detected);
+        localStorage.setItem("nexaRegion", detected);
+      }
+
+      // Sync across components
+      const handleRegionSync = () => {
+        setRegion(localStorage.getItem("nexaRegion") || "Global");
+      };
+      window.addEventListener("regionChange", handleRegionSync);
+      return () => window.removeEventListener("regionChange", handleRegionSync);
     }
   }, []);
+
+  const handleRegionChange = (newRegion: string) => {
+    setRegion(newRegion);
+    localStorage.setItem("nexaRegion", newRegion);
+    window.dispatchEvent(new Event("regionChange"));
+  };
 
   useEffect(() => {
     if (isDark) {
@@ -130,49 +164,45 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [pathname]);
 
-  const mainRef = useRef<HTMLElement>(null);
-  const [adLayout, setAdLayout] = useState<AdSize[]>(["standard"]);
+  // ==========================================
+  // FILTER NAVIGATION BY REGION
+  // ==========================================
+  const filteredNavGroups = navGroups.map(g => ({
+    ...g,
+    tools: g.tools.filter(t => !t.regions || t.regions.includes(region) || t.regions.includes("Global"))
+  })).filter(g => g.tools.length > 0);
 
+  // Resize Observer for Ads
   useEffect(() => {
     if (!mainRef.current) return;
-    
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         if (activeTool === "privacy" || activeTool === "terms") {
             setAdLayout([]);
             continue;
         }
-
         const h = entry.contentRect.height;
         const TALL_H = 624; 
         const SHORT_H = 274; 
-        
         let bestLayout: AdSize[] = [];
         let minWaste = h;
-
         const maxTall = Math.floor(h / TALL_H);
         for (let tallAds = 0; tallAds <= maxTall; tallAds++) {
           const remainder = h - (tallAds * TALL_H);
           const shortAds = Math.floor(remainder / SHORT_H);
           const waste = remainder - (shortAds * SHORT_H);
-
           if (waste < minWaste) {
             minWaste = waste;
-            bestLayout = [
-              ...Array(tallAds).fill("skyscraper"),
-              ...Array(shortAds).fill("standard")
-            ];
+            bestLayout = [...Array(tallAds).fill("skyscraper"), ...Array(shortAds).fill("standard")];
           }
         }
-        
         if (bestLayout.length === 0) bestLayout = ["standard"];
         setAdLayout((prev) => JSON.stringify(prev) === JSON.stringify(bestLayout) ? prev : bestLayout);
       }
     });
-
     resizeObserver.observe(mainRef.current);
     return () => resizeObserver.disconnect();
-  }, [activeTool, children]); // Re-calculate when children change
+  }, [activeTool, children]);
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
@@ -188,7 +218,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
           </Link>
           
           <nav className="flex-1 justify-center items-center gap-2 xl:gap-6 h-16 hidden lg:flex">
-            {navGroups.map((g, idx) => (
+            {filteredNavGroups.map((g, idx) => (
               <div key={idx} className="relative group h-full flex items-center cursor-pointer">
                 <div className="text-[12px] xl:text-sm font-semibold text-slate-300 group-hover:text-white transition flex items-center gap-1 whitespace-nowrap">
                   {g.group}
@@ -213,15 +243,17 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
           </nav>
 
           <div className="flex items-center gap-3 ml-auto lg:ml-6 shrink-0">
-            <style dangerouslySetInnerHTML={{__html: `
-              .skiptranslate > iframe.skiptranslate { display: none !important; }
-              body { top: 0px !important; }
-              .goog-te-gadget { color: transparent !important; font-size: 0px !important; display: flex; align-items: center; margin-top: 2px; }
-              .goog-te-gadget img, .goog-te-gadget span { display: none !important; }
-              .goog-te-combo { color: #334155; background-color: #f8fafc; padding: 6px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; outline: none; border: 1px solid #cbd5e1; cursor: pointer; margin: 0 !important; }
-              .dark .goog-te-combo { color: #cbd5e1; background-color: #1e293b; border-color: #334155; }
-            `}} />
-            <div id="google_translate_element" className="hidden sm:block"></div>
+            {/* REGION SELECTOR (Replaces Language) */}
+            <select
+              value={region}
+              onChange={(e) => handleRegionChange(e.target.value)}
+              className="bg-slate-800 text-slate-200 border border-slate-700 text-sm font-semibold rounded-lg px-3 py-1.5 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer hidden sm:block"
+            >
+              <option value="Global">🌎 Global</option>
+              <option value="UK">🇬🇧 UK</option>
+              <option value="US">🇺🇸 US</option>
+              <option value="EU">🇪🇺 EU</option>
+            </select>
 
             <button
               onClick={() => setIsDark(!isDark)}
@@ -254,12 +286,28 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
         <AdColumn side="right" layout={adLayout} />
       </div>
 
-      <footer className="w-full bg-slate-900 border-t-4 border-slate-800 text-slate-400 py-8 text-center text-sm mt-auto relative z-50">
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8 mb-3 px-4">
-          <Link href="/" className="hover:text-white transition">Home Dashboard</Link>
-          <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
-          <Link href="/terms" className="hover:text-white transition">Terms of Service</Link>
+      <footer className="w-full bg-slate-900 border-t-4 border-slate-800 text-slate-400 py-10 text-center text-sm mt-auto relative z-50">
+        
+        {/* CSS Fix for Google Translate Widget */}
+        <style dangerouslySetInnerHTML={{__html: `
+          .skiptranslate > iframe.skiptranslate { display: none !important; }
+          body { top: 0px !important; }
+          .goog-te-gadget { color: transparent !important; font-size: 0px !important; display: flex; align-items: center; justify-content: center; }
+          .goog-te-gadget img, .goog-te-gadget span { display: none !important; }
+          .goog-te-combo { color: #cbd5e1; background-color: #1e293b; padding: 8px 12px; border-radius: 6px; font-size: 14px; font-weight: 600; outline: none; border: 1px solid #334155; cursor: pointer; margin: 0 !important; }
+        `}} />
+        
+        <div className="flex flex-col items-center justify-center gap-4 mb-6 px-4">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+            <Link href="/" className="hover:text-white transition">Home Dashboard</Link>
+            <Link href="/privacy" className="hover:text-white transition">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition">Terms of Service</Link>
+          </div>
+          
+          {/* GOOGLE TRANSLATE WIDGET MOVED HERE */}
+          <div id="google_translate_element" className="mt-2"></div>
         </div>
+        
         <p>&copy; {new Date().getFullYear()} NexaKit Suite. All rights reserved.</p>
       </footer>
 

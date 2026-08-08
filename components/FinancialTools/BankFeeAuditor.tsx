@@ -15,34 +15,89 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
   const [flags, setFlags] = useState<FlaggedItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [totalScanned, setTotalScanned] = useState(0);
+  const [currency, setCurrency] = useState("GBP");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (activeTool !== "fee-auditor") return null;
 
-  const formatMoney = (val: number) => 
-    new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(val);
+  // ==========================================
+  // DYNAMIC CURRENCY FORMATTER
+  // ==========================================
+  const formatMoney = (val: number) => {
+    const locales = { GBP: 'en-GB', USD: 'en-US', EUR: 'de-DE' };
+    return new Intl.NumberFormat(locales[currency as keyof typeof locales], { 
+      style: 'currency', 
+      currency: currency 
+    }).format(val);
+  };
 
   // ==========================================
-  // CORE FUNCTION 3: DATA INGESTION & PARSING
+  // MULTI-LINGUAL KEYWORD DICTIONARIES
   // ==========================================
+  const feeKeywords = [
+    'fee', 'srvc', 'overdraft', 'late pay', 'charge', // English
+    'comisión', 'cargo', 'tarifa', 'descubierto', 'recargo', 'penalización', // Spanish
+    'frais', 'commission', 'découvert', 'pénalité', 'agios', // French
+    'gebühr', 'provision', 'überziehung', 'mahnung' // German
+  ];
+
+  const subKeywords = [
+    'netflix', 'prime', 'spotify', 'software', 'sub', 'subscription', // English
+    'suscripción', 'abono', // Spanish
+    'abonnement', // French
+    'abo', 'abonnement' // German
+  ];
+
+  // ==========================================
+  // SMART CSV PARSER (Handles delimiters & EU Decimals)
+  // ==========================================
+  const parseAmount = (valStr: string) => {
+    let cleaned = valStr.replace(/[^0-9.,-]/g, '');
+    
+    // Check if it uses European formatting (comma for decimal: 1.234,50)
+    if (cleaned.includes('.') && cleaned.includes(',')) {
+      if (cleaned.lastIndexOf(',') > cleaned.lastIndexOf('.')) {
+        cleaned = cleaned.replace(/\./g, '').replace(',', '.'); // EU to Standard
+      } else {
+        cleaned = cleaned.replace(/,/g, ''); // US/UK to Standard
+      }
+    } else if (cleaned.includes(',')) {
+      // If there's only a comma, check if it's a decimal (e.g., 12,50)
+      if (cleaned.split(',')[1]?.length !== 3) {
+        cleaned = cleaned.replace(',', '.');
+      } else {
+        cleaned = cleaned.replace(',', ''); // It was a thousands separator
+      }
+    }
+    return parseFloat(cleaned);
+  };
+
   const processCSVData = (csvText: string) => {
     setIsProcessing(true);
     
     setTimeout(() => {
       const lines = csvText.split('\n').filter(line => line.trim().length > 0);
-      setTotalScanned(lines.length - 1); // Exclude header
+      if (lines.length < 2) {
+        setIsProcessing(false);
+        return;
+      }
+      
+      setTotalScanned(lines.length - 1);
+      
+      // Auto-detect delimiter (comma vs semicolon)
+      const delimiter = lines[0].includes(';') ? ';' : ',';
       
       const newFlags: FlaggedItem[] = [];
       const seenTransactions = new Set<string>();
 
-      // Basic client-side CSV parsing (assuming Date, Description, Amount format)
       for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+        // Basic split preserving potential quotes
+        const cols = lines[i].split(delimiter).map(c => c.trim().replace(/^"|"$/g, ''));
         if (cols.length < 3) continue;
 
         const date = cols[0];
         const desc = cols[1].toLowerCase();
-        const amount = parseFloat(cols[2]);
+        const amount = parseAmount(cols[2]);
 
         if (isNaN(amount)) continue;
 
@@ -51,25 +106,25 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
         // 1. DUPLICATE DEBIT DETECTION
         if (seenTransactions.has(txKey)) {
           newFlags.push({
-            id: crypto.randomUUID(), date: date, description: cols[1], amount: amount,
+            id: crypto.randomUUID(), date, description: cols[1], amount,
             category: "Duplicate Debit", notes: "Identical charge detected on the same date."
           });
-          continue; // Skip further checks for this exact line
+          continue; 
         }
         seenTransactions.add(txKey);
 
-        // 2. FEE ERROR DETECTION (Hidden charges, pricing anomalies)
-        if (desc.includes('fee') || desc.includes('srvc chg') || desc.includes('overdraft') || desc.includes('late pay')) {
+        // 2. MULTI-LINGUAL FEE ERROR DETECTION
+        if (feeKeywords.some(keyword => desc.includes(keyword))) {
           newFlags.push({
-            id: crypto.randomUUID(), date: date, description: cols[1], amount: amount,
-            category: "Fee Error", notes: "Matches common hidden service charge or penalty keyword."
+            id: crypto.randomUUID(), date, description: cols[1], amount,
+            category: "Fee Error", notes: "Matches multi-lingual service charge or penalty keyword."
           });
         }
 
-        // 3. SUBSCRIPTION & LEAK TRACKING
-        if (desc.includes('netflix') || desc.includes('prime') || desc.includes('spotify') || desc.includes('software') || desc.includes('sub')) {
+        // 3. MULTI-LINGUAL SUBSCRIPTION & LEAK TRACKING
+        if (subKeywords.some(keyword => desc.includes(keyword))) {
           newFlags.push({
-            id: crypto.randomUUID(), date: date, description: cols[1], amount: amount,
+            id: crypto.randomUUID(), date, description: cols[1], amount,
             category: "Subscription Leak", notes: "Recurring subscription detected. Verify active contract."
           });
         }
@@ -77,7 +132,7 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
 
       setFlags(newFlags);
       setIsProcessing(false);
-    }, 800); // Artificial delay for UI processing effect
+    }, 800);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,15 +148,25 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
   };
 
   const loadSampleData = () => {
-    const sampleCSV = `Date,Description,Amount
-2026-08-01,TechCorp Software Sub,-45.00
-2026-08-02,Monthly Account Mgt Fee,-12.50
-2026-08-03,Office Supplies,-120.00
-2026-08-04,Prime Video Subscription,-8.99
-2026-08-05,Client Lunch,-45.50
-2026-08-05,Client Lunch,-45.50
-2026-08-10,International Txn Fee,-3.50
-2026-08-15,Overdraft Srvc Chg,-35.00`;
+    // Generates a sample CSV reflecting the currently selected currency format
+    const isEU = currency === "EUR";
+    const delim = isEU ? ';' : ',';
+    
+    const formatSampleAmount = (val: string) => {
+      if (!isEU) return val;
+      return val.replace('.', ',');
+    };
+
+    const sampleCSV = `Date${delim}Description${delim}Amount
+2026-08-01${delim}TechCorp Software Sub${delim}${formatSampleAmount("-45.00")}
+2026-08-02${delim}Monthly Account Mgt Fee${delim}${formatSampleAmount("-12.50")}
+2026-08-03${delim}Office Supplies${delim}${formatSampleAmount("-120.00")}
+2026-08-04${delim}Prime Video Subscription${delim}${formatSampleAmount("-8.99")}
+2026-08-05${delim}Client Lunch${delim}${formatSampleAmount("-45.50")}
+2026-08-05${delim}Client Lunch${delim}${formatSampleAmount("-45.50")}
+2026-08-10${delim}International Txn Comisión${delim}${formatSampleAmount("-3.50")}
+2026-08-15${delim}Overdraft Frais${delim}${formatSampleAmount("-35.00")}`;
+    
     processCSVData(sampleCSV);
   };
 
@@ -113,16 +178,34 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
     <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
       
       {/* HEADER SECTION */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-3 dark:text-white">Bank Fee & Leak Auditor</h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4">
-          Automatically scan corporate or personal financial statements to catch hidden service charges, pricing errors, duplicate subscriptions, and unauthorized debits. Compare active billing lines against baseline contracts to recover lost funds.
-        </p>
-        
-        {/* Security Badge */}
-        <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-md w-fit border border-emerald-200 dark:border-emerald-800/50">
-          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-          Client-Side Parser: Files are processed locally in your browser and never uploaded to an external server.
+      <div className="mb-8 flex flex-col md:flex-row md:items-start justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold mb-3 dark:text-white">Bank Fee & Leak Auditor</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4 max-w-3xl">
+            Automatically scan corporate or personal financial statements to catch hidden service charges, pricing errors, duplicate subscriptions, and unauthorized debits. Compare active billing lines against baseline contracts to recover lost funds.
+          </p>
+          
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-md w-fit border border-emerald-200 dark:border-emerald-800/50">
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            Client-Side Parser: Files are processed locally in your browser and never uploaded.
+          </div>
+        </div>
+
+        {/* Currency Toggle */}
+        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 shrink-0 self-start">
+          {["GBP", "USD", "EUR"].map(c => (
+            <button 
+              key={c}
+              onClick={() => {
+                setCurrency(c);
+                setFlags([]);
+                setTotalScanned(0);
+              }} 
+              className={`px-4 py-2 rounded-md text-sm font-bold transition-colors flex items-center gap-2 ${currency === c ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-sky-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}
+            >
+              {c === "GBP" ? "£" : c === "USD" ? "$" : "€"} {c}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -142,7 +225,7 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
               Upload Statement
             </button>
             <p className="text-xs text-slate-500 dark:text-slate-400 text-center mb-6">
-              Supported formats: Standard CSV, EDI.822, CAMT.086
+              Auto-detects CSV delimiters ( , or ; )
             </p>
             
             <div className="relative flex items-center py-2 mb-4">
@@ -163,7 +246,7 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
             <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-600 dark:text-slate-300">Standard Account Fee</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">£0 - £5.00</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatMoney(0)} - {formatMoney(5)}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-600 dark:text-slate-300">Intl. Transaction Rate</span>
@@ -178,7 +261,7 @@ export default function BankFeeAuditor({ activeTool }: { activeTool: string }) {
           {isProcessing ? (
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
               <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-              <p className="text-slate-500 dark:text-slate-400 font-bold animate-pulse">Running Auditor Engine...</p>
+              <p className="text-slate-500 dark:text-slate-400 font-bold animate-pulse">Running Multi-Lingual Auditor Engine...</p>
             </div>
           ) : totalScanned === 0 ? (
             <div className="h-full min-h-[300px] flex flex-col items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/20 text-center p-8">

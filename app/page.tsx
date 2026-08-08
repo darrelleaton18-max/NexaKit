@@ -1,7 +1,31 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { navGroups } from "../components/navData";
 
 export default function Home() {
+  const [region, setRegion] = useState("Global");
+
+  // Listen to the Global Region state
+  useEffect(() => {
+    const handleRegionSync = () => {
+      setRegion(localStorage.getItem("nexaRegion") || "Global");
+    };
+    
+    // Run once on mount to get initial value
+    handleRegionSync();
+    
+    window.addEventListener("regionChange", handleRegionSync);
+    return () => window.removeEventListener("regionChange", handleRegionSync);
+  }, []);
+
+  // Filter the tools based on the selected region
+  const filteredNavGroups = navGroups.map(g => ({
+    ...g,
+    tools: g.tools.filter(t => !t.regions || t.regions.includes(region) || t.regions.includes("Global"))
+  })).filter(g => g.tools.length > 0);
+
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-300">
       <div className="text-center py-6 md:py-10">
@@ -9,9 +33,6 @@ export default function Home() {
         <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Select any of our 30 premium web utilities below to instantly format data, calculate finances, track time, or manage your everyday development needs.</p>
       </div>
 
-      {/* ========================================== */}
-      {/* FEATURED CARDS                             */}
-      {/* ========================================== */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-2">
         <Link href="/tool/currency-converter" className="group flex flex-col text-left bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="h-36 w-full bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
@@ -26,7 +47,6 @@ export default function Home() {
         </Link>
         <Link href="/tool/qr-maker" className="group flex flex-col text-left bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="h-36 w-full bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
-            {/* NEW QR CODE IMAGE */}
             <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=600&h=300" alt="QR Code Generator" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <span className="absolute bottom-3 left-4 text-white font-bold tracking-wider uppercase text-[10px] bg-emerald-600/90 px-2 py-1 rounded">Utility</span>
@@ -38,7 +58,6 @@ export default function Home() {
         </Link>
         <Link href="/tool/wheel-gen" className="group flex flex-col text-left bg-white dark:bg-slate-900 rounded-2xl shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <div className="h-36 w-full bg-slate-200 dark:bg-slate-800 relative overflow-hidden">
-            {/* NEW SPINNING WHEEL IMAGE */}
             <img src="https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=600&h=300" alt="Spinning Decision Wheel" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
             <span className="absolute bottom-3 left-4 text-white font-bold tracking-wider uppercase text-[10px] bg-amber-500/90 px-2 py-1 rounded">Fun</span>
@@ -50,15 +69,9 @@ export default function Home() {
         </Link>
       </div>
       
-      {/* ========================================== */}
-      {/* TOOL CATEGORIES WITH NEW HOVER ANIMATIONS  */}
-      {/* ========================================== */}
       <div className="flex flex-col gap-8">
-        {navGroups.map((group, idx) => (
-          <div 
-            key={idx} 
-            className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-          >
+        {filteredNavGroups.map((group, idx) => (
+          <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
             <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-5 pb-3 border-b border-slate-100 dark:border-slate-800">{group.group}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {group.tools.map((tool) => (

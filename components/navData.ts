@@ -1,10 +1,21 @@
-export const navGroups = [
+export type ToolItem = {
+  id: string;
+  label: string;
+  regions?: string[]; // E.g., ["UK", "US", "EU"] - If undefined, it shows everywhere
+};
+
+export type NavGroup = {
+  group: string;
+  tools: ToolItem[];
+};
+
+export const navGroups: NavGroup[] = [
   {
-    group: "💰 Finance Calculators",
+    group: "💰 Finance Calculators", // Renamed!
     tools: [
-      { id: "tax-calculator", label: "Income Tax Calculator" },
+      { id: "tax-calculator", label: "Income Tax Calculator" }, // Global (Has toggle)
       { id: "currency-converter", label: "Currency Converter" },
-      { id: "loan-calc", label: "Mortgage & Loan" },
+      { id: "loan-calc", label: "Mortgage & Loan", regions: ["UK"] }, // Restricting as a test!
       { id: "compound-calc", label: "Compound Interest" },
       { id: "comp-calc", label: "Total Comp Calculator" },
       { id: "time-to-buy", label: "Time-to-Buy Planner" },
@@ -12,7 +23,7 @@ export const navGroups = [
     ],
   },
   {
-    group: "📊 Finance Trackers",
+    group: "📊 Finance Trackers", // Renamed!
     tools: [
       { id: "net-worth", label: "Net Worth Tracker" },
       { id: "budget-planner", label: "Zero-Based Budget" },
@@ -58,23 +69,23 @@ export const navGroups = [
   {
     group: "🛠️ Dev",
     tools: [
-      { id: "json-format", label: "JSON Formatter / Minify" }, // ID Fixed
+      { id: "json-format", label: "JSON Formatter / Minify" },
       { id: "base64", label: "Base64 Encoder / Decoder" },
-      { id: "url-encode", label: "URL Encoder & Decoder" }, // Added from earlier
-      { id: "hash-gen", label: "Secure Hash Generator" }, // Added from earlier
-      { id: "color-conv", label: "Color Space Converter" }, // Added from earlier
-      { id: "qr-maker", label: "QR Code Generator" }, // Missing tool added
+      { id: "url-encode", label: "URL Encoder & Decoder" },
+      { id: "hash-gen", label: "Secure Hash Generator" },
+      { id: "color-conv", label: "Color Space Converter" },
+      { id: "qr-maker", label: "QR Code Generator" },
     ],
   },
   {
     group: "🎲 Random",
     tools: [
-      { id: "password-gen", label: "Secure Password Generator" }, // Moved from Dev
-      { id: "num-gen", label: "Random Number Gen" }, // ID Fixed
-      { id: "uuid-gen", label: "UUID / GUID Generator" }, // Added from earlier
-      { id: "dice-coin", label: "Dice Roller & Coin Flip" }, // Added from earlier
-      { id: "username-gen", label: "Random Username Gen" }, // Missing tool added
-      { id: "wheel-gen", label: "Spinning Decision Wheel" }, // Missing tool added
+      { id: "password-gen", label: "Secure Password Generator" },
+      { id: "num-gen", label: "Random Number Gen" },
+      { id: "uuid-gen", label: "UUID / GUID Generator" },
+      { id: "dice-coin", label: "Dice Roller & Coin Flip" },
+      { id: "username-gen", label: "Random Username Gen" },
+      { id: "wheel-gen", label: "Spinning Decision Wheel" },
     ],
   },
   {
