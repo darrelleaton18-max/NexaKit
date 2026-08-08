@@ -170,7 +170,8 @@ const navGroups = [
       { id: "list-tools", label: "List Sorter & Deduplicator" },
       { id: "find-replace", label: "Find & Replace Text" },
       { id: "lorem-gen", label: "Dummy Lorem Generator" },
-      { id: "lang-converter", label: "Language Converter" },
+      { id: "lang-converter", label: "Text Encoder (Morse/NATO)" }, // Renamed slightly to avoid confusion
+      { id: "translator", label: "Live Language Translator" }, // <-- New tool!
     ],
   },
   {
