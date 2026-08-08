@@ -24,48 +24,83 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
 
     setCoinRotation(newRotation);
 
-    // Wait for the 2.5s CSS transition to finish before allowing another flip
     setTimeout(() => {
       setIsFlipping(false);
     }, 2500);
   };
 
   // ==========================================
-  // DICE ROLLER STATE & LOGIC
+  // TRUE 3D DICE ROLLER STATE & LOGIC
   // ==========================================
   const [diceSides, setDiceSides] = useState(6);
   const [diceResult, setDiceResult] = useState(6);
   const [isRolling, setIsRolling] = useState(false);
-  const [diceTransform, setDiceTransform] = useState("rotateX(0deg) rotateY(0deg) scale(1)");
+  const [rollCount, setRollCount] = useState(1);
+  const [diceRotation, setDiceRotation] = useState({ x: 0, y: 0 });
+  const [diceScale, setDiceScale] = useState(1);
 
   const rollDice = () => {
     if (isRolling) return;
     setIsRolling(true);
 
-    let ticks = 0;
-    // Rapidly tumble the die in 3D space
-    const rollInterval = setInterval(() => {
-      setDiceResult(Math.floor(Math.random() * diceSides) + 1);
-      
-      // Randomly rotate all axes and scale up (bounce)
-      setDiceTransform(`rotateX(${Math.random() * 360}deg) rotateY(${Math.random() * 360}deg) scale(1.3)`);
-      ticks++;
+    const result = Math.floor(Math.random() * diceSides) + 1;
+    let targetX = 0;
+    let targetY = 0;
 
-      if (ticks > 12) {
-        clearInterval(rollInterval);
-        setDiceResult(Math.floor(Math.random() * diceSides) + 1);
-        // Snap back to flat view facing the user
-        setDiceTransform("rotateX(0deg) rotateY(0deg) scale(1)"); 
-        setIsRolling(false);
+    // If D6, calculate the precise 3D rotation to land on the correct face
+    if (diceSides === 6) {
+      switch (result) {
+        case 1: targetX = 0; targetY = 0; break;       // Front
+        case 6: targetX = 180; targetY = 0; break;     // Back
+        case 2: targetX = -90; targetY = 0; break;     // Top
+        case 5: targetX = 90; targetY = 0; break;      // Bottom
+        case 3: targetX = 0; targetY = -90; break;     // Right
+        case 4: targetX = 0; targetY = 90; break;      // Left
       }
-    }, 100);
+    } else {
+      // For non-D6, always land flat facing forward
+      targetX = 0; 
+      targetY = 0;
+    }
+
+    // Add extra wild tumbling spins (multiples of 360)
+    const spinX = rollCount * 1080; // 3 extra vertical spins
+    const spinY = rollCount * 1440; // 4 extra horizontal spins
+
+    setDiceRotation({
+      x: targetX + spinX,
+      y: targetY + spinY
+    });
+    
+    setRollCount(rc => rc + 1);
+
+    // Make the dice "jump" toward the screen while tumbling
+    setDiceScale(1.5);
+    setTimeout(() => setDiceScale(1), 1200);
+
+    // Rapidly cycle the number for non-D6 dice until it lands
+    if (diceSides !== 6) {
+      let ticks = 0;
+      const interval = setInterval(() => {
+        setDiceResult(Math.floor(Math.random() * diceSides) + 1);
+        ticks++;
+        if (ticks > 15) {
+          clearInterval(interval);
+          setDiceResult(result);
+        }
+      }, 100);
+    } else {
+      setDiceResult(result);
+    }
+
+    setTimeout(() => {
+      setIsRolling(false);
+    }, 2500);
   };
 
-  // Helper to draw actual dots (pips) for a standard D6, just like the video
+  // Helper to draw physical white dots (pips) for the 3D cube
   const renderDieFace = (val: number) => {
-    if (diceSides !== 6) return <span className="text-5xl font-black text-white">{val}</span>;
-
-    const dot = <div className="w-6 h-6 bg-white rounded-full shadow-sm"></div>;
+    const dot = <div className="w-5 h-5 bg-white rounded-full shadow-sm"></div>;
     switch (val) {
       case 1: return <div className="flex items-center justify-center w-full h-full">{dot}</div>;
       case 2: return <div className="flex justify-between w-full h-full p-4"><div className="self-start">{dot}</div><div className="self-end">{dot}</div></div>;
@@ -76,6 +111,16 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
       default: return null;
     }
   };
+
+  // Physical 3D Face wrapper
+  const DieFace = ({ value, transform }: { value: number, transform: string }) => (
+    <div 
+      className="absolute inset-0 rounded-2xl bg-indigo-500 shadow-[inset_0_0_15px_rgba(0,0,0,0.3)] flex items-center justify-center border-2 border-indigo-400"
+      style={{ transform, backfaceVisibility: 'hidden' }}
+    >
+      {renderDieFace(value)}
+    </div>
+  );
 
   const diceOptions = [4, 6, 8, 10, 12, 20];
 
@@ -92,7 +137,6 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
         <div className="flex flex-col items-center bg-slate-50 dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 text-center justify-between overflow-hidden">
           <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-8 block">Coin Flipper</span>
           
-          {/* 3D Perspective Container */}
           <div className="relative w-48 h-48 mb-10" style={{ perspective: '1000px' }}>
             <div
               className="w-full h-full relative"
@@ -102,19 +146,11 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
                 transition: 'transform 2.5s cubic-bezier(0.2, 0.8, 0.2, 1)'
               }}
             >
-              {/* Front Face (HEADS - Indigo) */}
-              <div
-                className="absolute inset-0 rounded-full border-[10px] border-indigo-400 bg-indigo-600 flex items-center justify-center shadow-xl"
-                style={{ backfaceVisibility: 'hidden' }}
-              >
+              <div className="absolute inset-0 rounded-full border-[10px] border-indigo-400 bg-indigo-600 flex items-center justify-center shadow-xl" style={{ backfaceVisibility: 'hidden' }}>
                 <span className="text-4xl font-black text-white tracking-widest drop-shadow-md">HEADS</span>
               </div>
               
-              {/* Back Face (TAILS - Pink) - Rotated 180deg by default */}
-              <div
-                className="absolute inset-0 rounded-full border-[10px] border-pink-400 bg-pink-500 flex items-center justify-center shadow-xl"
-                style={{ backfaceVisibility: 'hidden', transform: 'rotateX(180deg)' }}
-              >
+              <div className="absolute inset-0 rounded-full border-[10px] border-pink-400 bg-pink-500 flex items-center justify-center shadow-xl" style={{ backfaceVisibility: 'hidden', transform: 'rotateX(180deg)' }}>
                 <span className="text-4xl font-black text-white tracking-widest drop-shadow-md">TAILS</span>
               </div>
             </div>
@@ -130,7 +166,7 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
         </div>
 
         {/* ========================================== */}
-        {/* 3D TUMBLING DICE ROLLER                    */}
+        {/* TRUE 3D TUMBLING DICE ROLLER               */}
         {/* ========================================== */}
         <div className="flex flex-col items-center bg-slate-50 dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 text-center justify-between overflow-hidden">
           <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-6 block">Dice Roller</span>
@@ -148,20 +184,46 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
             ))}
           </div>
 
-          {/* 3D Perspective Container */}
-          <div className="relative w-36 h-36 mb-10" style={{ perspective: '1000px' }}>
+          <div className="relative w-28 h-28 mb-10" style={{ perspective: '1200px' }}>
+            {/* Scale wrapper handles the "jump" toward the screen */}
             <div 
-              className="w-full h-full rounded-3xl bg-indigo-500 shadow-xl flex items-center justify-center transition-all"
+              className="w-full h-full"
               style={{
-                transform: diceTransform,
-                transitionDuration: isRolling ? '100ms' : '600ms',
-                transitionTimingFunction: isRolling ? 'linear' : 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-                transformStyle: 'preserve-3d',
-                // Adding a fake 3D lip when flat
-                boxShadow: isRolling ? '0 20px 25px -5px rgba(0, 0, 0, 0.3)' : 'inset 0 4px 0 rgba(255,255,255,0.2), 0 8px 0 #3730a3, 0 15px 20px rgba(0,0,0,0.4)'
+                transform: `scale(${diceScale})`,
+                transition: 'transform 1.2s cubic-bezier(0.25, 1, 0.5, 1)'
               }}
             >
-              {renderDieFace(diceResult)}
+              {/* Rotation wrapper handles the tumbling physics */}
+              <div 
+                className="w-full h-full relative"
+                style={{
+                  transformStyle: 'preserve-3d',
+                  transform: `rotateX(${diceRotation.x}deg) rotateY(${diceRotation.y}deg)`,
+                  transition: 'transform 2.5s cubic-bezier(0.15, 0.85, 0.35, 1)'
+                }}
+              >
+                {diceSides === 6 ? (
+                  <>
+                    {/* Width is 112px (w-28), so translateZ is half that (56px) to build a perfect cube */}
+                    <DieFace value={1} transform="rotateY(0deg) translateZ(56px)" />
+                    <DieFace value={6} transform="rotateY(180deg) translateZ(56px)" />
+                    <DieFace value={2} transform="rotateX(90deg) translateZ(56px)" />
+                    <DieFace value={5} transform="rotateX(-90deg) translateZ(56px)" />
+                    <DieFace value={3} transform="rotateY(90deg) translateZ(56px)" />
+                    <DieFace value={4} transform="rotateY(-90deg) translateZ(56px)" />
+                  </>
+                ) : (
+                  <>
+                    {/* Fallback tumbling tile for non-D6 dice */}
+                    <div className="absolute inset-0 rounded-2xl bg-indigo-500 shadow-inner flex items-center justify-center border-2 border-indigo-400" style={{ backfaceVisibility: 'hidden' }}>
+                      <span className="text-5xl font-black text-white">{diceResult}</span>
+                    </div>
+                    <div className="absolute inset-0 rounded-2xl bg-indigo-600 shadow-inner flex items-center justify-center border-2 border-indigo-500" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+                      <span className="text-5xl font-black text-slate-300">{diceResult}</span>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
           
