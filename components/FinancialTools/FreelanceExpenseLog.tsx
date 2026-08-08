@@ -55,9 +55,13 @@ export default function FreelanceExpenseLog({ activeTool }: { activeTool: string
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold mb-1 dark:text-white">Freelance Expense Log</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">Log business deductions quickly and export to CSV for tax season.</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-3">Log business deductions quickly and export to CSV for tax season.</p>
+          <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-md w-fit border border-emerald-200 dark:border-emerald-800/50">
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            Data is securely saved in browser memory and persists on page refresh
+          </div>
         </div>
-        <button onClick={exportCSV} disabled={expenses.length === 0} className="mt-4 sm:mt-0 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
+        <button onClick={exportCSV} disabled={expenses.length === 0} className="mt-4 sm:mt-0 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm shrink-0">
           📥 Export CSV
         </button>
       </div>
