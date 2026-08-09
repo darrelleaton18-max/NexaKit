@@ -64,6 +64,7 @@ export const navGroups: NavGroup[] = [
       { id: "lorem-gen", label: "Dummy Lorem Generator" },
       { id: "lang-converter", label: "Text Encoder (Morse/NATO)" },
       { id: "translator", label: "Live Language Translator" },
+      { id: "language-learning", label: "Language Phrasebook & Audio" },
     ],
   },
   {
