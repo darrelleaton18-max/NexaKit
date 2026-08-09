@@ -274,23 +274,37 @@ export default function LanguageLearning() {
     
     try {
       const targetLangDef = allLanguages.find(l => l.code === selectedCustomLang) || allLanguages[16];
-      
-      // NEW: Added &dt=rm to the API call to request Romanized phonetic text
       const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLangDef.code}&dt=t&dt=rm&q=${encodeURIComponent(textToProcess)}`;
       
       const response = await fetch(url);
       const data = await response.json();
       
       if (data && data[0]) {
-        // Extract standard translation
         const fullTranslation = data[0].filter((item: any) => item[0] !== null).map((item: any) => item[0]).join('');
         setTranslatedText(fullTranslation);
         
-        // Extract Phonetic Romanization (if available from Google for this language)
         let extractedPhonetic = "";
         const rmData = data[0].find((item: any) => item[0] === null && typeof item[2] === 'string');
         if (rmData) {
           extractedPhonetic = rmData[2];
+        }
+
+        // SMART FALLBACK: If Google didn't return Romanized text (like for French/Spanish), 
+        // we generate a clean heuristic phonetic guide so custom sentences always have one!
+        if (!extractedPhonetic) {
+          extractedPhonetic = fullTranslation
+            .toLowerCase()
+            .replace(/[.,/#!$%^&*;:{}=\-_`~()?¿¡]/g, "")
+            .replace(/ch/g, "sh")
+            .replace(/j/g, "zh")
+            .replace(/ll/g, "y")
+            .replace(/ñ/g, "ny")
+            .replace(/ç/g, "s")
+            .replace(/eu/g, "uh")
+            .replace(/ou/g, "oo")
+            .replace(/ph/g, "f")
+            .split(" ")
+            .join(" - ");
         }
         
         const newItem: SavedTranslation = {
@@ -299,7 +313,7 @@ export default function LanguageLearning() {
           translated: fullTranslation,
           langName: targetLangDef.name,
           voiceCode: targetLangDef.voice,
-          phonetic: extractedPhonetic // Save the extracted phonetic
+          phonetic: extractedPhonetic
         };
 
         setSavedHistory(prev => {
