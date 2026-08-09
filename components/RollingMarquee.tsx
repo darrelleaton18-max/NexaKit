@@ -1,18 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { navGroups } from "./navData";
 
+// Notice we changed 'link' to 'id' so we can look up the correct folder dynamically!
 const marqueeItems = [
-  { label: "⚡ 100% In-Browser Processing", link: null, type: "badge" },
-  { label: "🧮 Live Currency Converter", link: "/tool/currency-converter", type: "tool" },
-  { label: "🔒 Zero Server Uploads", link: null, type: "badge" },
-  { label: "📱 QR Code Generator", link: "/tool/qr-maker", type: "tool" },
-  { label: "🎯 Spinning Decision Wheel", link: "/tool/wheel-gen", type: "tool" },
-  { label: "💡 No Signup Required", link: null, type: "badge" },
-  { label: "📊 Net Worth Tracker", link: "/tool/net-worth", type: "tool" },
-  { label: "🎲 3D Dice Roller & Coin Flip", link: "/tool/dice-coin", type: "tool" },
-  { label: "🛡️ Bank Fee & Leak Auditor", link: "/tool/fee-auditor", type: "tool" },
-  { label: "✨ Instant Performance", link: null, type: "badge" },
+  { label: "⚡ 100% In-Browser Processing", id: null, type: "badge" },
+  { label: "🧮 Live Currency Converter", id: "currency-converter", type: "tool" },
+  { label: "🔒 Zero Server Uploads", id: null, type: "badge" },
+  { label: "📱 QR Code Generator", id: "qr-maker", type: "tool" },
+  { label: "🎯 Spinning Decision Wheel", id: "wheel-gen", type: "tool" },
+  { label: "💡 No Signup Required", id: null, type: "badge" },
+  { label: "📊 Net Worth Tracker", id: "net-worth", type: "tool" },
+  { label: "🎲 3D Dice Roller & Coin Flip", id: "dice-coin", type: "tool" },
+  { label: "🛡️ Bank Fee & Leak Auditor", id: "fee-auditor", type: "tool" },
+  { label: "✨ Instant Performance", id: null, type: "badge" },
 ];
 
 export default function RollingMarquee() {
@@ -40,12 +42,21 @@ export default function RollingMarquee() {
       <div className="animate-marquee flex gap-4 items-center">
         {[...marqueeItems, ...marqueeItems].map((item, idx) => {
           
-          if (item.type === "tool") {
-            // Interactive Tool Pill
+          if (item.type === "tool" && item.id) {
+            // DYNAMIC ROUTING: Find the correct category slug automatically!
+            let categorySlug = "tool"; 
+            for (const group of navGroups) {
+              if (group.tools.some(t => t.id === item.id)) {
+                categorySlug = group.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
+                break;
+              }
+            }
+            const linkHref = `/${categorySlug}/${item.id}`;
+
             return (
               <Link 
                 key={idx} 
-                href={item.link!} 
+                href={linkHref} 
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold shadow-xs border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-all hover:border-blue-500 dark:hover:border-sky-400 hover:shadow-md group"
               >
                 <span>{item.label}</span>
@@ -56,7 +67,7 @@ export default function RollingMarquee() {
             );
           }
 
-          // Static Trust Feature Badge (Using the header gradient color!)
+          // Static Trust Feature Badge (Using the header gradient color)
           return (
             <div 
               key={idx} 
