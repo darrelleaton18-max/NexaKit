@@ -7,6 +7,7 @@ import FindReplace from "./TextTools/FindReplace";
 import LoremGenerator from "./TextTools/LoremGenerator";
 import LanguageConverter from "./TextTools/LanguageConverter";
 import LiveTranslator from "./TextTools/LiveTranslator"; // <-- Add this
+import LanguageLearning from "./TextTools/LanguageLearning";
 
 export default function TextTools({ activeTool }: { activeTool: string }) {
   return (
@@ -18,6 +19,7 @@ export default function TextTools({ activeTool }: { activeTool: string }) {
       <LoremGenerator activeTool={activeTool} />
       <LanguageConverter activeTool={activeTool} />
       <LiveTranslator activeTool={activeTool} /> {/* <-- Add this */}
+      {activeTool === "language-learning" && <LanguageLearning />}
     </>
   );
 }
