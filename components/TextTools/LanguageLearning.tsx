@@ -32,7 +32,6 @@ const masterCoreLanguages = {
 
 type CoreLanguageKey = keyof typeof masterCoreLanguages;
 
-// Expanded list for the Custom Translator Dropdown
 const allLanguages = [
   { code: "ar", name: "Arabic", voice: "ar-SA" },
   { code: "bn", name: "Bengali", voice: "bn-IN" },
@@ -76,34 +75,30 @@ export default function LanguageLearning() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [selectedCustomLang, setSelectedCustomLang] = useState("es"); 
   
-  // Audio & History States
-  const [playingIndex, setPlayingIndex] = useState<number | string | null>(null);
+  // Audio, Mic & History States
+  const [playingIndex, setPlayingIndex] = useState<string | null>(null);
+  const [listeningId, setListeningId] = useState<string | null>(null);
+  const [practiceFeedback, setPracticeFeedback] = useState<Record<string, { success: boolean, heard: string }>>({});
   const [savedHistory, setSavedHistory] = useState<SavedTranslation[]>([]);
 
-  // 1. Detect Region and Load History on Mount
+  // Detect Region and Load History on Mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Load History
       const saved = localStorage.getItem("nexakit_language_history");
       if (saved) {
         try { setSavedHistory(JSON.parse(saved)); } catch (e) { console.error(e); }
       }
 
-      // Detect Region and Set Top 5 Languages Dynamically
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
       let regionalDefaults: CoreLanguageKey[] = [];
 
       if (tz.startsWith("Europe/London") || tz.startsWith("Europe/")) {
-        // UK & Europe Trends
         regionalDefaults = ["french", "spanish", "german", "italian", "mandarin"];
       } else if (tz.startsWith("America/")) {
-        // North & South America Trends
         regionalDefaults = ["spanish", "french", "japanese", "german", "mandarin"];
       } else if (tz.startsWith("Asia/") || tz.startsWith("Australia/")) {
-        // Asia & Oceania Trends
         regionalDefaults = ["english", "mandarin", "japanese", "korean", "spanish"];
       } else {
-        // Global Fallback
         regionalDefaults = ["spanish", "french", "mandarin", "german", "japanese"];
       }
 
@@ -113,14 +108,13 @@ export default function LanguageLearning() {
     }
   }, []);
 
-  // Update local storage whenever history changes
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("nexakit_language_history", JSON.stringify(savedHistory));
     }
   }, [savedHistory]);
 
-  const playAudio = (text: string, voiceCode: string, id: number | string) => {
+  const playAudio = (text: string, voiceCode: string, id: string) => {
     if (!("speechSynthesis" in window)) {
       alert("Sorry, your browser does not support text-to-speech audio.");
       return;
@@ -137,6 +131,65 @@ export default function LanguageLearning() {
     utterance.onerror = () => setPlayingIndex(null);
 
     window.speechSynthesis.speak(utterance);
+  };
+
+  // Browser Native Speech Recognition for Pronunciation Practice
+  const startPractice = (targetText: string, voiceCode: string, id: string) => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Sorry, speech recognition is not supported in this browser. Try using Chrome or Edge.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = voiceCode;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    // Clean up the target text for accurate comparison (remove phonetics & punctuation)
+    const expected = targetText.replace(/\s*\(.*?\)\s*/g, '').toLowerCase().replace(/[.,!?¿¡]/g, '').trim();
+
+    recognition.onstart = () => {
+      setListeningId(id);
+      // Clear old feedback for this item
+      setPracticeFeedback(prev => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      const spoken = transcript.toLowerCase().replace(/[.,!?¿¡]/g, '').trim();
+
+      // Check if they got it right (allowing minor fuzzy match leeway)
+      const success = spoken.includes(expected) || expected.includes(spoken) || expected === spoken;
+      
+      setPracticeFeedback(prev => ({
+        ...prev,
+        [id]: { success, heard: transcript }
+      }));
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error", event.error);
+      setListeningId(null);
+    };
+
+    recognition.onend = () => {
+      setListeningId(null);
+      // Auto-hide feedback after 5 seconds
+      setTimeout(() => {
+        setPracticeFeedback(prev => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
+      }, 5000);
+    };
+
+    recognition.start();
   };
 
   const handleTranslate = async () => {
@@ -183,7 +236,7 @@ export default function LanguageLearning() {
       
       <div className="mb-8">
         <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">Language Phrasebook & Pronouncer</h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm">Learn essential phrases or build a custom dictionary. Top languages are personalized based on your region.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">Learn essential phrases, build a custom dictionary, and test your pronunciation with your microphone.</p>
       </div>
 
       {/* Dynamic Regional Language Selector */}
@@ -260,72 +313,125 @@ export default function LanguageLearning() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {savedHistory.map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-4 bg-white dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-2xl shadow-sm hover:border-blue-300 dark:hover:border-sky-500 transition-colors group relative overflow-hidden">
-                
-                <div className="flex flex-col gap-1 pr-14 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-extrabold text-blue-500 dark:text-sky-400 uppercase tracking-wider">{item.langName}</span>
-                    <span className="text-xs text-slate-400 truncate border-l border-slate-300 dark:border-slate-600 pl-2">{item.original}</span>
+              <div key={item.id} className="flex flex-col p-4 bg-white dark:bg-slate-800/80 border border-blue-100 dark:border-slate-700 rounded-2xl shadow-sm hover:border-blue-300 dark:hover:border-sky-500 transition-colors group relative overflow-hidden">
+                <div className="flex justify-between items-center w-full">
+                  <div className="flex flex-col gap-1 pr-24 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-extrabold text-blue-500 dark:text-sky-400 uppercase tracking-wider">{item.langName}</span>
+                      <span className="text-xs text-slate-400 truncate border-l border-slate-300 dark:border-slate-600 pl-2">{item.original}</span>
+                    </div>
+                    <span className="text-base font-bold text-slate-800 dark:text-slate-100 truncate mt-1">{item.translated}</span>
                   </div>
-                  <span className="text-base font-bold text-slate-800 dark:text-slate-100 truncate mt-1">{item.translated}</span>
+
+                  <div className="absolute right-3 top-4 flex items-center gap-2 bg-white dark:bg-slate-800/80 pl-2">
+                    <button
+                      onClick={() => deleteHistoryItem(item.id)}
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Remove item"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                    
+                    {/* Practice Pronunciation Mic */}
+                    <button
+                      onClick={() => startPractice(item.translated, item.voiceCode, item.id)}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                        listeningId === item.id
+                          ? "bg-red-500 text-white shadow-md animate-pulse"
+                          : "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
+                      }`}
+                      title="Test Pronunciation"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                    </button>
+
+                    {/* Play Audio */}
+                    <button
+                      onClick={() => playAudio(item.translated, item.voiceCode, item.id)}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                        playingIndex === item.id
+                          ? "bg-blue-600 text-white shadow-md animate-pulse"
+                          : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                      }`}
+                      title="Listen"
+                    >
+                      {playingIndex === item.id ? (
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                      ) : (
+                        <svg className="w-4 h-4 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="absolute right-3 flex items-center gap-2 bg-white dark:bg-slate-800/80 pl-2">
-                  <button
-                    onClick={() => deleteHistoryItem(item.id)}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors opacity-0 group-hover:opacity-100"
-                    title="Remove item"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                  </button>
-                  <button
-                    onClick={() => playAudio(item.translated, item.voiceCode, item.id)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                      playingIndex === item.id
-                        ? "bg-blue-600 text-white shadow-md animate-pulse"
-                        : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
-                    }`}
-                  >
-                    {playingIndex === item.id ? (
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-                    ) : (
-                      <svg className="w-4 h-4 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    )}
-                  </button>
-                </div>
+                {/* Pronunciation Feedback */}
+                {practiceFeedback[item.id] && (
+                  <div className={`mt-3 pt-3 border-t text-sm font-semibold flex items-center gap-2 ${practiceFeedback[item.id].success ? "border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400" : "border-orange-200 dark:border-orange-900/30 text-orange-600 dark:text-orange-400"}`}>
+                    {practiceFeedback[item.id].success ? "✅ Perfect pronunciation!" : "❌ Keep trying. Heard: " + practiceFeedback[item.id].heard}
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Phrases Grid */}
+      {/* Phrases Grid (Core Languages Only) */}
       <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Essential {masterCoreLanguages[activeCoreLang].name} Phrases</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {masterCoreLanguages[activeCoreLang].phrases.map((phrase, idx) => (
-          <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 rounded-2xl hover:border-blue-400 dark:hover:border-sky-500 transition-colors group">
-            
-            <div className="flex flex-col gap-1 pr-4 min-w-0">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{phrase.en}</span>
-              <span className="text-base font-bold text-slate-800 dark:text-slate-100 truncate">{phrase.target}</span>
-            </div>
+        {masterCoreLanguages[activeCoreLang].phrases.map((phrase, idx) => {
+          const uniqueId = `essential-${activeCoreLang}-${idx}`;
+          return (
+            <div key={uniqueId} className="flex flex-col p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 rounded-2xl hover:border-blue-400 dark:hover:border-sky-500 transition-colors group">
+              <div className="flex justify-between items-center w-full">
+                
+                <div className="flex flex-col gap-1 pr-24 min-w-0">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{phrase.en}</span>
+                  <span className="text-base font-bold text-slate-800 dark:text-slate-100 truncate">{phrase.target}</span>
+                </div>
 
-            <button
-              onClick={() => playAudio(phrase.target, masterCoreLanguages[activeCoreLang].voiceCode, `essential-${idx}`)}
-              className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                playingIndex === `essential-${idx}`
-                  ? "bg-blue-600 text-white shadow-md animate-pulse"
-                  : "bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40"
-              }`}
-            >
-              {playingIndex === `essential-${idx}` ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
-              ) : (
-                <svg className="w-5 h-5 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* Practice Pronunciation Mic */}
+                  <button
+                    onClick={() => startPractice(phrase.target, masterCoreLanguages[activeCoreLang].voiceCode, uniqueId)}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                      listeningId === uniqueId
+                        ? "bg-red-500 text-white shadow-md animate-pulse"
+                        : "bg-white dark:bg-slate-700/50 text-slate-400 border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800"
+                    }`}
+                    title="Test Pronunciation"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                  </button>
+
+                  {/* Play Audio */}
+                  <button
+                    onClick={() => playAudio(phrase.target, masterCoreLanguages[activeCoreLang].voiceCode, uniqueId)}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                      playingIndex === uniqueId
+                        ? "bg-blue-600 text-white shadow-md animate-pulse"
+                        : "bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40"
+                    }`}
+                    title="Listen"
+                  >
+                    {playingIndex === uniqueId ? (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+                    ) : (
+                      <svg className="w-5 h-5 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Pronunciation Feedback */}
+              {practiceFeedback[uniqueId] && (
+                <div className={`mt-3 pt-3 border-t text-sm font-semibold flex items-center gap-2 ${practiceFeedback[uniqueId].success ? "border-emerald-200 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400" : "border-orange-200 dark:border-orange-900/30 text-orange-600 dark:text-orange-400"}`}>
+                  {practiceFeedback[uniqueId].success ? "✅ Perfect pronunciation!" : "❌ Keep trying. Heard: " + practiceFeedback[uniqueId].heard}
+                </div>
               )}
-            </button>
-          </div>
-        ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
