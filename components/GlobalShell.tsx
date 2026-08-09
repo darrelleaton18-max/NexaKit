@@ -166,9 +166,9 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
     }
   }, [isDark]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [pathname]);
+  //useEffect(() => {
+  //  window.scrollTo({ top: 0, behavior: "smooth" });
+  //}, [pathname]);
 
   // ==========================================
   // FILTER NAVIGATION BY REGION
