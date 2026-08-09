@@ -111,25 +111,31 @@ export default function LanguageLearning() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // Fetch translation from free public API
+  // Fetch translation from a more reliable free public API
   const handleTranslate = async () => {
     if (!customText.trim()) return;
     setIsTranslating(true);
     setTranslatedText("");
     
     try {
-      const langPair = `en|${languages[activeLang].translateCode}`;
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(customText)}&langpair=${langPair}`;
+      const targetLang = languages[activeLang].translateCode;
+      
+      // Using a much more robust public endpoint
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(customText)}`;
       
       const response = await fetch(url);
       const data = await response.json();
       
-      if (data && data.responseData && data.responseData.translatedText) {
-        setTranslatedText(data.responseData.translatedText);
+      // The API returns a nested array, the actual translated text is deeply nested at data[0][0][0]
+      if (data && data[0] && data[0][0] && data[0][0][0]) {
+        // This stitches together multiple sentences if the user types a long paragraph
+        const fullTranslation = data[0].map((item: any) => item[0]).join('');
+        setTranslatedText(fullTranslation);
       } else {
         setTranslatedText("Translation failed. Please try again.");
       }
     } catch (error) {
+      console.error("Translation API Error:", error);
       setTranslatedText("Error connecting to translation service.");
     } finally {
       setIsTranslating(false);
