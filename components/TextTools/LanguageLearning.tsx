@@ -192,25 +192,21 @@ export default function LanguageLearning() {
     utterance.lang = voiceCode;
     utterance.rate = playbackSpeed; 
 
+    // Calculate a highly accurate duration based on character count and selected playback speed
+    const estimatedDurationMs = (cleanText.length / 11) * (1 / playbackSpeed) * 1000;
+
     utterance.onstart = () => {
       setPlayingIndex(id);
-      setSpeechProgress({ id, percent: 0, duration: 0 }); // Start cleanly at 0%
-    };
-
-    // HYBRID SOLUTION: Use the exact speech engine timing, but smooth it with CSS!
-    utterance.onboundary = (event) => {
-      if (event.name === 'word') {
-        // Calculate the exact percentage of where the current spoken word ends
-        const wordEndIndex = event.charIndex + (event.charLength || 5);
-        const percent = Math.min((wordEndIndex / cleanText.length) * 100, 100);
-        
-        // Tell the CSS to smoothly transition to this percentage over 250ms
-        setSpeechProgress({ id, percent, duration: 250 });
-      }
+      setSpeechProgress({ id, percent: 0, duration: 0 }); 
+      
+      // Delay slightly, then trigger a continuous CSS transition to 100%
+      setTimeout(() => {
+        setSpeechProgress({ id, percent: 100, duration: estimatedDurationMs });
+      }, 50);
     };
 
     utterance.onend = () => {
-      setSpeechProgress({ id, percent: 100, duration: 200 }); 
+      setSpeechProgress({ id, percent: 100, duration: 100 }); 
       setTimeout(() => {
         setPlayingIndex(null);
         setSpeechProgress(null);
@@ -493,7 +489,7 @@ export default function LanguageLearning() {
                               {/* SMOOTH CONTINUOUS CLIP-PATH EFFECT (NO BG BOX) */}
                               <div className="relative inline-block w-fit mt-0.5">
                                 {/* Base Text (Gray) */}
-                                <span className="text-base font-bold text-slate-800 dark:text-slate-100">
+                                <span className={`text-base font-bold transition-colors ${isPlaying ? 'text-slate-300 dark:text-slate-600' : 'text-slate-800 dark:text-slate-100'}`}>
                                   {item.translated}
                                 </span>
                                 {/* Overlay Text (Blue Highlight) */}
@@ -502,7 +498,7 @@ export default function LanguageLearning() {
                                     className="absolute left-0 top-0 text-base font-bold text-blue-600 dark:text-sky-400 whitespace-nowrap overflow-hidden pointer-events-none"
                                     style={{ 
                                       clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                                      transition: progressDuration > 0 ? `clip-path ${progressDuration}ms ease-out` : 'none'
+                                      transition: progressDuration > 0 ? `clip-path ${progressDuration}ms linear` : 'none'
                                     }}
                                     aria-hidden="true"
                                   >
@@ -594,7 +590,7 @@ export default function LanguageLearning() {
                   {/* SMOOTH CONTINUOUS CLIP-PATH EFFECT (NO BG BOX) */}
                   <div className="relative inline-block w-fit">
                     {/* Base Text (Gray) */}
-                    <span className="text-base font-bold text-slate-800 dark:text-slate-100">
+                    <span className={`text-base font-bold transition-colors ${isPlaying ? 'text-slate-300 dark:text-slate-600' : 'text-slate-800 dark:text-slate-100'}`}>
                       {phrase.target}
                     </span>
                     {/* Overlay Text (Blue Highlight) */}
@@ -603,7 +599,7 @@ export default function LanguageLearning() {
                         className="absolute left-0 top-0 text-base font-bold text-blue-600 dark:text-sky-400 whitespace-nowrap overflow-hidden pointer-events-none"
                         style={{ 
                           clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                          transition: progressDuration > 0 ? `clip-path ${progressDuration}ms ease-out` : 'none'
+                          transition: progressDuration > 0 ? `clip-path ${progressDuration}ms linear` : 'none'
                         }}
                         aria-hidden="true"
                       >
@@ -615,7 +611,7 @@ export default function LanguageLearning() {
                   {/* PHONETIC SMOOTH CONTINUOUS FILL */}
                   {phrase.phonetic && (
                     <div className="relative inline-block w-fit mt-0.5">
-                      <span className="text-xs font-medium text-slate-500/80 dark:text-slate-400/80 italic">
+                      <span className={`text-xs font-medium italic transition-colors ${isPlaying ? 'text-slate-300 dark:text-slate-600' : 'text-slate-500/80 dark:text-slate-400/80'}`}>
                         {phrase.phonetic}
                       </span>
                       {isPlaying && (
@@ -623,7 +619,7 @@ export default function LanguageLearning() {
                           className="absolute left-0 top-0 text-xs font-medium text-blue-600/80 dark:text-sky-400/80 italic whitespace-nowrap overflow-hidden pointer-events-none"
                           style={{ 
                             clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                            transition: progressDuration > 0 ? `clip-path ${progressDuration}ms ease-out` : 'none'
+                            transition: progressDuration > 0 ? `clip-path ${progressDuration}ms linear` : 'none'
                           }}
                           aria-hidden="true"
                         >
