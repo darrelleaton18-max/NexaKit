@@ -1,15 +1,26 @@
 "use client";
 
-import ImageStudio from "./MediaTools/ImageStudio";
-import JpegOptimizer from "./MediaTools/JpegOptimizer";
-import GifConverter from "./MediaTools/GifConverter";
+import ImageTools from "./MediaTools/ImageStudio";
+import JpgTools from "./MediaTools/JpegOptimizer";
+import GifTools from "./MediaTools/GifConverter";
+import PdfStudio from "./MediaTools/PdfStudio";
 
-export default function MediaTools({ activeTool, isDark }: { activeTool: string, isDark: boolean }) {
+interface MediaToolsProps {
+  activeTool: string;
+  isDark: boolean;
+}
+
+export default function MediaTools({ activeTool, isDark }: MediaToolsProps) {
   return (
     <>
-      <ImageStudio activeTool={activeTool} isDark={isDark} />
-      <JpegOptimizer activeTool={activeTool} isDark={isDark} />
-      <GifConverter activeTool={activeTool} isDark={isDark} />
+      {/* @ts-ignore */}
+      {activeTool === "image-tools" && <ImageTools />}
+      {/* @ts-ignore */}
+      {activeTool === "jpg-tools" && <JpgTools />}
+      {/* @ts-ignore */}
+      {activeTool === "gif-tools" && <GifTools />}
+      
+      {activeTool === "pdf-studio" && <PdfStudio />}
     </>
   );
 }

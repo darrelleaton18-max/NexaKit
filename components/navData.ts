@@ -67,6 +67,12 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
+    group: "📄 Documents",
+    tools: [
+      { id: "pdf-studio", label: "PDF Studio (Merge & Edit)" },
+    ],
+  },
+  {
     group: "🛠️ Dev",
     tools: [
       { id: "json-format", label: "JSON Formatter / Minify" },
