@@ -127,22 +127,20 @@ interface SavedTranslation {
   translated: string;
   langName: string;
   voiceCode: string;
+  phonetic?: string; // NEW: Storing Romanized phonetics for custom translations
 }
 
 export default function LanguageLearning() {
   const [activeCoreLang, setActiveCoreLang] = useState<CoreLanguageKey>("spanish");
   const [topRegionLanguages, setTopRegionLanguages] = useState<CoreLanguageKey[]>(["spanish", "french", "german", "japanese", "italian"]);
   
-  // Custom Translation States
   const [customText, setCustomText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [isTranslating, setIsTranslating] = useState(false);
   const [selectedCustomLang, setSelectedCustomLang] = useState("es"); 
   
-  // Audio, Mic, UI & History States
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(0.85);
   const [playingIndex, setPlayingIndex] = useState<string | null>(null);
-  const [speechProgress, setSpeechProgress] = useState<{ id: string, percent: number, duration: number } | null>(null); 
   const [listeningId, setListeningId] = useState<string | null>(null);
   const [practiceFeedback, setPracticeFeedback] = useState<Record<string, { success: boolean, heard: string }>>({});
   const [savedHistory, setSavedHistory] = useState<SavedTranslation[]>([]);
@@ -185,39 +183,32 @@ export default function LanguageLearning() {
       alert("Sorry, your browser does not support text-to-speech audio.");
       return;
     }
+    
+    window.speechSynthesis.cancel();
+    setPlayingIndex(null);
+    
+    setTimeout(() => {
+      const cleanText = text.replace(/\s*\(.*?\)\s*/g, '');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = voiceCode;
+      utterance.rate = playbackSpeed; 
+
+      utterance.onstart = () => setPlayingIndex(id);
+      utterance.onend = () => setPlayingIndex(null);
+      utterance.onerror = () => setPlayingIndex(null);
+
+      window.speechSynthesis.speak(utterance);
+    }, 50);
+  };
+
+  const playPhoneticChunk = (text: string) => {
+    if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     
-    const cleanText = text.replace(/\s*\(.*?\)\s*/g, '');
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = voiceCode;
-    utterance.rate = playbackSpeed; 
-
-    // Calculate a highly accurate duration based on character count and selected playback speed
-    const estimatedDurationMs = (cleanText.length / 11) * (1 / playbackSpeed) * 1000;
-
-    utterance.onstart = () => {
-      setPlayingIndex(id);
-      setSpeechProgress({ id, percent: 0, duration: 0 }); 
-      
-      // Delay slightly, then trigger a continuous CSS transition to 100%
-      setTimeout(() => {
-        setSpeechProgress({ id, percent: 100, duration: estimatedDurationMs });
-      }, 50);
-    };
-
-    utterance.onend = () => {
-      setSpeechProgress({ id, percent: 100, duration: 100 }); 
-      setTimeout(() => {
-        setPlayingIndex(null);
-        setSpeechProgress(null);
-      }, 300); 
-    };
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-GB"; 
+    utterance.rate = playbackSpeed * 0.85; 
     
-    utterance.onerror = () => {
-      setPlayingIndex(null);
-      setSpeechProgress(null);
-    };
-
     window.speechSynthesis.speak(utterance);
   };
 
@@ -283,21 +274,32 @@ export default function LanguageLearning() {
     
     try {
       const targetLangDef = allLanguages.find(l => l.code === selectedCustomLang) || allLanguages[16];
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLangDef.code}&dt=t&q=${encodeURIComponent(textToProcess)}`;
+      
+      // NEW: Added &dt=rm to the API call to request Romanized phonetic text
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLangDef.code}&dt=t&dt=rm&q=${encodeURIComponent(textToProcess)}`;
       
       const response = await fetch(url);
       const data = await response.json();
       
-      if (data && data[0] && data[0][0] && data[0][0][0]) {
-        const fullTranslation = data[0].map((item: any) => item[0]).join('');
+      if (data && data[0]) {
+        // Extract standard translation
+        const fullTranslation = data[0].filter((item: any) => item[0] !== null).map((item: any) => item[0]).join('');
         setTranslatedText(fullTranslation);
+        
+        // Extract Phonetic Romanization (if available from Google for this language)
+        let extractedPhonetic = "";
+        const rmData = data[0].find((item: any) => item[0] === null && typeof item[2] === 'string');
+        if (rmData) {
+          extractedPhonetic = rmData[2];
+        }
         
         const newItem: SavedTranslation = {
           id: Date.now().toString() + Math.random().toString(36).substring(7),
           original: textToProcess,
           translated: fullTranslation,
           langName: targetLangDef.name,
-          voiceCode: targetLangDef.voice
+          voiceCode: targetLangDef.voice,
+          phonetic: extractedPhonetic // Save the extracted phonetic
         };
 
         setSavedHistory(prev => {
@@ -346,7 +348,6 @@ export default function LanguageLearning() {
           <p className="text-slate-500 dark:text-slate-400 text-sm">Learn essential phrases, build a custom dictionary, and test your pronunciation with your microphone.</p>
         </div>
         
-        {/* Playback Speed Controls */}
         <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Speed</span>
           <button 
@@ -476,39 +477,51 @@ export default function LanguageLearning() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {groupedHistory[langGroup].map((item) => {
                       const isPlaying = playingIndex === item.id;
-                      const progress = isPlaying && speechProgress?.id === item.id ? speechProgress.percent : 0;
-                      const progressDuration = isPlaying && speechProgress?.id === item.id ? speechProgress.duration : 0;
 
                       return (
                         <div key={item.id} className="flex flex-col p-4 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm hover:border-blue-300 dark:hover:border-sky-500 transition-colors group relative overflow-hidden">
-                          <div className="flex justify-between items-center w-full">
+                          
+                          {/* CSS LAYOUT FIX: Replaced absolute positioning with a robust flex container */}
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start w-full gap-4">
                             
-                            <div className="flex flex-col gap-1 pr-[130px] min-w-0">
+                            {/* Text Container: Flex-1 forces it to take available space and wrap smoothly */}
+                            <div className="flex flex-col gap-1 min-w-0 flex-1">
                               <span className="text-xs text-slate-400 truncate">{item.original}</span>
                               
-                              {/* SMOOTH CONTINUOUS CLIP-PATH EFFECT (NO BG BOX) */}
-                              <div className="relative inline-block w-fit mt-0.5">
-                                {/* Base Text (Gray) */}
-                                <span className={`text-base font-bold transition-colors ${isPlaying ? 'text-slate-300 dark:text-slate-600' : 'text-slate-800 dark:text-slate-100'}`}>
-                                  {item.translated}
-                                </span>
-                                {/* Overlay Text (Blue Highlight) */}
-                                {isPlaying && (
-                                  <span 
-                                    className="absolute left-0 top-0 text-base font-bold text-blue-600 dark:text-sky-400 whitespace-nowrap overflow-hidden pointer-events-none"
-                                    style={{ 
-                                      clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                                      transition: progressDuration > 0 ? `clip-path ${progressDuration}ms linear` : 'none'
-                                    }}
-                                    aria-hidden="true"
-                                  >
-                                    {item.translated}
-                                  </span>
-                                )}
-                              </div>
+                              <span 
+                                className={`text-base font-bold transition-colors duration-300 ${isPlaying ? 'text-blue-600 dark:text-sky-400' : 'text-slate-800 dark:text-slate-100'}`} 
+                                style={{ wordBreak: 'break-word' }}
+                              >
+                                {item.translated}
+                              </span>
+
+                              {/* NEW: Clickable Romanized Phonetic for Custom Translations */}
+                              {item.phonetic && (
+                                <div className={`flex flex-wrap gap-x-1 mt-0.5 text-xs font-medium italic transition-colors duration-300 ${isPlaying ? 'text-blue-500/80 dark:text-sky-400/80' : 'text-slate-500/80 dark:text-slate-400/80'}`}>
+                                  {item.phonetic.split(/([ -])/).map((chunk, i) => {
+                                    if (chunk === ' ' || chunk === '-') {
+                                      return <span key={i}>{chunk}</span>;
+                                    }
+                                    return (
+                                      <button
+                                        key={i}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          playPhoneticChunk(chunk);
+                                        }}
+                                        className="hover:text-blue-600 dark:hover:text-sky-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+                                        title={`Sound out "${chunk}"`}
+                                      >
+                                        {chunk}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
                             </div>
 
-                            <div className="absolute right-3 top-4 flex items-center gap-1.5 bg-white dark:bg-slate-800/80 pl-2">
+                            {/* Button Container: Safely aligned to the right or bottom depending on screen size */}
+                            <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center mt-2 sm:mt-0">
                               <button
                                 onClick={() => handleTranslate(item.original)}
                                 className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors opacity-0 group-hover:opacity-100"
@@ -540,13 +553,13 @@ export default function LanguageLearning() {
                               <button
                                 onClick={() => playAudio(item.translated, item.voiceCode, item.id)}
                                 className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                                  playingIndex === item.id
+                                  isPlaying
                                     ? "bg-blue-600 text-white shadow-md animate-pulse"
                                     : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
                                 }`}
                                 title="Listen"
                               >
-                                {playingIndex === item.id ? (
+                                {isPlaying ? (
                                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
                                 ) : (
                                   <svg className="w-4 h-4 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -577,60 +590,49 @@ export default function LanguageLearning() {
         {masterCoreLanguages[activeCoreLang].phrases.map((phrase, idx) => {
           const uniqueId = `essential-${activeCoreLang}-${idx}`;
           const isPlaying = playingIndex === uniqueId;
-          const progress = isPlaying && speechProgress?.id === uniqueId ? speechProgress.percent : 0;
-          const progressDuration = isPlaying && speechProgress?.id === uniqueId ? speechProgress.duration : 0;
 
           return (
             <div key={uniqueId} className="flex flex-col p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 rounded-2xl hover:border-blue-400 dark:hover:border-sky-500 transition-colors group">
-              <div className="flex justify-between items-center w-full">
+              
+              {/* CSS LAYOUT FIX APPLIED HERE AS WELL */}
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start w-full gap-4">
                 
-                <div className="flex flex-col gap-1 pr-24 min-w-0">
+                <div className="flex flex-col gap-1 min-w-0 flex-1">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{phrase.en}</span>
                   
-                  {/* SMOOTH CONTINUOUS CLIP-PATH EFFECT (NO BG BOX) */}
-                  <div className="relative inline-block w-fit">
-                    {/* Base Text (Gray) */}
-                    <span className={`text-base font-bold transition-colors ${isPlaying ? 'text-slate-300 dark:text-slate-600' : 'text-slate-800 dark:text-slate-100'}`}>
-                      {phrase.target}
-                    </span>
-                    {/* Overlay Text (Blue Highlight) */}
-                    {isPlaying && (
-                      <span 
-                        className="absolute left-0 top-0 text-base font-bold text-blue-600 dark:text-sky-400 whitespace-nowrap overflow-hidden pointer-events-none"
-                        style={{ 
-                          clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                          transition: progressDuration > 0 ? `clip-path ${progressDuration}ms linear` : 'none'
-                        }}
-                        aria-hidden="true"
-                      >
-                        {phrase.target}
-                      </span>
-                    )}
-                  </div>
+                  <span 
+                    className={`text-base font-bold transition-colors duration-300 ${isPlaying ? 'text-blue-600 dark:text-sky-400' : 'text-slate-800 dark:text-slate-100'}`}
+                    style={{ wordBreak: 'break-word' }}
+                  >
+                    {phrase.target}
+                  </span>
                   
-                  {/* PHONETIC SMOOTH CONTINUOUS FILL */}
+                  {/* CLICKABLE PHONETIC CHUNKS */}
                   {phrase.phonetic && (
-                    <div className="relative inline-block w-fit mt-0.5">
-                      <span className={`text-xs font-medium italic transition-colors ${isPlaying ? 'text-slate-300 dark:text-slate-600' : 'text-slate-500/80 dark:text-slate-400/80'}`}>
-                        {phrase.phonetic}
-                      </span>
-                      {isPlaying && (
-                        <span 
-                          className="absolute left-0 top-0 text-xs font-medium text-blue-600/80 dark:text-sky-400/80 italic whitespace-nowrap overflow-hidden pointer-events-none"
-                          style={{ 
-                            clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                            transition: progressDuration > 0 ? `clip-path ${progressDuration}ms linear` : 'none'
-                          }}
-                          aria-hidden="true"
-                        >
-                          {phrase.phonetic}
-                        </span>
-                      )}
+                    <div className={`flex flex-wrap gap-x-1 mt-0.5 text-xs font-medium italic transition-colors duration-300 ${isPlaying ? 'text-blue-500/80 dark:text-sky-400/80' : 'text-slate-500/80 dark:text-slate-400/80'}`}>
+                      {phrase.phonetic.split(/([ -])/).map((chunk, i) => {
+                        if (chunk === ' ' || chunk === '-') {
+                          return <span key={i}>{chunk}</span>;
+                        }
+                        return (
+                          <button
+                            key={i}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              playPhoneticChunk(chunk);
+                            }}
+                            className="hover:text-blue-600 dark:hover:text-sky-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+                            title={`Sound out "${chunk}"`}
+                          >
+                            {chunk}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-center mt-2 sm:mt-0">
                   <button
                     onClick={() => startPractice(phrase.target, masterCoreLanguages[activeCoreLang].voiceCode, uniqueId)}
                     className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
