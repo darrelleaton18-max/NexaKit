@@ -256,42 +256,57 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
           </nav>
 
           <div className="flex items-center gap-3 ml-auto lg:ml-6 shrink-0">
+            
             {/* CUSTOM REGION SELECTOR WITH REAL FLAGS */}
-            <div className="relative group hidden sm:block">
-              <div className="flex items-center gap-2 bg-slate-800 border border-slate-700 text-slate-200 text-sm font-semibold rounded-lg px-3 py-1.5 cursor-pointer hover:bg-slate-700 transition">
-                {region === "Global" && <span>🌎 Global</span>}
-                {region === "UK" && <><img src="https://flagcdn.com/w20/gb.png" width="16" alt="UK" className="rounded-[2px]" /> UK</>}
-                {region === "US" && <><img src="https://flagcdn.com/w20/us.png" width="16" alt="US" className="rounded-[2px]" /> US</>}
-                {region === "EU" && <><img src="https://flagcdn.com/w20/eu.png" width="16" alt="EU" className="rounded-[2px]" /> EU</>}
-                {region === "CA" && <><img src="https://flagcdn.com/w20/ca.png" width="16" alt="CA" className="rounded-[2px]" /> Canada</>}
-                {region === "AU" && <><img src="https://flagcdn.com/w20/au.png" width="16" alt="AU" className="rounded-[2px]" /> Australia</>}
-                {region === "NZ" && <><img src="https://flagcdn.com/w20/nz.png" width="16" alt="NZ" className="rounded-[2px]" /> New Zealand</>}
-                <svg className="w-4 h-4 opacity-70 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </div>
+            {(() => {
+              // TOGGLE THIS TO FALSE TO DISABLE THE DROPDOWN LIST
+              const ALLOW_REGION_TESTING = true; 
 
-              <div className="absolute top-full right-0 mt-1 hidden group-hover:flex flex-col bg-slate-800 border border-slate-700 rounded-lg shadow-xl min-w-[160px] overflow-hidden z-[100] py-1">
-                {[
-                  { code: "Global", label: "Global", flag: null },
-                  { code: "UK", label: "UK", flag: "gb" },
-                  { code: "US", label: "US", flag: "us" },
-                  { code: "EU", label: "EU", flag: "eu" },
-                  { code: "CA", label: "Canada", flag: "ca" },
-                  { code: "AU", label: "Australia", flag: "au" },
-                  { code: "NZ", label: "New Zealand", flag: "nz" },
-                ].map((r) => (
-                  <button
-                    key={r.code}
-                    onClick={() => handleRegionChange(r.code)}
-                    className={`flex items-center gap-2.5 px-4 py-2.5 text-left text-sm transition ${
-                      region === r.code ? "bg-blue-600 text-white font-bold" : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                    }`}
-                  >
-                    {r.flag ? <img src={`https://flagcdn.com/w20/${r.flag}.png`} width="16" alt={r.code} className="rounded-[2px]" /> : <span>🌎</span>}
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+              return (
+                <div className={`relative hidden sm:block ${ALLOW_REGION_TESTING ? "group" : ""}`}>
+                  <div className={`flex items-center gap-2 bg-slate-800 border border-slate-700 text-slate-200 text-sm font-semibold rounded-lg px-3 py-1.5 transition ${ALLOW_REGION_TESTING ? "cursor-pointer hover:bg-slate-700" : "cursor-default"}`}>
+                    {region === "Global" && <span>🌎 Global</span>}
+                    {region === "UK" && <><img src="https://flagcdn.com/w20/gb.png" width="16" alt="UK" className="rounded-[2px]" /> UK</>}
+                    {region === "US" && <><img src="https://flagcdn.com/w20/us.png" width="16" alt="US" className="rounded-[2px]" /> US</>}
+                    {region === "EU" && <><img src="https://flagcdn.com/w20/eu.png" width="16" alt="EU" className="rounded-[2px]" /> EU</>}
+                    {region === "CA" && <><img src="https://flagcdn.com/w20/ca.png" width="16" alt="CA" className="rounded-[2px]" /> Canada</>}
+                    {region === "AU" && <><img src="https://flagcdn.com/w20/au.png" width="16" alt="AU" className="rounded-[2px]" /> Australia</>}
+                    {region === "NZ" && <><img src="https://flagcdn.com/w20/nz.png" width="16" alt="NZ" className="rounded-[2px]" /> New Zealand</>}
+                    
+                    {ALLOW_REGION_TESTING && (
+                      <svg className="w-4 h-4 opacity-70 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                    )}
+                  </div>
+
+                  {ALLOW_REGION_TESTING && (
+                    <div className="absolute top-full right-0 pt-1 hidden group-hover:block z-[100]">
+                      <div className="flex flex-col bg-slate-800 border border-slate-700 rounded-lg shadow-xl min-w-[160px] overflow-hidden py-1">
+                        {[
+                          { code: "Global", label: "Global", flag: null },
+                          { code: "UK", label: "UK", flag: "gb" },
+                          { code: "US", label: "US", flag: "us" },
+                          { code: "EU", label: "EU", flag: "eu" },
+                          { code: "CA", label: "Canada", flag: "ca" },
+                          { code: "AU", label: "Australia", flag: "au" },
+                          { code: "NZ", label: "New Zealand", flag: "nz" },
+                        ].map((r) => (
+                          <button
+                            key={r.code}
+                            onClick={() => handleRegionChange(r.code)}
+                            className={`flex items-center gap-2.5 px-4 py-2.5 text-left text-sm transition ${
+                              region === r.code ? "bg-blue-600 text-white font-bold" : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                            }`}
+                          >
+                            {r.flag ? <img src={`https://flagcdn.com/w20/${r.flag}.png`} width="16" alt={r.code} className="rounded-[2px]" /> : <span>🌎</span>}
+                            {r.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             <button
               onClick={() => setIsDark(!isDark)}
