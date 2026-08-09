@@ -104,12 +104,15 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
   const [adLayout, setAdLayout] = useState<AdSize[]>(["standard"]);
 
   let activeTool = "home";
-  if (pathname.includes("/tool/")) {
-    activeTool = pathname.split("/").pop() || "home";
-  } else if (pathname.includes("/privacy")) {
+  const pathParts = pathname.split("/").filter(Boolean);
+
+  if (pathname.includes("/privacy")) {
     activeTool = "privacy";
   } else if (pathname.includes("/terms")) {
     activeTool = "terms";
+  } else if (pathParts.length === 2) {
+    // Path looks like /financecalculators/tax-calculator
+    activeTool = pathParts[1]; 
   }
 
   // ==========================================
@@ -229,17 +232,21 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
                 </div>
                 
                 <div className="absolute top-[64px] left-1/2 transform -translate-x-1/2 hidden group-hover:flex flex-col bg-slate-800 border border-slate-700 rounded-b-lg shadow-xl min-w-[260px] overflow-hidden z-[100] py-2">
-                  {g.tools.map((t) => (
-                    <Link
-                      key={t.id}
-                      href={`/tool/${t.id}`}
-                      className={`block text-left px-5 py-3 text-sm transition ${
-                        activeTool === t.id ? "bg-blue-600 text-white font-bold" : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                      }`}
-                    >
-                      {t.label}
-                    </Link>
-                  ))}
+                  {g.tools.map((t) => {
+                    const categorySlug = g.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
+                    
+                    return (
+                      <Link
+                        key={t.id}
+                        href={`/${categorySlug}/${t.id}`}
+                        className={`block text-left px-5 py-3 text-sm transition ${
+                          activeTool === t.id ? "bg-blue-600 text-white font-bold" : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                        }`}
+                      >
+                        {t.label}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             ))}

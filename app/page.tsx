@@ -121,33 +121,39 @@ export default function Home() {
 
               {/* Horizontal Row Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {group.tools.map((tool) => (
-                  <Link
-                    key={tool.id}
-                    href={`/tool/${tool.id}`}
-                    className="group flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    {/* Left: Icon Badge + Title / Category Stack */}
-                    <div className="flex items-center gap-3.5 min-w-0 pr-2">
-                      <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 flex items-center justify-center font-bold text-base shadow-inner border border-blue-100 dark:border-blue-800/40 shrink-0 group-hover:scale-105 transition-transform">
-                        {tool.label.charAt(0)}
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-colors truncate">
-                          {tool.label}
-                        </span>
-                        <span className="text-xs font-medium text-slate-400 dark:text-slate-500 truncate mt-0.5">
-                          {cleanCategoryName}
-                        </span>
-                      </div>
-                    </div>
+                {group.tools.map((tool) => {
+                  // Generate the URL-safe category slug for the link
+                  const categorySlug = group.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
 
-                    {/* Right: Clean Arrow Icon */}
-                    <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800/80 text-slate-400 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center transition-all shrink-0">
-                      <svg className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path></svg>
-                    </div>
-                  </Link>
-                ))}
+                  return (
+                    <Link
+                      key={tool.id}
+                      // Updated href to use the new route structure
+                      href={`/${categorySlug}/${tool.id}`}
+                      className="group flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                      {/* Left: Icon Badge + Title / Category Stack */}
+                      <div className="flex items-center gap-3.5 min-w-0 pr-2">
+                        <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 flex items-center justify-center font-bold text-base shadow-inner border border-blue-100 dark:border-blue-800/40 shrink-0 group-hover:scale-105 transition-transform">
+                          {tool.label.charAt(0)}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-colors truncate">
+                            {tool.label}
+                          </span>
+                          <span className="text-xs font-medium text-slate-400 dark:text-slate-500 truncate mt-0.5">
+                            {cleanCategoryName}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right: Clean Arrow Icon */}
+                      <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800/80 text-slate-400 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center transition-all shrink-0">
+                        <svg className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path></svg>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
 
             </div>
