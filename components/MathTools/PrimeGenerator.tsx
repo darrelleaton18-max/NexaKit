@@ -27,14 +27,14 @@ export default function PrimeGenerator({ activeTool }: { activeTool: string }) {
   const isNumPrime = isPrime(numToCheck);
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Prime Number Checker</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Verify if a number is prime and easily locate the next closest prime.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Verify if a number is prime and easily locate the next closest prime.</p>
 
       <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
         <div className="w-full sm:w-1/2">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Enter Number</label>
-          <input type="number" value={checkNum} onChange={(e) => setCheckNum(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-4 text-2xl font-mono border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white text-center" />
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Enter Number</label>
+          <input type="number" value={checkNum} onChange={(e) => setCheckNum(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-4 text-2xl font-mono border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white text-center" />
         </div>
         
         <div className="w-full sm:w-1/2">
@@ -49,9 +49,9 @@ export default function PrimeGenerator({ activeTool }: { activeTool: string }) {
       </div>
 
       {checkNum !== "" && (
-        <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-lg flex justify-between items-center">
-          <span className="text-sm font-bold text-slate-600 dark:text-slate-300">Next closest prime number:</span>
-          <span className="text-xl font-mono font-bold text-blue-600 dark:text-sky-400">{getNextPrime(numToCheck)}</span>
+        <div className="bg-neutral-100 dark:bg-neutral-800 p-4 rounded-lg flex justify-between items-center">
+          <span className="text-sm font-bold text-neutral-600 dark:text-neutral-300">Next closest prime number:</span>
+          <span className="text-xl font-mono font-bold text-orange-600 dark:text-sky-400">{getNextPrime(numToCheck)}</span>
         </div>
       )}
     </div>

@@ -42,16 +42,16 @@ export default function StatisticsCalculator({ activeTool }: { activeTool: strin
   const stats = calcStats();
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Statistics Data Calculator</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Calculate mean, median, mode, variance, and standard deviation instantly.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Calculate mean, median, mode, variance, and standard deviation instantly.</p>
 
       <div className="mb-6">
-        <label className="block text-xs font-bold mb-2 dark:text-slate-300">Data Set (Comma or Space Separated)</label>
+        <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Data Set (Comma or Space Separated)</label>
         <textarea 
           value={input} 
           onChange={(e) => setInput(e.target.value)} 
-          className="w-full h-24 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-mono" 
+          className="w-full h-24 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-mono" 
           placeholder="e.g. 5, 10, 15.5, 20"
         />
       </div>
@@ -68,7 +68,7 @@ export default function StatisticsCalculator({ activeTool }: { activeTool: strin
           <StatBox label="Standard Dev (σ)" val={stats.sd.toFixed(2)} highlight />
         </div>
       ) : (
-        <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg text-center text-slate-500 dark:text-slate-400">Please enter valid numbers.</div>
+        <div className="bg-neutral-50 dark:bg-neutral-800 p-4 rounded-lg text-center text-neutral-500 dark:text-neutral-400">Please enter valid numbers.</div>
       )}
     </div>
   );
@@ -76,9 +76,9 @@ export default function StatisticsCalculator({ activeTool }: { activeTool: strin
 
 function StatBox({ label, val, highlight = false }: { label: string, val: string, highlight?: boolean }) {
   return (
-    <div className={`p-4 rounded-xl border ${highlight ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:border-blue-800' : 'bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700'}`}>
-      <span className={`block text-xs font-bold mb-1 ${highlight ? 'text-blue-600 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'}`}>{label}</span>
-      <span className="block text-xl font-mono font-bold text-slate-800 dark:text-slate-100">{val.replace(/\.00$/, '')}</span>
+    <div className={`p-4 rounded-xl border ${highlight ? 'bg-orange-50 border-orange-200 dark:bg-orange-900/30 dark:border-orange-800' : 'bg-neutral-50 border-neutral-200 dark:bg-neutral-800/50 dark:border-neutral-700'}`}>
+      <span className={`block text-xs font-bold mb-1 ${highlight ? 'text-orange-600 dark:text-sky-400' : 'text-neutral-500 dark:text-neutral-400'}`}>{label}</span>
+      <span className="block text-xl font-mono font-bold text-neutral-800 dark:text-neutral-100">{val.replace(/\.00$/, '')}</span>
     </div>
   );
 }

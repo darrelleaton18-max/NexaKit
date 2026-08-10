@@ -54,21 +54,21 @@ export default function LiveTranslator({ activeTool }: { activeTool: string }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Live Language Translator</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Translate text instantly using the MyMemory Translation API.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Translate text instantly using the MyMemory Translation API.</p>
 
       <div className="flex flex-col md:flex-row items-end gap-3 mb-6">
         <div className="flex-1 w-full">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Translate From</label>
-          <select value={fromLang} onChange={(e) => setFromLang(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Translate From</label>
+          <select value={fromLang} onChange={(e) => setFromLang(e.target.value)} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-medium">
             {LANGUAGES.map((l) => (<option key={`from-${l.code}`} value={l.code}>{l.name}</option>))}
           </select>
         </div>
 
         <button
           onClick={handleSwap}
-          className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-sky-400 transition-colors shrink-0 self-stretch md:self-end flex items-center justify-center"
+          className="p-3 bg-neutral-100 dark:bg-neutral-800 hover:bg-orange-50 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-700 dark:text-neutral-200 hover:text-orange-600 dark:hover:text-sky-400 transition-colors shrink-0 self-stretch md:self-end flex items-center justify-center"
           title="Swap Languages"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,8 +77,8 @@ export default function LiveTranslator({ activeTool }: { activeTool: string }) {
         </button>
 
         <div className="flex-1 w-full">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Translate To</label>
-          <select value={toLang} onChange={(e) => setToLang(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Translate To</label>
+          <select value={toLang} onChange={(e) => setToLang(e.target.value)} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-medium">
             {LANGUAGES.map((l) => (<option key={`to-${l.code}`} value={l.code}>{l.name}</option>))}
           </select>
         </div>
@@ -90,12 +90,12 @@ export default function LiveTranslator({ activeTool }: { activeTool: string }) {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Type your text here..."
-            className="w-full h-48 p-4 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            className="w-full h-48 p-4 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-xl dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-orange-500 mb-4"
           />
           <button 
             onClick={handleTranslate} 
             disabled={isTranslating || !text.trim()} 
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold rounded-lg transition-colors"
+            className="w-full py-3 bg-orange-600 hover:bg-orange-700 disabled:bg-neutral-400 text-white font-bold rounded-lg transition-colors"
           >
             {isTranslating ? "Translating..." : "Translate Text"}
           </button>
@@ -105,7 +105,7 @@ export default function LiveTranslator({ activeTool }: { activeTool: string }) {
           readOnly
           value={translatedText}
           placeholder="Translation will appear here..."
-          className="w-full h-48 p-4 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-xl dark:text-slate-300 resize-none focus:outline-none"
+          className="w-full h-48 p-4 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-xl dark:text-neutral-300 resize-none focus:outline-none"
         />
       </div>
     </div>

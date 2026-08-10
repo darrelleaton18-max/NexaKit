@@ -104,7 +104,7 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
     const isPositive = Number(percentChange) >= 0;
 
     return (
-      <div className="mt-8 border-t border-slate-200 dark:border-slate-800 pt-6">
+      <div className="mt-8 border-t border-neutral-200 dark:border-neutral-800 pt-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 gap-4">
           <div>
             <h3 className="text-lg font-bold dark:text-white flex items-center gap-2">
@@ -113,11 +113,11 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
                 {isPositive ? '+' : ''}{percentChange}% ({chartPeriod})
               </span>
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Free API rates update once every 24 hours.</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Free API rates update once every 24 hours.</p>
           </div>
-          <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
+          <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg">
             {(["1M", "6M", "1Y"] as const).map(period => (
-              <button key={period} onClick={() => setChartPeriod(period)} className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${chartPeriod === period ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-sky-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}>
+              <button key={period} onClick={() => setChartPeriod(period)} className={`px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${chartPeriod === period ? "bg-white dark:bg-neutral-700 shadow-sm text-orange-600 dark:text-sky-400" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}>
                 {period}
               </button>
             ))}
@@ -125,7 +125,7 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
         </div>
 
         <div 
-          className="relative w-full aspect-[2/1] sm:aspect-[3/1] bg-white dark:bg-slate-900 rounded-xl overflow-hidden group cursor-crosshair border border-slate-100 dark:border-slate-800"
+          className="relative w-full aspect-[2/1] sm:aspect-[3/1] bg-white dark:bg-neutral-900 rounded-xl overflow-hidden group cursor-crosshair border border-neutral-100 dark:border-neutral-800"
           onMouseLeave={() => setChartHover(null)}
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
@@ -142,9 +142,9 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
                 <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
               </linearGradient>
             </defs>
-            <line x1="0" y1="40" x2="500" y2="40" stroke="currentColor" className="text-slate-100 dark:text-slate-800" strokeDasharray="4 4" />
-            <line x1="0" y1="110" x2="500" y2="110" stroke="currentColor" className="text-slate-100 dark:text-slate-800" strokeDasharray="4 4" />
-            <line x1="0" y1="180" x2="500" y2="180" stroke="currentColor" className="text-slate-100 dark:text-slate-800" strokeDasharray="4 4" />
+            <line x1="0" y1="40" x2="500" y2="40" stroke="currentColor" className="text-neutral-100 dark:text-neutral-800" strokeDasharray="4 4" />
+            <line x1="0" y1="110" x2="500" y2="110" stroke="currentColor" className="text-neutral-100 dark:text-neutral-800" strokeDasharray="4 4" />
+            <line x1="0" y1="180" x2="500" y2="180" stroke="currentColor" className="text-neutral-100 dark:text-neutral-800" strokeDasharray="4 4" />
             
             <path d={fillD} fill="url(#chartGradient)" />
             <path d={pathD} fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinejoin="round" />
@@ -159,11 +159,11 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
 
           {chartHover && (
             <div 
-              className="absolute pointer-events-none bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-xl whitespace-nowrap z-10 transform -translate-x-1/2 -translate-y-full"
+              className="absolute pointer-events-none bg-neutral-800 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-xl whitespace-nowrap z-10 transform -translate-x-1/2 -translate-y-full"
               style={{ left: `${(chartHover.x / 500) * 100}%`, top: `${(chartHover.y / 200) * 100}%`, marginTop: '-12px' }}
             >
               <div className="text-sky-300 font-mono text-sm">{chartHover.rate.toFixed(4)}</div>
-              <div className="text-slate-400 font-normal">{new Date(chartHover.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+              <div className="text-neutral-400 font-normal">{new Date(chartHover.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</div>
             </div>
           )}
         </div>
@@ -172,19 +172,19 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Live Currency Converter</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert global currencies with real-time exchange rates.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Convert global currencies with real-time exchange rates.</p>
       
       <div className="flex flex-col md:flex-row items-end gap-3 mb-6">
         <div className="flex-1 w-full">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Amount</label>
-          <input type="number" value={currAmount} onChange={(e) => setCurrAmount(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium" />
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Amount</label>
+          <input type="number" value={currAmount} onChange={(e) => setCurrAmount(e.target.value === "" ? "" : Number(e.target.value))} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-medium" />
         </div>
         
         <div className="flex-1 w-full">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">From Currency</label>
-          <select value={currFrom} onChange={(e) => setCurrFrom(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">From Currency</label>
+          <select value={currFrom} onChange={(e) => setCurrFrom(e.target.value)} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-medium">
             {currencyList.map((c) => (<option key={`from-${c.code}`} value={c.code}>{c.name}</option>))}
           </select>
         </div>
@@ -195,7 +195,7 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
             setCurrFrom(currTo);
             setCurrTo(temp);
           }}
-          className="p-3 bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-sky-400 transition-colors shrink-0 self-stretch md:self-end flex items-center justify-center"
+          className="p-3 bg-neutral-100 dark:bg-neutral-800 hover:bg-orange-50 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 rounded-lg text-neutral-700 dark:text-neutral-200 hover:text-orange-600 dark:hover:text-sky-400 transition-colors shrink-0 self-stretch md:self-end flex items-center justify-center"
           title="Swap Currencies"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -204,25 +204,25 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
         </button>
 
         <div className="flex-1 w-full">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">To Currency</label>
-          <select value={currTo} onChange={(e) => setCurrTo(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium">
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">To Currency</label>
+          <select value={currTo} onChange={(e) => setCurrTo(e.target.value)} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-medium">
             {currencyList.map((c) => (<option key={`to-${c.code}`} value={c.code}>{c.name}</option>))}
           </select>
         </div>
       </div>
 
-      <div className="bg-slate-100 dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div className="bg-neutral-100 dark:bg-neutral-800 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-slate-600 dark:text-slate-300">Converted Value:</span>
+          <span className="text-sm font-bold text-neutral-600 dark:text-neutral-300">Converted Value:</span>
           {currRate && !currLoading && (
             <>
-              <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-mono font-medium text-neutral-500 dark:text-neutral-400">
                 Rate: 1 {currFrom} = {currRate.toFixed(4)} {currTo}
               </span>
               {lastUpdate && (
-                <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 leading-tight block">
-                  <span className="font-semibold text-slate-500">Updated:</span> {lastUpdate} <br/>
-                  <span className="font-semibold text-slate-500">Next Check:</span> {nextUpdate}
+                <span className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1 leading-tight block">
+                  <span className="font-semibold text-neutral-500">Updated:</span> {lastUpdate} <br/>
+                  <span className="font-semibold text-neutral-500">Next Check:</span> {nextUpdate}
                   <span className={`ml-2 font-bold ${isUpToDate ? 'text-emerald-500' : 'text-amber-500'}`}>
                     ({isUpToDate ? '✓ Verified Fresh' : '⚠ Pending API Refresh'})
                   </span>
@@ -231,7 +231,7 @@ export default function CurrencyConverter({ activeTool }: { activeTool: string }
             </>
           )}
         </div>
-        <span className="text-2xl font-mono font-bold text-blue-600 dark:text-sky-400 break-all">
+        <span className="text-2xl font-mono font-bold text-orange-600 dark:text-sky-400 break-all">
           {currLoading ? "Fetching..." : `${currResult || "0.00"} ${currTo}`}
         </span>
       </div>

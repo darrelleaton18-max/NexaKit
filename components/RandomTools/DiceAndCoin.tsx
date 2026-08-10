@@ -125,17 +125,17 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
   const diceOptions = [4, 6, 8, 10, 12, 20];
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Dice Roller & Coin Flipper</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Need to settle a debate or roll for initiative?</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Need to settle a debate or roll for initiative?</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         
         {/* ========================================== */}
         {/* 3D COIN FLIPPER                            */}
         {/* ========================================== */}
-        <div className="flex flex-col items-center bg-slate-50 dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 text-center justify-between overflow-hidden">
-          <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-8 block">Coin Flipper</span>
+        <div className="flex flex-col items-center bg-neutral-50 dark:bg-neutral-800/50 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center justify-between overflow-hidden">
+          <span className="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest mb-8 block">Coin Flipper</span>
           
           <div className="relative w-48 h-48 mb-10" style={{ perspective: '1000px' }}>
             <div
@@ -159,7 +159,7 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
           <button 
             onClick={flipCoin} 
             disabled={isFlipping} 
-            className="w-full py-4 bg-slate-800 hover:bg-slate-900 disabled:opacity-50 text-white text-lg font-bold rounded-xl transition-transform active:scale-95 shadow-md"
+            className="w-full py-4 bg-neutral-800 hover:bg-neutral-900 disabled:opacity-50 text-white text-lg font-bold rounded-xl transition-transform active:scale-95 shadow-md"
           >
             {isFlipping ? "Flipping..." : "Flip Coin"}
           </button>
@@ -168,8 +168,8 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
         {/* ========================================== */}
         {/* TRUE 3D TUMBLING DICE ROLLER               */}
         {/* ========================================== */}
-        <div className="flex flex-col items-center bg-slate-50 dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 text-center justify-between overflow-hidden">
-          <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-6 block">Dice Roller</span>
+        <div className="flex flex-col items-center bg-neutral-50 dark:bg-neutral-800/50 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center justify-between overflow-hidden">
+          <span className="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest mb-6 block">Dice Roller</span>
           
           <div className="flex flex-wrap justify-center gap-2 mb-8">
             {diceOptions.map(sides => (
@@ -177,7 +177,7 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
                 key={sides}
                 onClick={() => { setDiceSides(sides); setDiceResult(sides); }}
                 disabled={isRolling}
-                className={`px-3 py-1.5 rounded-lg font-bold text-sm transition-colors ${diceSides === sides ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-800/80 text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 border border-slate-300 dark:border-slate-700'}`}
+                className={`px-3 py-1.5 rounded-lg font-bold text-sm transition-colors ${diceSides === sides ? 'bg-indigo-600 text-white' : 'bg-neutral-200 dark:bg-neutral-800/80 text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-300 border border-neutral-300 dark:border-neutral-700'}`}
               >
                 D{sides}
               </button>
@@ -223,7 +223,7 @@ export default function DiceAndCoin({ activeTool }: { activeTool: string }) {
                       <span className="text-5xl font-black text-white">{diceResult}</span>
                     </div>
                     <div className="absolute inset-0 rounded-2xl bg-indigo-600 shadow-inner flex items-center justify-center border-2 border-indigo-500" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-                      <span className="text-5xl font-black text-slate-300">{diceResult}</span>
+                      <span className="text-5xl font-black text-neutral-300">{diceResult}</span>
                     </div>
                   </>
                 )}

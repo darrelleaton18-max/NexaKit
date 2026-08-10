@@ -189,11 +189,11 @@ export default function ImageStudio({ activeTool, isDark }: { activeTool: string
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold mb-1 dark:text-white">PNG & Image Studio</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">Convert formats, compress, resize, filter, blur, and extract Base64 data instantly.</p>
+          <p className="text-neutral-500 dark:text-neutral-400 text-sm">Convert formats, compress, resize, filter, blur, and extract Base64 data instantly.</p>
         </div>
         {imgSrc && (
           <button onClick={resetImage} className="bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 text-xs font-bold px-4 py-2 rounded-lg transition-colors border border-red-200 dark:border-red-800/50 shrink-0">
@@ -206,87 +206,87 @@ export default function ImageStudio({ activeTool, isDark }: { activeTool: string
         
         <div className="space-y-6">
           <div>
-            <label className="block text-xs font-bold mb-2 dark:text-slate-300">1. Upload Image (PNG, JPG, WebP)</label>
-            <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-sky-400 hover:file:bg-blue-100 transition-colors" />
+            <label className="block text-xs font-bold mb-2 dark:text-neutral-300">1. Upload Image (PNG, JPG, WebP)</label>
+            <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full p-2 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-bold file:bg-orange-50 file:text-orange-700 dark:file:bg-orange-900/30 dark:file:text-sky-400 hover:file:bg-orange-100 transition-colors" />
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">Quick Adjustments & Effects</h3>
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-sm font-bold text-neutral-700 dark:text-neutral-200 mb-3">Quick Adjustments & Effects</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <button onClick={() => applyEdit("rotate")} disabled={!processedImg} className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-2 rounded border border-slate-200 dark:border-slate-600 transition-colors">🔄 Rotate</button>
-              <button onClick={() => applyEdit("flipH")} disabled={!processedImg} className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-2 rounded border border-slate-200 dark:border-slate-600 transition-colors">↔️ Flip Horiz</button>
-              <button onClick={() => applyEdit("flipV")} disabled={!processedImg} className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-2 rounded border border-slate-200 dark:border-slate-600 transition-colors">↕️ Flip Vert</button>
-              <button onClick={() => applyEdit("blur")} disabled={!processedImg} className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-2 rounded border border-slate-200 dark:border-slate-600 transition-colors">💧 Blur</button>
-              <button onClick={() => applyEdit("grayscale")} disabled={!processedImg} className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-2 rounded border border-slate-200 dark:border-slate-600 transition-colors">🔲 Grayscale</button>
-              <button onClick={() => applyEdit("sepia")} disabled={!processedImg} className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-2 rounded border border-slate-200 dark:border-slate-600 transition-colors">🌗 Sepia</button>
-              <button onClick={() => applyEdit("invert")} disabled={!processedImg} className="bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 text-slate-700 dark:text-slate-300 text-xs font-bold py-2 px-2 rounded border border-slate-200 dark:border-slate-600 transition-colors">🔮 Invert</button>
+              <button onClick={() => applyEdit("rotate")} disabled={!processedImg} className="bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-300 text-xs font-bold py-2 px-2 rounded border border-neutral-200 dark:border-neutral-600 transition-colors">🔄 Rotate</button>
+              <button onClick={() => applyEdit("flipH")} disabled={!processedImg} className="bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-300 text-xs font-bold py-2 px-2 rounded border border-neutral-200 dark:border-neutral-600 transition-colors">↔️ Flip Horiz</button>
+              <button onClick={() => applyEdit("flipV")} disabled={!processedImg} className="bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-300 text-xs font-bold py-2 px-2 rounded border border-neutral-200 dark:border-neutral-600 transition-colors">↕️ Flip Vert</button>
+              <button onClick={() => applyEdit("blur")} disabled={!processedImg} className="bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-300 text-xs font-bold py-2 px-2 rounded border border-neutral-200 dark:border-neutral-600 transition-colors">💧 Blur</button>
+              <button onClick={() => applyEdit("grayscale")} disabled={!processedImg} className="bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-300 text-xs font-bold py-2 px-2 rounded border border-neutral-200 dark:border-neutral-600 transition-colors">🔲 Grayscale</button>
+              <button onClick={() => applyEdit("sepia")} disabled={!processedImg} className="bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-300 text-xs font-bold py-2 px-2 rounded border border-neutral-200 dark:border-neutral-600 transition-colors">🌗 Sepia</button>
+              <button onClick={() => applyEdit("invert")} disabled={!processedImg} className="bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 disabled:opacity-50 text-neutral-700 dark:text-neutral-300 text-xs font-bold py-2 px-2 rounded border border-neutral-200 dark:border-neutral-600 transition-colors">🔮 Invert</button>
             </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
-            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200">Exposure Tuning</h3>
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-3">
+            <h3 className="text-sm font-bold text-neutral-700 dark:text-neutral-200">Exposure Tuning</h3>
             <div>
-              <label className="block text-xs font-semibold mb-1 dark:text-slate-300">Brightness: {brightness}%</label>
+              <label className="block text-xs font-semibold mb-1 dark:text-neutral-300">Brightness: {brightness}%</label>
               <input type="range" min="0" max="200" value={brightness} onChange={(e) => setBrightness(Number(e.target.value))} onMouseUp={() => applyEdit("exposure")} className="w-full" />
             </div>
             <div>
-              <label className="block text-xs font-semibold mb-1 dark:text-slate-300">Contrast: {contrast}%</label>
+              <label className="block text-xs font-semibold mb-1 dark:text-neutral-300">Contrast: {contrast}%</label>
               <input type="range" min="0" max="200" value={contrast} onChange={(e) => setContrast(Number(e.target.value))} onMouseUp={() => applyEdit("exposure")} className="w-full" />
             </div>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">Remove Background Color</h3>
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <h3 className="text-sm font-bold text-neutral-700 dark:text-neutral-200 mb-3">Remove Background Color</h3>
             <div className="flex items-center gap-4 mb-3">
               <input type="color" value={targetColor} onChange={(e) => setTargetColor(e.target.value)} className="w-12 h-12 rounded cursor-pointer border-0 bg-transparent p-0" title="Pick color to remove" />
               <div className="flex-1">
-                <label className="block text-xs font-semibold mb-1 dark:text-slate-300">Tolerance: {tolerance}%</label>
+                <label className="block text-xs font-semibold mb-1 dark:text-neutral-300">Tolerance: {tolerance}%</label>
                 <input type="range" min="0" max="100" value={tolerance} onChange={(e) => setTolerance(Number(e.target.value))} className="w-full" />
               </div>
             </div>
-            <button onClick={() => applyEdit("transparent")} disabled={!processedImg} className="w-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-50 text-slate-800 dark:text-white font-bold py-2 rounded-lg text-sm transition-colors">
+            <button onClick={() => applyEdit("transparent")} disabled={!processedImg} className="w-full bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:opacity-50 text-neutral-800 dark:text-white font-bold py-2 rounded-lg text-sm transition-colors">
               Make Color Transparent
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold mb-2 dark:text-slate-300">Resize Width (px)</label>
-              <input type="number" value={imgWidth || ""} onChange={(e) => setImgWidth(Number(e.target.value))} placeholder="Auto" className="w-full p-2.5 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
+              <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Resize Width (px)</label>
+              <input type="number" value={imgWidth || ""} onChange={(e) => setImgWidth(Number(e.target.value))} placeholder="Auto" className="w-full p-2.5 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white" />
             </div>
             <div>
-              <label className="block text-xs font-bold mb-2 dark:text-slate-300">Resize Height (px)</label>
-              <input type="number" value={imgHeight || ""} onChange={(e) => setImgHeight(Number(e.target.value))} placeholder="Auto" className="w-full p-2.5 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
+              <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Resize Height (px)</label>
+              <input type="number" value={imgHeight || ""} onChange={(e) => setImgHeight(Number(e.target.value))} placeholder="Auto" className="w-full p-2.5 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white" />
             </div>
           </div>
-          <button onClick={() => applyEdit("resize")} disabled={!processedImg} className="w-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 disabled:opacity-50 text-slate-800 dark:text-white font-bold py-2 rounded-lg text-sm transition-colors">
+          <button onClick={() => applyEdit("resize")} disabled={!processedImg} className="w-full bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 disabled:opacity-50 text-neutral-800 dark:text-white font-bold py-2 rounded-lg text-sm transition-colors">
             Apply New Dimensions
           </button>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center">
-            <label className="block text-xs font-bold dark:text-slate-300">Output Preview</label>
+            <label className="block text-xs font-bold dark:text-neutral-300">Output Preview</label>
             {imgWidth > 0 && imgHeight > 0 && (
-              <span className="text-[11px] font-mono font-bold text-blue-600 dark:text-sky-400 bg-blue-50 dark:bg-blue-950/50 px-2.5 py-1 rounded-full border border-blue-200 dark:border-blue-900">
+              <span className="text-[11px] font-mono font-bold text-orange-600 dark:text-sky-400 bg-orange-50 dark:bg-orange-950/50 px-2.5 py-1 rounded-full border border-orange-200 dark:border-orange-900">
                 {imgWidth} × {imgHeight} px
               </span>
             )}
           </div>
 
-          <div className="flex-1 min-h-[250px] bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex items-center justify-center overflow-hidden relative" style={checkerboardStyle}>
+          <div className="flex-1 min-h-[250px] bg-neutral-100 dark:bg-neutral-900 border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl flex items-center justify-center overflow-hidden relative" style={checkerboardStyle}>
             {processedImg ? (
               <img src={processedImg} alt="Processed Preview" className="max-w-full max-h-[350px] object-contain relative z-10 shadow-xl" />
             ) : (
-              <span className="text-sm font-semibold text-slate-400 bg-white/80 dark:bg-slate-900/80 px-4 py-2 rounded-lg relative z-10">Image preview will appear here</span>
+              <span className="text-sm font-semibold text-neutral-400 bg-white/80 dark:bg-neutral-900/80 px-4 py-2 rounded-lg relative z-10">Image preview will appear here</span>
             )}
           </div>
           
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
-                <label className="block text-xs font-bold mb-1 dark:text-slate-300">Format</label>
-                <select value={outputFormat} onChange={(e) => { setOutputFormat(e.target.value); setShowBase64(false); }} className="w-full p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg font-bold dark:text-white">
+                <label className="block text-xs font-bold mb-1 dark:text-neutral-300">Format</label>
+                <select value={outputFormat} onChange={(e) => { setOutputFormat(e.target.value); setShowBase64(false); }} className="w-full p-2 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg font-bold dark:text-white">
                   <option value="image/png">Save as PNG</option>
                   <option value="image/jpeg">Save as JPG</option>
                   <option value="image/webp">Save as WebP</option>
@@ -295,17 +295,17 @@ export default function ImageStudio({ activeTool, isDark }: { activeTool: string
               
               {(outputFormat === "image/jpeg" || outputFormat === "image/webp") && (
                 <div className="flex-1">
-                  <label className="block text-xs font-bold mb-1 dark:text-slate-300">Compression: {quality}%</label>
+                  <label className="block text-xs font-bold mb-1 dark:text-neutral-300">Compression: {quality}%</label>
                   <input type="range" min="1" max="100" value={quality} onChange={(e) => { setQuality(Number(e.target.value)); setShowBase64(false); }} className="w-full mt-1" />
                 </div>
               )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button onClick={handleShowBase64} disabled={!processedImg || isGenerating} className="flex-1 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 disabled:bg-slate-400 text-white font-bold py-3 px-4 rounded-lg transition-colors text-sm">
+              <button onClick={handleShowBase64} disabled={!processedImg || isGenerating} className="flex-1 bg-neutral-800 dark:bg-neutral-700 hover:bg-neutral-900 dark:hover:bg-neutral-600 disabled:bg-neutral-400 text-white font-bold py-3 px-4 rounded-lg transition-colors text-sm">
                 {isGenerating ? "Processing..." : showBase64 ? "Hide Base64" : "Generate Base64"}
               </button>
-              <button onClick={downloadProcessedImage} disabled={!processedImg} className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+              <button onClick={downloadProcessedImage} disabled={!processedImg} className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:bg-neutral-400 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                 Download
               </button>
@@ -315,8 +315,8 @@ export default function ImageStudio({ activeTool, isDark }: { activeTool: string
           {showBase64 && finalBase64 && (
             <div className="animate-in fade-in zoom-in-95 duration-200 flex flex-col gap-2">
               <div className="flex justify-between items-center px-1">
-                <label className="block text-xs font-bold dark:text-slate-300">Final Data URL String</label>
-                <button onClick={copyBase64} className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:text-blue-700 dark:hover:text-sky-300 transition-colors">
+                <label className="block text-xs font-bold dark:text-neutral-300">Final Data URL String</label>
+                <button onClick={copyBase64} className="text-xs font-bold text-orange-600 dark:text-sky-400 hover:text-orange-700 dark:hover:text-sky-300 transition-colors">
                   {copied ? "✓ Copied!" : "Copy to Clipboard"}
                 </button>
               </div>
@@ -324,7 +324,7 @@ export default function ImageStudio({ activeTool, isDark }: { activeTool: string
                 readOnly 
                 value={finalBase64} 
                 onClick={(e) => (e.target as HTMLTextAreaElement).select()} 
-                className="w-full h-32 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-950 rounded-lg font-mono text-[10px] leading-tight dark:text-slate-400 break-all resize-y outline-none cursor-pointer shadow-inner" 
+                className="w-full h-32 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-950 rounded-lg font-mono text-[10px] leading-tight dark:text-neutral-400 break-all resize-y outline-none cursor-pointer shadow-inner" 
               />
             </div>
           )}

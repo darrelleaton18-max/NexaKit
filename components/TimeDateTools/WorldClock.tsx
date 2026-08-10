@@ -22,9 +22,9 @@ export default function WorldClock({ activeTool }: { activeTool: string }) {
   ];
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">World Clock & Timezones</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Track live times across major global financial hubs.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Track live times across major global financial hubs.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {timezones.map((t, idx) => {
@@ -43,15 +43,15 @@ export default function WorldClock({ activeTool }: { activeTool: string }) {
           });
 
           return (
-            <div key={idx} className={`p-5 rounded-xl border ${idx === 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800/50' : 'bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700'}`}>
+            <div key={idx} className={`p-5 rounded-xl border ${idx === 0 ? 'bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800/50' : 'bg-neutral-50 border-neutral-200 dark:bg-neutral-800/50 dark:border-neutral-700'}`}>
               <div className="flex justify-between items-start mb-2">
-                <span className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{t.city}</span>
+                <span className="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide">{t.city}</span>
                 <span className="text-lg">{t.flag}</span>
               </div>
-              <div className="text-3xl font-black font-mono text-slate-800 dark:text-white tabular-nums tracking-tight">
+              <div className="text-3xl font-black font-mono text-neutral-800 dark:text-white tabular-nums tracking-tight">
                 {formatter.format(time)}
               </div>
-              <div className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+              <div className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mt-1">
                 {dateFormatter.format(time)}
               </div>
             </div>

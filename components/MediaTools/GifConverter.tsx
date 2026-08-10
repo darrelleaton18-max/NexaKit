@@ -60,35 +60,35 @@ export default function GifConverter({ activeTool, isDark }: { activeTool: strin
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">GIF Converter & Creator</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert any static graphic (PNG, JPG, WebP) into standard GIF format instantly.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Convert any static graphic (PNG, JPG, WebP) into standard GIF format instantly.</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <div>
-            <label className="block text-xs font-bold mb-2 dark:text-slate-300">Upload Source Image</label>
-            <input type="file" accept="image/*" onChange={handleUpload} className="w-full p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white text-sm cursor-pointer" />
+            <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Upload Source Image</label>
+            <input type="file" accept="image/*" onChange={handleUpload} className="w-full p-2 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white text-sm cursor-pointer" />
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+            <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
               This tool encodes your image directly into the GIF file format using browser-native canvas rendering. Perfect for legacy web design assets and simple format conversions.
             </p>
           </div>
 
-          <button onClick={downloadGif} disabled={!previewUrl} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+          <button onClick={downloadGif} disabled={!previewUrl} className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-neutral-400 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
             Download GIF File
           </button>
         </div>
 
         <div className="flex flex-col gap-4">
-          <label className="block text-xs font-bold dark:text-slate-300">GIF Preview</label>
-          <div className="flex-1 min-h-[250px] bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex items-center justify-center overflow-hidden p-4 relative" style={checkerboardStyle}>
+          <label className="block text-xs font-bold dark:text-neutral-300">GIF Preview</label>
+          <div className="flex-1 min-h-[250px] bg-neutral-100 dark:bg-neutral-900 border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl flex items-center justify-center overflow-hidden p-4 relative" style={checkerboardStyle}>
             {previewUrl ? (
               <img src={previewUrl} alt="GIF Preview" className="max-w-full max-h-[350px] object-contain shadow-xl relative z-10" />
             ) : (
-              <span className="text-sm font-semibold text-slate-400 bg-white/80 dark:bg-slate-900/80 px-4 py-2 rounded-lg relative z-10">Upload an image to convert</span>
+              <span className="text-sm font-semibold text-neutral-400 bg-white/80 dark:bg-neutral-900/80 px-4 py-2 rounded-lg relative z-10">Upload an image to convert</span>
             )}
           </div>
         </div>

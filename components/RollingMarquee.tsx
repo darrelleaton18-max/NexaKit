@@ -1,83 +1,64 @@
 "use client";
 
-import Link from "next/link";
-import { navGroups } from "./navData";
+import React from "react";
 
-// Notice we changed 'link' to 'id' so we can look up the correct folder dynamically!
 const marqueeItems = [
-  { label: "⚡ 100% In-Browser Processing", id: null, type: "badge" },
-  { label: "🧮 Live Currency Converter", id: "currency-converter", type: "tool" },
-  { label: "🔒 Zero Server Uploads", id: null, type: "badge" },
-  { label: "📱 QR Code Generator", id: "qr-maker", type: "tool" },
-  { label: "🎯 Spinning Decision Wheel", id: "wheel-gen", type: "tool" },
-  { label: "💡 No Signup Required", id: null, type: "badge" },
-  { label: "📊 Net Worth Tracker", id: "net-worth", type: "tool" },
-  { label: "🎲 3D Dice Roller & Coin Flip", id: "dice-coin", type: "tool" },
-  { label: "🛡️ Bank Fee & Leak Auditor", id: "fee-auditor", type: "tool" },
-  { label: "✨ Instant Performance", id: null, type: "badge" },
+  { text: "Live Currency Converter", highlight: false, icon: "💱" },
+  { text: "Zero Server Uploads", highlight: true, icon: "🔒" },
+  { text: "QR Code Generator", highlight: false, icon: "📱" },
+  { text: "Spinning Decision Wheel", highlight: false, icon: "🎯" },
+  { text: "No Signup Required", highlight: true, icon: "💡" },
+  { text: "PDF Studio", highlight: false, icon: "📄" },
+  { text: "100% Private Workflows", highlight: true, icon: "🛡️" },
+  { text: "Word & Character Counter", highlight: false, icon: "📝" },
+  { text: "Income Tax Calculator", highlight: false, icon: "💰" },
+  { text: "Instant Local Execution", highlight: true, icon: "⚡" },
 ];
 
 export default function RollingMarquee() {
+  // Tripling the array creates a perfectly seamless infinite scroll loop
+  const scrollItems = [...marqueeItems, ...marqueeItems, ...marqueeItems];
+
   return (
-    <div className="w-full overflow-hidden bg-slate-100 dark:bg-slate-900/80 border-y border-slate-200 dark:border-slate-800 py-3.5 relative flex items-center my-2">
+    <div className="w-full overflow-hidden flex relative py-2 mask-edges">
       
+      {/* Zero-config CSS for the marquee animation and smooth edge fading. Hover pause removed. */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes marquee {
           0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
+          100% { transform: translateX(-33.333333%); } 
         }
         .animate-marquee {
           display: flex;
           width: max-content;
-          animation: marquee 30s linear infinite;
+          animation: marquee 35s linear infinite;
         }
-        .animate-marquee:hover {
-          animation-play-state: paused;
+        .mask-edges {
+          -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+          mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
         }
       `}} />
-
-      <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
-      <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none"></div>
-
-      <div className="animate-marquee flex gap-4 items-center">
-        {[...marqueeItems, ...marqueeItems].map((item, idx) => {
-          
-          if (item.type === "tool" && item.id) {
-            // DYNAMIC ROUTING: Find the correct category slug automatically!
-            let categorySlug = "tool"; 
-            for (const group of navGroups) {
-              if (group.tools.some(t => t.id === item.id)) {
-                categorySlug = group.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
-                break;
-              }
-            }
-            const linkHref = `/${categorySlug}/${item.id}`;
-
-            return (
-              <Link 
-                key={idx} 
-                href={linkHref} 
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs font-bold shadow-xs border border-slate-200 dark:border-slate-700 whitespace-nowrap transition-all hover:border-blue-500 dark:hover:border-sky-400 hover:shadow-md group"
-              >
-                <span>{item.label}</span>
-                <span className="w-4 h-4 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center transition-colors text-[10px]">
-                  &rarr;
-                </span>
-              </Link>
-            );
-          }
-
-          // Static Trust Feature Badge (Using the header gradient color)
-          return (
-            <div 
-              key={idx} 
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-400 text-white text-xs font-bold shadow-xs whitespace-nowrap cursor-default select-none"
-            >
-              <span>{item.label}</span>
-            </div>
-          );
-        })}
+      
+      <div className="animate-marquee gap-3 md:gap-4 pl-3 md:pl-4">
+        {scrollItems.map((item, idx) => (
+          <div
+            key={idx}
+            className={`flex items-center gap-2.5 px-4 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-sm font-bold whitespace-nowrap transition-transform cursor-default select-none ${
+              item.highlight
+                ? "bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-lg shadow-orange-500/20 border border-orange-400/30"
+                : "bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] text-neutral-600 dark:text-neutral-300 shadow-sm"
+            }`}
+          >
+            <span>{item.icon}</span>
+            <span>{item.text}</span>
+            
+            {!item.highlight && (
+              <span className="text-neutral-400 dark:text-neutral-600 font-normal ml-0.5">→</span>
+            )}
+          </div>
+        ))}
       </div>
+      
     </div>
   );
 }

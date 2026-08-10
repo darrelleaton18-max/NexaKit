@@ -43,33 +43,33 @@ export default function ColorConverter({ activeTool }: { activeTool: string }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Color Space Converter</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Convert color codes instantly and preview them.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Convert color codes instantly and preview them.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold mb-2 dark:text-slate-300">HEX Code</label>
+            <label className="block text-xs font-bold mb-2 dark:text-neutral-300">HEX Code</label>
             <div className="flex gap-2">
               <input type="color" value={hex.length === 7 ? hex : "#ffffff"} onChange={(e) => handleHexChange(e.target.value)} className="w-12 h-12 rounded cursor-pointer border-0 bg-transparent p-0" />
-              <input type="text" value={hex} onChange={(e) => handleHexChange(e.target.value)} className="flex-1 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-mono uppercase" />
+              <input type="text" value={hex} onChange={(e) => handleHexChange(e.target.value)} className="flex-1 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-mono uppercase" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold mb-2 dark:text-slate-300">RGB Format</label>
-            <input readOnly value={rgb} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-slate-400 font-mono" />
+            <label className="block text-xs font-bold mb-2 dark:text-neutral-300">RGB Format</label>
+            <input readOnly value={rgb} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-neutral-400 font-mono" />
           </div>
           <div>
-            <label className="block text-xs font-bold mb-2 dark:text-slate-300">HSL Format</label>
-            <input readOnly value={hsl} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-slate-400 font-mono" />
+            <label className="block text-xs font-bold mb-2 dark:text-neutral-300">HSL Format</label>
+            <input readOnly value={hsl} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-neutral-400 font-mono" />
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="block text-xs font-bold dark:text-slate-300">Live Preview</label>
+          <label className="block text-xs font-bold dark:text-neutral-300">Live Preview</label>
           <div 
-            className="flex-1 min-h-[200px] w-full rounded-2xl shadow-inner border border-slate-200 dark:border-slate-800 transition-colors duration-200"
+            className="flex-1 min-h-[200px] w-full rounded-2xl shadow-inner border border-neutral-200 dark:border-neutral-800 transition-colors duration-200"
             style={{ backgroundColor: /^#?([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex) ? hex : 'transparent' }}
           />
         </div>

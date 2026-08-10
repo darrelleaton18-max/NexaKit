@@ -37,12 +37,12 @@ export default function Stopwatch({ activeTool }: { activeTool: string }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Precision Stopwatch</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Track time with millisecond precision and record split laps.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Track time with millisecond precision and record split laps.</p>
 
       <div className="flex flex-col items-center">
-        <div className="text-6xl md:text-8xl font-black font-mono text-slate-800 dark:text-white tabular-nums tracking-tight mb-8 drop-shadow-sm">
+        <div className="text-6xl md:text-8xl font-black font-mono text-neutral-800 dark:text-white tabular-nums tracking-tight mb-8 drop-shadow-sm">
           {formatTime(time)}
         </div>
 
@@ -55,26 +55,26 @@ export default function Stopwatch({ activeTool }: { activeTool: string }) {
           </button>
           <button 
             onClick={isRunning ? handleLap : handleReset} 
-            className="flex-1 font-bold py-4 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-lg transition-transform active:scale-95"
+            className="flex-1 font-bold py-4 rounded-xl bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 text-lg transition-transform active:scale-95"
           >
             {isRunning ? "Lap" : "Reset"}
           </button>
         </div>
 
         {laps.length > 0 && (
-          <div className="w-full max-w-md bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 max-h-[250px] overflow-y-auto">
+          <div className="w-full max-w-md bg-neutral-50 dark:bg-neutral-800/50 rounded-xl border border-neutral-200 dark:border-neutral-700 max-h-[250px] overflow-y-auto">
             <table className="w-full text-left text-sm font-mono">
-              <thead className="sticky top-0 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+              <thead className="sticky top-0 bg-neutral-100 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400">
                 <tr><th className="p-3">Lap</th><th className="p-3 text-right">Split Time</th><th className="p-3 text-right">Total Time</th></tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700/50">
                 {laps.map((lapTime, i) => {
                   const previousLap = laps[i + 1] || 0;
                   const split = lapTime - previousLap;
                   return (
-                    <tr key={i} className="text-slate-700 dark:text-slate-300">
-                      <td className="p-3 text-slate-400">{(laps.length - i).toString().padStart(2, '0')}</td>
-                      <td className="p-3 text-right text-blue-600 dark:text-sky-400 font-bold">{formatTime(split)}</td>
+                    <tr key={i} className="text-neutral-700 dark:text-neutral-300">
+                      <td className="p-3 text-neutral-400">{(laps.length - i).toString().padStart(2, '0')}</td>
+                      <td className="p-3 text-right text-orange-600 dark:text-sky-400 font-bold">{formatTime(split)}</td>
                       <td className="p-3 text-right">{formatTime(lapTime)}</td>
                     </tr>
                   );

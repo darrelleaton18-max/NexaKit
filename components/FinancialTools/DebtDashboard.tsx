@@ -82,9 +82,9 @@ export default function DebtDashboard({ activeTool }: { activeTool: string }) {
   freedomDate.setMonth(freedomDate.getMonth() + monthsToFreedom);
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Debt Eradication Dashboard</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-3">Simulate Snowball or Avalanche methods to find your exact debt-free date.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-3">Simulate Snowball or Avalanche methods to find your exact debt-free date.</p>
       <div className="flex items-center gap-2 mb-6 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-md w-fit border border-emerald-200 dark:border-emerald-800/50">
         <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
         Data is securely saved in browser memory and persists on page refresh
@@ -95,8 +95,8 @@ export default function DebtDashboard({ activeTool }: { activeTool: string }) {
           <span className="block text-xs font-bold text-red-600 dark:text-red-400 uppercase mb-1">Total Debt</span>
           <span className="text-2xl font-black text-red-900 dark:text-white">{formatMoney(totalDebt)}</span>
         </div>
-        <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-200 dark:border-slate-700">
-          <span className="block text-xs font-bold text-slate-500 uppercase mb-1">Monthly Payment</span>
+        <div className="bg-neutral-50 dark:bg-neutral-800/50 p-5 rounded-xl border border-neutral-200 dark:border-neutral-700">
+          <span className="block text-xs font-bold text-neutral-500 uppercase mb-1">Monthly Payment</span>
           <span className="text-2xl font-black dark:text-white">{formatMoney(totalMin + extraPay)}</span>
         </div>
         <div className="bg-emerald-50 dark:bg-emerald-900/20 p-5 rounded-xl border border-emerald-200 dark:border-emerald-800">
@@ -107,43 +107,43 @@ export default function DebtDashboard({ activeTool }: { activeTool: string }) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-8 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+      <div className="flex flex-col md:flex-row gap-4 mb-8 bg-neutral-50 dark:bg-neutral-800 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
         <div className="flex-1">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Strategy</label>
-          <div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-lg">
-            <button onClick={() => setStrategy("snowball")} className={`flex-1 py-2 text-xs font-bold rounded-md transition-colors ${strategy === "snowball" ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600" : "text-slate-500"}`}>Snowball (Lowest Bal)</button>
-            <button onClick={() => setStrategy("avalanche")} className={`flex-1 py-2 text-xs font-bold rounded-md transition-colors ${strategy === "avalanche" ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600" : "text-slate-500"}`}>Avalanche (High Rate)</button>
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Strategy</label>
+          <div className="flex bg-neutral-200 dark:bg-neutral-900 p-1 rounded-lg">
+            <button onClick={() => setStrategy("snowball")} className={`flex-1 py-2 text-xs font-bold rounded-md transition-colors ${strategy === "snowball" ? "bg-white dark:bg-neutral-700 shadow-sm text-orange-600" : "text-neutral-500"}`}>Snowball (Lowest Bal)</button>
+            <button onClick={() => setStrategy("avalanche")} className={`flex-1 py-2 text-xs font-bold rounded-md transition-colors ${strategy === "avalanche" ? "bg-white dark:bg-neutral-700 shadow-sm text-orange-600" : "text-neutral-500"}`}>Avalanche (High Rate)</button>
           </div>
         </div>
         <div>
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Extra Monthly Payment (£)</label>
-          <input type="number" value={extraPay} onChange={e => setExtraPay(Number(e.target.value))} className="w-full p-2.5 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-white" />
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Extra Monthly Payment (£)</label>
+          <input type="number" value={extraPay} onChange={e => setExtraPay(Number(e.target.value))} className="w-full p-2.5 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-white" />
         </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Card/Loan Name" className="flex-1 min-w-[140px] p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
-        <input type="number" value={balance} onChange={e => setBalance(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Balance (£)" className="w-28 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
-        <input type="number" value={rate} onChange={e => setRate(e.target.value === "" ? "" : Number(e.target.value))} placeholder="APR (%)" className="w-24 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
-        <input type="number" value={minPay} onChange={e => setMinPay(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Min Pay (£)" className="w-28 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
-        <button onClick={addDebt} className="px-6 py-3 bg-slate-800 text-white font-bold rounded-lg transition-colors">Add</button>
+        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Card/Loan Name" className="flex-1 min-w-[140px] p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white" />
+        <input type="number" value={balance} onChange={e => setBalance(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Balance (£)" className="w-28 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white" />
+        <input type="number" value={rate} onChange={e => setRate(e.target.value === "" ? "" : Number(e.target.value))} placeholder="APR (%)" className="w-24 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white" />
+        <input type="number" value={minPay} onChange={e => setMinPay(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Min Pay (£)" className="w-28 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white" />
+        <button onClick={addDebt} className="px-6 py-3 bg-neutral-800 text-white font-bold rounded-lg transition-colors">Add</button>
       </div>
 
       <div className="space-y-2">
         {sortedDebts.map((d, i) => (
-          <div key={d.id} className={`flex flex-wrap justify-between items-center p-4 rounded-xl border ${i === 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20' : 'bg-slate-50 border-slate-200 dark:bg-slate-800/50'}`}>
+          <div key={d.id} className={`flex flex-wrap justify-between items-center p-4 rounded-xl border ${i === 0 ? 'bg-orange-50 border-orange-200 dark:bg-orange-900/20' : 'bg-neutral-50 border-neutral-200 dark:bg-neutral-800/50'}`}>
             <div className="flex items-center gap-4">
-              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}>{i + 1}</span>
-              <span className="font-bold dark:text-white">{d.name} <span className="text-xs font-normal text-slate-500 ml-2">{d.rate}% APR</span></span>
+              <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-orange-600 text-white' : 'bg-neutral-200 dark:bg-neutral-700 text-neutral-500'}`}>{i + 1}</span>
+              <span className="font-bold dark:text-white">{d.name} <span className="text-xs font-normal text-neutral-500 ml-2">{d.rate}% APR</span></span>
             </div>
             <div className="flex items-center gap-6 mt-2 sm:mt-0 w-full sm:w-auto justify-end">
               <div className="text-right">
-                <span className="block text-[10px] uppercase text-slate-500">Balance</span>
+                <span className="block text-[10px] uppercase text-neutral-500">Balance</span>
                 <span className="font-mono font-bold dark:text-white">{formatMoney(d.balance)}</span>
               </div>
               <div className="text-right">
-                <span className="block text-[10px] uppercase text-slate-500">Min Pay</span>
-                <span className="font-mono dark:text-slate-300">{formatMoney(d.minPay)}</span>
+                <span className="block text-[10px] uppercase text-neutral-500">Min Pay</span>
+                <span className="font-mono dark:text-neutral-300">{formatMoney(d.minPay)}</span>
               </div>
               <button onClick={() => setDebts(debts.filter(x => x.id !== d.id))} className="text-red-400 hover:text-red-600 font-bold ml-2">×</button>
             </div>

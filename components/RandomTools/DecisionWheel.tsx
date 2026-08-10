@@ -88,17 +88,17 @@ export default function DecisionWheel({ activeTool }: { activeTool: string }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300 relative">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300 relative">
       
       {/* WINNER MODAL OVERLAY */}
       {showWinner && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm rounded-xl animate-in fade-in duration-300">
-          <div className="bg-amber-400 text-slate-900 p-8 md:p-12 rounded-2xl shadow-2xl text-center transform scale-100 animate-in zoom-in-75 duration-300 w-11/12 max-w-md border-4 border-white">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-neutral-900/40 dark:bg-black/60 backdrop-blur-sm rounded-xl animate-in fade-in duration-300">
+          <div className="bg-amber-400 text-neutral-900 p-8 md:p-12 rounded-2xl shadow-2xl text-center transform scale-100 animate-in zoom-in-75 duration-300 w-11/12 max-w-md border-4 border-white">
              <h3 className="text-xl md:text-2xl font-bold mb-2 opacity-80 uppercase tracking-widest">We have a winner!</h3>
              <p className="text-4xl md:text-5xl font-black mb-8 break-words leading-tight">{result}</p>
              <button 
                 onClick={() => setShowWinner(false)} 
-                className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition-transform active:scale-95 shadow-md w-full"
+                className="bg-neutral-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-neutral-800 transition-transform active:scale-95 shadow-md w-full"
              >
                 Close & Play Again
              </button>
@@ -107,7 +107,7 @@ export default function DecisionWheel({ activeTool }: { activeTool: string }) {
       )}
 
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Spinning Decision Wheel</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">Let fate decide. Enter your options on the right.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-8">Let fate decide. Enter your options on the right.</p>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
         
@@ -118,13 +118,13 @@ export default function DecisionWheel({ activeTool }: { activeTool: string }) {
           
           {/* Right Pointer Triangle */}
           <div className="absolute right-0 top-1/2 -translate-y-1/2 z-20 drop-shadow-xl flex items-center pr-2">
-            <div className="w-0 h-0 border-t-[20px] border-b-[20px] border-r-[35px] border-t-transparent border-b-transparent border-r-slate-800 dark:border-r-white"></div>
+            <div className="w-0 h-0 border-t-[20px] border-b-[20px] border-r-[35px] border-t-transparent border-b-transparent border-r-neutral-800 dark:border-r-white"></div>
           </div>
 
           <div className="relative w-full max-w-[500px] aspect-square">
             {/* The Spinning Wheel Element */}
             <div 
-              className="w-full h-full rounded-full shadow-2xl overflow-hidden border-4 border-slate-100 dark:border-slate-800 relative"
+              className="w-full h-full rounded-full shadow-2xl overflow-hidden border-4 border-neutral-100 dark:border-neutral-800 relative"
               style={{
                 background: conicGradient,
                 transform: `rotate(${rotation}deg)`,
@@ -157,7 +157,7 @@ export default function DecisionWheel({ activeTool }: { activeTool: string }) {
               <button 
                 onClick={spin}
                 disabled={isSpinning || list.length === 0}
-                className="w-20 h-20 md:w-24 md:h-24 bg-white dark:bg-slate-800 rounded-full shadow-xl flex items-center justify-center border-4 border-slate-200 dark:border-slate-700 hover:scale-105 active:scale-95 transition-transform disabled:opacity-80 disabled:hover:scale-100 text-slate-800 dark:text-white font-black text-xl md:text-2xl"
+                className="w-20 h-20 md:w-24 md:h-24 bg-white dark:bg-neutral-800 rounded-full shadow-xl flex items-center justify-center border-4 border-neutral-200 dark:border-neutral-700 hover:scale-105 active:scale-95 transition-transform disabled:opacity-80 disabled:hover:scale-100 text-neutral-800 dark:text-white font-black text-xl md:text-2xl"
               >
                 SPIN
               </button>
@@ -169,24 +169,24 @@ export default function DecisionWheel({ activeTool }: { activeTool: string }) {
         {/* ========================================== */}
         {/* TEXT INPUTS (RIGHT/BOTTOM)                 */}
         {/* ========================================== */}
-        <div className="lg:col-span-1 flex flex-col h-full bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+        <div className="lg:col-span-1 flex flex-col h-full bg-neutral-50 dark:bg-neutral-800/50 p-6 rounded-xl border border-neutral-200 dark:border-neutral-700">
           <div className="flex justify-between items-end mb-4">
-            <label className="block text-sm font-bold dark:text-slate-300">Entries</label>
-            <span className="text-xs font-bold bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded text-slate-600 dark:text-slate-300">{list.length}</span>
+            <label className="block text-sm font-bold dark:text-neutral-300">Entries</label>
+            <span className="text-xs font-bold bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded text-neutral-600 dark:text-neutral-300">{list.length}</span>
           </div>
           
           <textarea 
             value={options} 
             onChange={e => setOptions(e.target.value)} 
             disabled={isSpinning}
-            className="w-full flex-1 min-h-[300px] p-4 font-medium border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-amber-500 mb-4 disabled:opacity-70" 
+            className="w-full flex-1 min-h-[300px] p-4 font-medium border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-xl dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-amber-500 mb-4 disabled:opacity-70" 
             placeholder="Type your entries here...&#10;(One on each line)" 
           />
           
           <button 
             onClick={spin} 
             disabled={isSpinning || list.length === 0} 
-            className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:text-slate-500 text-white text-lg font-bold rounded-xl transition-transform active:scale-95 shadow-md"
+            className="w-full py-4 bg-amber-500 hover:bg-amber-600 disabled:bg-neutral-300 dark:disabled:bg-neutral-700 disabled:text-neutral-500 text-white text-lg font-bold rounded-xl transition-transform active:scale-95 shadow-md"
           >
             {isSpinning ? "Spinning..." : "Spin the Wheel"}
           </button>

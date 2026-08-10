@@ -29,33 +29,33 @@ export default function LanguageConverter({ activeTool }: { activeTool: string }
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Text Encoding & Translator</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Translate standard text into Morse code, NATO phonetic spelling, or Leetspeak.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Translate standard text into Morse code, NATO phonetic spelling, or Leetspeak.</p>
 
-      <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg w-fit mb-6">
-        <button onClick={() => setMode("nato")} className={`px-4 py-2 rounded-md text-sm font-bold transition-colors ${mode === "nato" ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-sky-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}>✈️ NATO Phonetic</button>
-        <button onClick={() => setMode("morse")} className={`px-4 py-2 rounded-md text-sm font-bold transition-colors ${mode === "morse" ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-sky-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}>📡 Morse Code</button>
-        <button onClick={() => setMode("leet")} className={`px-4 py-2 rounded-md text-sm font-bold transition-colors ${mode === "leet" ? "bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-sky-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"}`}>💻 Leetspeak</button>
+      <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg w-fit mb-6">
+        <button onClick={() => setMode("nato")} className={`px-4 py-2 rounded-md text-sm font-bold transition-colors ${mode === "nato" ? "bg-white dark:bg-neutral-700 shadow-sm text-orange-600 dark:text-sky-400" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}>✈️ NATO Phonetic</button>
+        <button onClick={() => setMode("morse")} className={`px-4 py-2 rounded-md text-sm font-bold transition-colors ${mode === "morse" ? "bg-white dark:bg-neutral-700 shadow-sm text-orange-600 dark:text-sky-400" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}>📡 Morse Code</button>
+        <button onClick={() => setMode("leet")} className={`px-4 py-2 rounded-md text-sm font-bold transition-colors ${mode === "leet" ? "bg-white dark:bg-neutral-700 shadow-sm text-orange-600 dark:text-sky-400" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}>💻 Leetspeak</button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Input Text</label>
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Input Text</label>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message here..."
-            className="w-full h-48 p-4 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full h-48 p-4 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-xl dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
         <div>
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Translated Output</label>
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Translated Output</label>
           <textarea
             readOnly
             value={convertText()}
             placeholder="Translation appears here..."
-            className="w-full h-48 p-4 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-xl dark:text-slate-400 font-mono text-sm resize-none focus:outline-none"
+            className="w-full h-48 p-4 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-xl dark:text-neutral-400 font-mono text-sm resize-none focus:outline-none"
           />
         </div>
       </div>

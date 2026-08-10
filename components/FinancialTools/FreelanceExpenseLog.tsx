@@ -51,43 +51,43 @@ export default function FreelanceExpenseLog({ activeTool }: { activeTool: string
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold mb-1 dark:text-white">Freelance Expense Log</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-3">Log business deductions quickly and export to CSV for tax season.</p>
+          <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-3">Log business deductions quickly and export to CSV for tax season.</p>
           <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-md w-fit border border-emerald-200 dark:border-emerald-800/50">
             <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
             Data is securely saved in browser memory and persists on page refresh
           </div>
         </div>
-        <button onClick={exportCSV} disabled={expenses.length === 0} className="mt-4 sm:mt-0 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm shrink-0">
+        <button onClick={exportCSV} disabled={expenses.length === 0} className="mt-4 sm:mt-0 bg-emerald-600 hover:bg-emerald-700 disabled:bg-neutral-300 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm shrink-0">
           📥 Export CSV
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-8 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-        <input type="date" value={date} onChange={e => setDate(e.target.value)} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-white" />
-        <select value={category} onChange={e => setCategory(e.target.value)} className="p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-white">
+      <div className="flex flex-wrap gap-3 mb-8 bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+        <input type="date" value={date} onChange={e => setDate(e.target.value)} className="p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-white" />
+        <select value={category} onChange={e => setCategory(e.target.value)} className="p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-white">
           <option value="Software">Software & Hosting</option>
           <option value="Mileage">Mileage/Travel</option>
           <option value="Meals">Business Meals</option>
           <option value="Hardware">Hardware/Supplies</option>
           <option value="Other">Other</option>
         </select>
-        <input type="number" value={amount} onChange={e => setAmount(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Amount (£)" className="w-28 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-white" />
-        <input type="text" value={purpose} onChange={e => setPurpose(e.target.value)} placeholder="Purpose/Description" className="flex-1 min-w-[200px] p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-white" />
-        <button onClick={addExpense} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors">Log</button>
+        <input type="number" value={amount} onChange={e => setAmount(e.target.value === "" ? "" : Number(e.target.value))} placeholder="Amount (£)" className="w-28 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-white" />
+        <input type="text" value={purpose} onChange={e => setPurpose(e.target.value)} placeholder="Purpose/Description" className="flex-1 min-w-[200px] p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-white" />
+        <button onClick={addExpense} className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-colors">Log</button>
       </div>
 
       <div className="flex justify-between items-center mb-4 px-2">
         <h3 className="font-bold dark:text-white">Logged Expenses</h3>
-        <span className="font-black text-lg dark:text-white">Total: <span className="text-blue-600 dark:text-sky-400">{formatMoney(totalExpenses)}</span></span>
+        <span className="font-black text-lg dark:text-white">Total: <span className="text-orange-600 dark:text-sky-400">{formatMoney(totalExpenses)}</span></span>
       </div>
 
-      <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
+      <div className="overflow-x-auto border border-neutral-200 dark:border-neutral-700 rounded-xl">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+          <thead className="bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
             <tr>
               <th className="p-3 font-semibold">Date</th>
               <th className="p-3 font-semibold">Category</th>
@@ -96,14 +96,14 @@ export default function FreelanceExpenseLog({ activeTool }: { activeTool: string
               <th className="p-3 font-semibold w-10"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono">
+          <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800 font-mono">
             {expenses.length === 0 ? (
-              <tr><td colSpan={5} className="p-6 text-center text-slate-500 font-sans italic">No expenses logged yet.</td></tr>
+              <tr><td colSpan={5} className="p-6 text-center text-neutral-500 font-sans italic">No expenses logged yet.</td></tr>
             ) : (
               expenses.map(e => (
-                <tr key={e.id} className="dark:text-slate-300">
+                <tr key={e.id} className="dark:text-neutral-300">
                   <td className="p-3">{e.date}</td>
-                  <td className="p-3"><span className="bg-slate-200 dark:bg-slate-700 px-2 py-1 rounded-md text-[10px] font-sans font-bold uppercase tracking-wider">{e.category}</span></td>
+                  <td className="p-3"><span className="bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded-md text-[10px] font-sans font-bold uppercase tracking-wider">{e.category}</span></td>
                   <td className="p-3 font-sans truncate max-w-[200px]">{e.purpose}</td>
                   <td className="p-3 text-right font-bold">{formatMoney(e.amount)}</td>
                   <td className="p-3 text-right"><button onClick={() => setExpenses(expenses.filter(x => x.id !== e.id))} className="text-red-400 hover:text-red-600 text-lg">×</button></td>

@@ -354,31 +354,31 @@ export default function LanguageLearning() {
     });
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-neutral-900 rounded-3xl p-6 md:p-8 shadow-sm border border-neutral-200 dark:border-neutral-800">
       
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">Language Phrasebook & Pronouncer</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">Learn essential phrases, build a custom dictionary, and test your pronunciation with your microphone.</p>
+          <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-2">Language Phrasebook & Pronouncer</h2>
+          <p className="text-neutral-500 dark:text-neutral-400 text-sm">Learn essential phrases, build a custom dictionary, and test your pronunciation with your microphone.</p>
         </div>
         
-        <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shrink-0">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Speed</span>
+        <div className="flex items-center gap-1 bg-neutral-50 dark:bg-neutral-800/80 p-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700 shrink-0">
+          <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest px-2">Speed</span>
           <button 
             onClick={() => setPlaybackSpeed(0.85)}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${playbackSpeed === 0.85 ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${playbackSpeed === 0.85 ? 'bg-orange-600 text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
           >
             Normal
           </button>
           <button 
             onClick={() => setPlaybackSpeed(0.6)}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${playbackSpeed === 0.6 ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${playbackSpeed === 0.6 ? 'bg-orange-600 text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
           >
             Slow
           </button>
           <button 
             onClick={() => setPlaybackSpeed(0.4)}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${playbackSpeed === 0.4 ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${playbackSpeed === 0.4 ? 'bg-orange-600 text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'}`}
           >
             Very Slow
           </button>
@@ -397,8 +397,8 @@ export default function LanguageLearning() {
             }}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all border ${
               activeCoreLang === lang
-                ? "bg-blue-50 dark:bg-blue-900/30 border-blue-600 text-blue-700 dark:border-sky-400 dark:text-sky-400 shadow-sm"
-                : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-blue-300 dark:hover:border-slate-500"
+                ? "bg-orange-50 dark:bg-orange-900/30 border-orange-600 text-orange-700 dark:border-sky-400 dark:text-sky-400 shadow-sm"
+                : "bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 hover:border-orange-300 dark:hover:border-neutral-500"
             }`}
           >
             <span className="text-lg">{masterCoreLanguages[lang].flag}</span>
@@ -408,17 +408,17 @@ export default function LanguageLearning() {
       </div>
 
       {/* CUSTOM TRANSLATOR SECTION */}
-      <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 mb-10">
+      <div className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 mb-10">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-            <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <h3 className="text-sm font-bold text-neutral-800 dark:text-neutral-200 flex items-center gap-2">
+            <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
             Custom Translation
           </h3>
           
           <select 
             value={selectedCustomLang}
             onChange={(e) => setSelectedCustomLang(e.target.value)}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white cursor-pointer"
+            className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-1.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-500 text-neutral-800 dark:text-white cursor-pointer"
           >
             {allLanguages.map((lang) => (
               <option key={lang.code} value={lang.code}>Translate to {lang.name}</option>
@@ -433,12 +433,12 @@ export default function LanguageLearning() {
             onChange={(e) => setCustomText(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleTranslate()}
             placeholder="Type an English phrase here..."
-            className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white"
+            className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-neutral-800 dark:text-white"
           />
           <button 
             onClick={() => handleTranslate()}
             disabled={isTranslating || !customText.trim()}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors disabled:opacity-50 text-sm whitespace-nowrap"
+            className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-xl transition-colors disabled:opacity-50 text-sm whitespace-nowrap"
           >
             {isTranslating ? "Translating..." : "Save & Translate"}
           </button>
@@ -455,18 +455,18 @@ export default function LanguageLearning() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             
             <div className="flex items-center gap-4">
-              <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Your Saved Dictionary</h3>
+              <h3 className="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Your Saved Dictionary</h3>
               
-              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg border border-neutral-200 dark:border-neutral-700">
                 <button 
                   onClick={() => setShowAllSaved(false)} 
-                  className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${!showAllSaved ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-sky-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${!showAllSaved ? 'bg-white dark:bg-neutral-700 shadow-sm text-orange-600 dark:text-sky-400' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
                 >
                   Current Only
                 </button>
                 <button 
                   onClick={() => setShowAllSaved(true)} 
-                  className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${showAllSaved ? 'bg-white dark:bg-slate-700 shadow-sm text-blue-600 dark:text-sky-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${showAllSaved ? 'bg-white dark:bg-neutral-700 shadow-sm text-orange-600 dark:text-sky-400' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
                 >
                   Show All
                 </button>
@@ -478,14 +478,14 @@ export default function LanguageLearning() {
           
           <div className="flex flex-col gap-6">
             {displayGroups.length === 0 ? (
-               <p className="text-sm text-slate-500 italic">No custom phrases saved for {activeCustomLangName} yet.</p>
+               <p className="text-sm text-neutral-500 italic">No custom phrases saved for {activeCustomLangName} yet.</p>
             ) : (
               displayGroups.map((langGroup) => (
                 <div key={langGroup} className="flex flex-col gap-3">
                   
-                  <h4 className="text-xs font-extrabold text-blue-500 dark:text-sky-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800 pb-2 flex justify-between items-center">
+                  <h4 className="text-xs font-extrabold text-orange-500 dark:text-sky-400 uppercase tracking-widest border-b border-neutral-200 dark:border-neutral-800 pb-2 flex justify-between items-center">
                     {langGroup} 
-                    {langGroup === activeCustomLangName && <span className="text-[10px] text-slate-400 lowercase tracking-normal font-medium bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">Active Selection</span>}
+                    {langGroup === activeCustomLangName && <span className="text-[10px] text-neutral-400 lowercase tracking-normal font-medium bg-neutral-100 dark:bg-neutral-800 px-2 py-0.5 rounded-full">Active Selection</span>}
                   </h4>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -493,17 +493,17 @@ export default function LanguageLearning() {
                       const isPlaying = playingIndex === item.id;
 
                       return (
-                        <div key={item.id} className="flex flex-col p-4 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm hover:border-blue-300 dark:hover:border-sky-500 transition-colors group relative overflow-hidden">
+                        <div key={item.id} className="flex flex-col p-4 bg-white dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-sm hover:border-orange-300 dark:hover:border-sky-500 transition-colors group relative overflow-hidden">
                           
                           {/* CSS LAYOUT FIX: Replaced absolute positioning with a robust flex container */}
                           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start w-full gap-4">
                             
                             {/* Text Container: Flex-1 forces it to take available space and wrap smoothly */}
                             <div className="flex flex-col gap-1 min-w-0 flex-1">
-                              <span className="text-xs text-slate-400 truncate">{item.original}</span>
+                              <span className="text-xs text-neutral-400 truncate">{item.original}</span>
                               
                               <span 
-                                className={`text-base font-bold transition-colors duration-300 ${isPlaying ? 'text-blue-600 dark:text-sky-400' : 'text-slate-800 dark:text-slate-100'}`} 
+                                className={`text-base font-bold transition-colors duration-300 ${isPlaying ? 'text-orange-600 dark:text-sky-400' : 'text-neutral-800 dark:text-neutral-100'}`} 
                                 style={{ wordBreak: 'break-word' }}
                               >
                                 {item.translated}
@@ -511,7 +511,7 @@ export default function LanguageLearning() {
 
                               {/* NEW: Clickable Romanized Phonetic for Custom Translations */}
                               {item.phonetic && (
-                                <div className={`flex flex-wrap gap-x-1 mt-0.5 text-xs font-medium italic transition-colors duration-300 ${isPlaying ? 'text-blue-500/80 dark:text-sky-400/80' : 'text-slate-500/80 dark:text-slate-400/80'}`}>
+                                <div className={`flex flex-wrap gap-x-1 mt-0.5 text-xs font-medium italic transition-colors duration-300 ${isPlaying ? 'text-orange-500/80 dark:text-sky-400/80' : 'text-neutral-500/80 dark:text-neutral-400/80'}`}>
                                   {item.phonetic.split(/([ -])/).map((chunk, i) => {
                                     if (chunk === ' ' || chunk === '-') {
                                       return <span key={i}>{chunk}</span>;
@@ -523,7 +523,7 @@ export default function LanguageLearning() {
                                           e.stopPropagation();
                                           playPhoneticChunk(chunk);
                                         }}
-                                        className="hover:text-blue-600 dark:hover:text-sky-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+                                        className="hover:text-orange-600 dark:hover:text-sky-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded transition-colors outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
                                         title={`Sound out "${chunk}"`}
                                       >
                                         {chunk}
@@ -538,7 +538,7 @@ export default function LanguageLearning() {
                             <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center mt-2 sm:mt-0">
                               <button
                                 onClick={() => handleTranslate(item.original)}
-                                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors opacity-0 group-hover:opacity-100"
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/30 transition-colors opacity-0 group-hover:opacity-100"
                                 title={`Translate this to ${activeCustomLangName}`}
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
@@ -546,7 +546,7 @@ export default function LanguageLearning() {
 
                               <button
                                 onClick={() => deleteHistoryItem(item.id)}
-                                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors opacity-0 group-hover:opacity-100"
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors opacity-0 group-hover:opacity-100"
                                 title="Remove item"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -557,7 +557,7 @@ export default function LanguageLearning() {
                                 className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
                                   listeningId === item.id
                                     ? "bg-red-500 text-white shadow-md animate-pulse"
-                                    : "bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
+                                    : "bg-neutral-100 dark:bg-neutral-700/50 text-neutral-500 dark:text-neutral-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
                                 }`}
                                 title="Test Pronunciation"
                               >
@@ -568,8 +568,8 @@ export default function LanguageLearning() {
                                 onClick={() => playAudio(item.translated, item.voiceCode, item.id)}
                                 className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
                                   isPlaying
-                                    ? "bg-blue-600 text-white shadow-md animate-pulse"
-                                    : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                                    ? "bg-orange-600 text-white shadow-md animate-pulse"
+                                    : "bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-sky-400 hover:bg-orange-100 dark:hover:bg-orange-900/50"
                                 }`}
                                 title="Listen"
                               >
@@ -599,23 +599,23 @@ export default function LanguageLearning() {
       )}
 
       {/* Phrases Grid (Core Languages Only) */}
-      <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">Essential {masterCoreLanguages[activeCoreLang].name} Phrases</h3>
+      <h3 className="text-sm font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-4">Essential {masterCoreLanguages[activeCoreLang].name} Phrases</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {masterCoreLanguages[activeCoreLang].phrases.map((phrase, idx) => {
           const uniqueId = `essential-${activeCoreLang}-${idx}`;
           const isPlaying = playingIndex === uniqueId;
 
           return (
-            <div key={uniqueId} className="flex flex-col p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80 rounded-2xl hover:border-blue-400 dark:hover:border-sky-500 transition-colors group">
+            <div key={uniqueId} className="flex flex-col p-4 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700/80 rounded-2xl hover:border-orange-400 dark:hover:border-sky-500 transition-colors group">
               
               {/* CSS LAYOUT FIX APPLIED HERE AS WELL */}
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start w-full gap-4">
                 
                 <div className="flex flex-col gap-1 min-w-0 flex-1">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{phrase.en}</span>
+                  <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider">{phrase.en}</span>
                   
                   <span 
-                    className={`text-base font-bold transition-colors duration-300 ${isPlaying ? 'text-blue-600 dark:text-sky-400' : 'text-slate-800 dark:text-slate-100'}`}
+                    className={`text-base font-bold transition-colors duration-300 ${isPlaying ? 'text-orange-600 dark:text-sky-400' : 'text-neutral-800 dark:text-neutral-100'}`}
                     style={{ wordBreak: 'break-word' }}
                   >
                     {phrase.target}
@@ -623,7 +623,7 @@ export default function LanguageLearning() {
                   
                   {/* CLICKABLE PHONETIC CHUNKS */}
                   {phrase.phonetic && (
-                    <div className={`flex flex-wrap gap-x-1 mt-0.5 text-xs font-medium italic transition-colors duration-300 ${isPlaying ? 'text-blue-500/80 dark:text-sky-400/80' : 'text-slate-500/80 dark:text-slate-400/80'}`}>
+                    <div className={`flex flex-wrap gap-x-1 mt-0.5 text-xs font-medium italic transition-colors duration-300 ${isPlaying ? 'text-orange-500/80 dark:text-sky-400/80' : 'text-neutral-500/80 dark:text-neutral-400/80'}`}>
                       {phrase.phonetic.split(/([ -])/).map((chunk, i) => {
                         if (chunk === ' ' || chunk === '-') {
                           return <span key={i}>{chunk}</span>;
@@ -635,7 +635,7 @@ export default function LanguageLearning() {
                               e.stopPropagation();
                               playPhoneticChunk(chunk);
                             }}
-                            className="hover:text-blue-600 dark:hover:text-sky-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded transition-colors outline-none focus:ring-2 focus:ring-blue-500/50 cursor-pointer"
+                            className="hover:text-orange-600 dark:hover:text-sky-400 hover:bg-orange-50 dark:hover:bg-orange-900/30 rounded transition-colors outline-none focus:ring-2 focus:ring-orange-500/50 cursor-pointer"
                             title={`Sound out "${chunk}"`}
                           >
                             {chunk}
@@ -652,7 +652,7 @@ export default function LanguageLearning() {
                     className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
                       listeningId === uniqueId
                         ? "bg-red-500 text-white shadow-md animate-pulse"
-                        : "bg-white dark:bg-slate-700/50 text-slate-400 border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800"
+                        : "bg-white dark:bg-neutral-700/50 text-neutral-400 border border-neutral-200 dark:border-neutral-700 shadow-sm hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800"
                     }`}
                     title="Test Pronunciation"
                   >
@@ -663,8 +663,8 @@ export default function LanguageLearning() {
                     onClick={() => playAudio(phrase.target, masterCoreLanguages[activeCoreLang].voiceCode, uniqueId)}
                     className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-all ${
                       isPlaying
-                        ? "bg-blue-600 text-white shadow-md animate-pulse"
-                        : "bg-white dark:bg-slate-800 text-blue-600 dark:text-sky-400 border border-slate-200 dark:border-slate-700 shadow-sm group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40"
+                        ? "bg-orange-600 text-white shadow-md animate-pulse"
+                        : "bg-white dark:bg-neutral-800 text-orange-600 dark:text-sky-400 border border-neutral-200 dark:border-neutral-700 shadow-sm group-hover:bg-orange-50 dark:group-hover:bg-orange-900/40"
                     }`}
                     title="Listen"
                   >

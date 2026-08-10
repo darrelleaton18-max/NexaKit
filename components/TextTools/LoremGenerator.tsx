@@ -42,16 +42,16 @@ export default function LoremGenerator({ activeTool }: { activeTool: string }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Dummy Lorem Generator</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Generate placeholder text instantly for your web design mockups.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Generate placeholder text instantly for your web design mockups.</p>
 
       <div className="flex flex-col sm:flex-row items-end gap-4 mb-6">
         <div>
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Paragraphs</label>
-          <input type="number" min="1" max="50" value={paragraphs} onChange={(e) => setParagraphs(Number(e.target.value))} className="w-32 p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white" />
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Paragraphs</label>
+          <input type="number" min="1" max="50" value={paragraphs} onChange={(e) => setParagraphs(Number(e.target.value))} className="w-32 p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white" />
         </div>
-        <button onClick={generateLorem} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors shadow-sm">
+        <button onClick={generateLorem} className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-lg transition-colors shadow-sm">
           Generate Text
         </button>
       </div>
@@ -61,10 +61,10 @@ export default function LoremGenerator({ activeTool }: { activeTool: string }) {
           readOnly
           value={output}
           placeholder="Generated text will appear here..."
-          className="w-full h-64 p-4 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-xl dark:text-white resize-y focus:outline-none"
+          className="w-full h-64 p-4 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-xl dark:text-white resize-y focus:outline-none"
         />
         {output && (
-          <button onClick={handleCopy} className={`absolute top-4 right-4 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600'}`}>
+          <button onClick={handleCopy} className={`absolute top-4 right-4 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-all ${copied ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-600'}`}>
             {copied ? "✓ Copied!" : "Copy to Clipboard"}
           </button>
         )}

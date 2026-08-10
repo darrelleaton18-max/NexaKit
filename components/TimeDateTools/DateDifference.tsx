@@ -47,26 +47,26 @@ export default function DateDifference({ activeTool }: { activeTool: string }) {
   const res = calculateDiff();
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Date Difference Calculator</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Find the exact span between two dates, including business days.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Find the exact span between two dates, including business days.</p>
 
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="flex-1">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">Start Date</label>
-          <input type="date" value={date1} onChange={(e) => setDate1(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium cursor-pointer" />
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Start Date</label>
+          <input type="date" value={date1} onChange={(e) => setDate1(e.target.value)} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-medium cursor-pointer" />
         </div>
         <div className="flex-1">
-          <label className="block text-xs font-bold mb-2 dark:text-slate-300">End Date</label>
-          <input type="date" value={date2} onChange={(e) => setDate2(e.target.value)} className="w-full p-3 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white font-medium cursor-pointer" />
+          <label className="block text-xs font-bold mb-2 dark:text-neutral-300">End Date</label>
+          <input type="date" value={date2} onChange={(e) => setDate2(e.target.value)} className="w-full p-3 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white font-medium cursor-pointer" />
         </div>
       </div>
 
       {res ? (
         <div className="space-y-4">
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 p-6 rounded-xl text-center">
-            <span className="block text-sm font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider mb-2">Exact Breakdown</span>
-            <span className="text-xl md:text-3xl font-black text-blue-900 dark:text-white">
+          <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/50 p-6 rounded-xl text-center">
+            <span className="block text-sm font-bold text-orange-600 dark:text-sky-400 uppercase tracking-wider mb-2">Exact Breakdown</span>
+            <span className="text-xl md:text-3xl font-black text-orange-900 dark:text-white">
               {res.years > 0 && `${res.years} Years, `}
               {res.months > 0 && `${res.months} Months, `}
               {res.days} Days
@@ -74,13 +74,13 @@ export default function DateDifference({ activeTool }: { activeTool: string }) {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-              <span className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Total Days</span>
-              <span className="text-2xl font-mono font-bold text-slate-800 dark:text-white">{res.totalDays}</span>
+            <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+              <span className="block text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-1">Total Days</span>
+              <span className="text-2xl font-mono font-bold text-neutral-800 dark:text-white">{res.totalDays}</span>
             </div>
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-              <span className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Total Weeks</span>
-              <span className="text-2xl font-mono font-bold text-slate-800 dark:text-white">{res.totalWeeks}</span>
+            <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+              <span className="block text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase mb-1">Total Weeks</span>
+              <span className="text-2xl font-mono font-bold text-neutral-800 dark:text-white">{res.totalWeeks}</span>
             </div>
             <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800/50">
               <span className="block text-xs font-bold text-emerald-600 dark:text-emerald-500 uppercase mb-1">Working Days (Mon-Fri)</span>
@@ -89,7 +89,7 @@ export default function DateDifference({ activeTool }: { activeTool: string }) {
           </div>
         </div>
       ) : (
-        <div className="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-xl border border-slate-200 dark:border-slate-700 text-center text-slate-500 dark:text-slate-400 font-medium">
+        <div className="bg-neutral-50 dark:bg-neutral-800/50 p-8 rounded-xl border border-neutral-200 dark:border-neutral-700 text-center text-neutral-500 dark:text-neutral-400 font-medium">
           Select two dates above to see the breakdown.
         </div>
       )}

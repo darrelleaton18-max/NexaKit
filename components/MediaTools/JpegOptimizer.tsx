@@ -80,44 +80,44 @@ export default function JpegOptimizer({ activeTool, isDark }: { activeTool: stri
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">JPEG Optimizer & Converter</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Compress JPEGs with fine-tuned quality control and manage background mattes for transparent images.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Compress JPEGs with fine-tuned quality control and manage background mattes for transparent images.</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
           <div>
-            <label className="block text-xs font-bold mb-2 dark:text-slate-300">Upload Image</label>
-            <input type="file" accept="image/*" onChange={handleUpload} className="w-full p-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-800 rounded-lg dark:text-white text-sm cursor-pointer" />
+            <label className="block text-xs font-bold mb-2 dark:text-neutral-300">Upload Image</label>
+            <input type="file" accept="image/*" onChange={handleUpload} className="w-full p-2 border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 rounded-lg dark:text-white text-sm cursor-pointer" />
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
+          <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700 space-y-4">
             <div>
-              <label className="block text-xs font-bold mb-1 dark:text-slate-300">JPEG Quality: {quality}%</label>
+              <label className="block text-xs font-bold mb-1 dark:text-neutral-300">JPEG Quality: {quality}%</label>
               <input type="range" min="1" max="100" value={quality} onChange={(e) => handleQualityChange(Number(e.target.value))} disabled={!imgSrc} className="w-full" />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
-                <label className="block text-xs font-bold dark:text-slate-300">Background Matte Color</label>
-                <span className="text-[11px] text-slate-400 block">Replaces transparent pixels</span>
+                <label className="block text-xs font-bold dark:text-neutral-300">Background Matte Color</label>
+                <span className="text-[11px] text-neutral-400 block">Replaces transparent pixels</span>
               </div>
               <input type="color" value={bgColor} onChange={(e) => handleColorChange(e.target.value)} disabled={!imgSrc} className="w-10 h-10 rounded cursor-pointer border-0 bg-transparent" />
             </div>
           </div>
 
-          <button onClick={downloadJpg} disabled={!previewUrl} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+          <button onClick={downloadJpg} disabled={!previewUrl} className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-neutral-400 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
             Download Optimized JPG ({fileSize})
           </button>
         </div>
 
         <div className="flex flex-col gap-4">
-          <label className="block text-xs font-bold dark:text-slate-300">Live Preview</label>
-          <div className="flex-1 min-h-[250px] bg-slate-100 dark:bg-slate-900 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex items-center justify-center overflow-hidden relative" style={checkerboardStyle}>
+          <label className="block text-xs font-bold dark:text-neutral-300">Live Preview</label>
+          <div className="flex-1 min-h-[250px] bg-neutral-100 dark:bg-neutral-900 border-2 border-dashed border-neutral-300 dark:border-neutral-700 rounded-xl flex items-center justify-center overflow-hidden relative" style={checkerboardStyle}>
             {previewUrl ? (
               <img src={previewUrl} alt="JPG Preview" className="max-w-full max-h-[350px] object-contain relative z-10 shadow-xl" />
             ) : (
-              <span className="text-sm font-semibold text-slate-400 bg-white/80 dark:bg-slate-900/80 px-4 py-2 rounded-lg relative z-10">Upload an image to optimize</span>
+              <span className="text-sm font-semibold text-neutral-400 bg-white/80 dark:bg-neutral-900/80 px-4 py-2 rounded-lg relative z-10">Upload an image to optimize</span>
             )}
           </div>
         </div>

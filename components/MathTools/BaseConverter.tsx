@@ -25,9 +25,9 @@ export default function BaseConverter({ activeTool }: { activeTool: string }) {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 animate-in fade-in duration-300">
+    <div className="bg-white dark:bg-neutral-900 p-6 md:p-8 rounded-xl shadow-sm border border-neutral-200 dark:border-neutral-800 animate-in fade-in duration-300">
       <h2 className="text-2xl font-bold mb-1 dark:text-white">Number Base Converter</h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Type into any format below to instantly translate values across bases.</p>
+      <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">Type into any format below to instantly translate values across bases.</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <BaseInput label="Decimal (Base 10)" val={dec} onChange={(v) => handleUpdate(v, 10)} placeholder="e.g. 255" />
@@ -41,14 +41,14 @@ export default function BaseConverter({ activeTool }: { activeTool: string }) {
 
 function BaseInput({ label, val, onChange, placeholder }: { label: string, val: string, onChange: (v: string) => void, placeholder: string }) {
   return (
-    <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
-      <label className="block text-xs font-bold mb-2 text-blue-600 dark:text-sky-400 uppercase tracking-wider">{label}</label>
+    <div className="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-200 dark:border-neutral-700">
+      <label className="block text-xs font-bold mb-2 text-orange-600 dark:text-sky-400 uppercase tracking-wider">{label}</label>
       <input 
         type="text" 
         value={val} 
         onChange={(e) => onChange(e.target.value)} 
         placeholder={placeholder}
-        className="w-full p-3 text-lg font-mono border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg dark:text-white" 
+        className="w-full p-3 text-lg font-mono border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 rounded-lg dark:text-white" 
       />
     </div>
   );
