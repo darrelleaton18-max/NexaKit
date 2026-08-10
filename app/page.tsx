@@ -6,6 +6,53 @@ import { navGroups } from "../components/navData";
 import { LazyAd } from "../components/GlobalShell";
 import RollingMarquee from "../components/RollingMarquee";
 
+// Deletes any emojis or symbols before the first actual letter
+const cleanCategoryName = (name: string) => {
+  return name.replace(/^[^a-zA-Z]+/, '').trim();
+};
+
+// Smart component that assigns custom SVGs based on keywords in the tool's name
+const ToolIcon = ({ toolName, className }: { toolName: string, className?: string }) => {
+  const name = toolName.toLowerCase();
+  
+  // PDF / Document Tools
+  if (name.includes("merge")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7v8a2 2 0 002 2h6M8 7l-3 3m3-3l3 3m5-8V7a2 2 0 00-2-2h-2" /></svg>;
+  if (name.includes("split") || name.includes("cut")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.121 14.121L19 19m-4.879-4.879l-4.242-4.242m4.242 4.242L9 9m5.121 5.121A3 3 0 1015 15a3 3 0 00-.879-.879M9 9A3 3 0 106 6a3 3 0 003 3z" /></svg>;
+  if (name.includes("compress") || name.includes("reduce")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>;
+  if (name.includes("rotate")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>;
+  if (name.includes("watermark") || name.includes("stamp")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19h6" /></svg>;
+  if (name.includes("pdf")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>;
+
+  // Finance Tools
+  if (name.includes("tax") || name.includes("income")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
+  if (name.includes("currency")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>;
+  if (name.includes("mortgage") || name.includes("loan") || name.includes("buy")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>;
+  if (name.includes("compound") || name.includes("net worth") || name.includes("investment")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>;
+  if (name.includes("budget") || name.includes("audit") || name.includes("fee")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
+
+  // Time Tools
+  if (name.includes("stopwatch") || name.includes("timer") || name.includes("clock")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+  if (name.includes("date") || name.includes("day")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
+
+  // Text & String Tools
+  if (name.includes("word") || name.includes("character") || name.includes("lorem")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>;
+  if (name.includes("case") || name.includes("letter")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>;
+  if (name.includes("sort") || name.includes("list")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>;
+
+  // Math Tools
+  if (name.includes("percent") || name.includes("calculator") || name.includes("metric")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>;
+
+  // Utilities / Dev / Media
+  if (name.includes("password") || name.includes("hash")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>;
+  if (name.includes("qr") || name.includes("barcode")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>;
+  if (name.includes("image") || name.includes("png") || name.includes("jpg")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
+  if (name.includes("wheel") || name.includes("random") || name.includes("dice")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+  if (name.includes("json") || name.includes("xml") || name.includes("code")) return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>;
+
+  // Fallback Generic Icon
+  return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>;
+};
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All Categories");
@@ -22,40 +69,28 @@ export default function Home() {
     return () => window.removeEventListener('nexa-search', handleSearch);
   }, []);
 
-  const allCategories = ["All Categories", ...navGroups.map(g => g.group)];
-
-  const categoryIcons: Record<string, string> = {
-    "Finance Calculators": "💰",
-    "Finance Trackers": "📊",
-    "Math": "🧮",
-    "Time": "⏱️",
-    "Text": "📝",
-    "Documents": "📄",
-    "Dev": "⚙️",
-    "Random": "🎲",
-    "Media": "🖼️",
-    "Language": "🗣️",
-  };
+  const allCategories = ["All Categories", ...navGroups.map(g => cleanCategoryName(g.group))];
 
   const filteredGroups = navGroups.map(group => {
+    const cleanName = cleanCategoryName(group.group);
     const filteredTools = group.tools.filter(tool =>
       tool.label.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    return { ...group, tools: filteredTools };
+    return { ...group, cleanName, tools: filteredTools };
   }).filter(group => {
-    const matchesCategory = activeCategory === "All Categories" || group.group === activeCategory;
+    const matchesCategory = activeCategory === "All Categories" || group.cleanName === activeCategory;
     return matchesCategory && group.tools.length > 0;
   });
 
   return (
     <div className="w-full flex flex-col items-center">
       
-      {/* TIGHTENED SPACING: Reduced padding here */}
+      {/* ROLLING MARQUEE */}
       <div className="w-full pt-1 pb-0">
         <RollingMarquee />
       </div>
       
-      {/* TIGHTENED SPACING: Reduced top padding and bottom margin */}
+      {/* HERO SECTION */}
       <div className="w-full pt-6 pb-12 md:pt-10 md:pb-16 flex flex-col items-center text-center">
         
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-bold mb-6 shadow-sm">
@@ -79,13 +114,12 @@ export default function Home() {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+            className={`flex items-center px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
               activeCategory === cat
                 ? "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-lg shadow-black/10 dark:shadow-white/10"
                 : "bg-white dark:bg-neutral-900/40 border border-neutral-200 dark:border-white/5 text-neutral-600 dark:text-neutral-400 hover:border-orange-500/50 hover:text-orange-600 dark:hover:text-orange-400"
             }`}
           >
-            {categoryIcons[cat] && <span>{categoryIcons[cat]}</span>}
             {cat}
           </button>
         ))}
@@ -103,8 +137,8 @@ export default function Home() {
           <div key={idx} className="w-full bg-neutral-50 dark:bg-[#131313] border border-neutral-200 dark:border-white/5 rounded-[32px] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
             
             <div className="flex items-center justify-between mb-8 pb-4 border-b border-neutral-200/60 dark:border-white/[0.05]">
-              <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-white flex items-center gap-3 tracking-tight">
-                {categoryIcons[group.group]} {group.group}
+              <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+                {group.cleanName}
               </h2>
               <span className="text-xs font-bold text-neutral-400 dark:text-neutral-500 bg-white dark:bg-black/20 px-4 py-1.5 rounded-full border border-neutral-200 dark:border-white/5 shadow-sm">
                 {group.tools.length} Tools
@@ -113,7 +147,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
               {group.tools.map((tool) => {
-                const categorySlug = group.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
+                const categorySlug = group.cleanName.replace(/[^a-zA-Z]/g, "").toLowerCase();
                 
                 return (
                   <Link
@@ -121,21 +155,19 @@ export default function Home() {
                     href={`/${categorySlug}/${tool.id}`}
                     className="group flex items-center p-5 bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] rounded-[24px] hover:border-orange-500/40 dark:hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-neutral-100 dark:bg-black/40 text-neutral-500 dark:text-neutral-400 group-hover:bg-orange-500/10 group-hover:text-orange-600 dark:group-hover:text-orange-500 flex items-center justify-center font-black text-2xl mr-4 transition-colors duration-300 shadow-inner">
-                      {tool.label.charAt(0)}
+                    {/* LEFT COLUMN: Custom SVG Icon */}
+                    <div className="w-14 h-14 shrink-0 rounded-2xl bg-neutral-100 dark:bg-black/40 text-neutral-500 dark:text-neutral-400 group-hover:bg-orange-500/10 group-hover:text-orange-600 dark:group-hover:text-orange-500 flex items-center justify-center mr-4 transition-colors duration-300 shadow-inner">
+                      <ToolIcon toolName={tool.label} className="w-6 h-6" />
                     </div>
                     
+                    {/* RIGHT COLUMN: Title & Category Name */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-extrabold text-neutral-900 dark:text-neutral-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors truncate text-[17px]">
+                      <h3 className="font-extrabold text-neutral-900 dark:text-neutral-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors text-[16px] truncate">
                         {tool.label}
                       </h3>
                       <p className="text-[11px] font-bold text-neutral-500 dark:text-neutral-500 truncate mt-1 uppercase tracking-wider">
-                        {group.group}
+                        {group.cleanName}
                       </p>
-                    </div>
-                    
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center bg-neutral-50 dark:bg-black/40 text-neutral-400 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300 shrink-0 transform group-hover:translate-x-1">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
                     </div>
                   </Link>
                 );

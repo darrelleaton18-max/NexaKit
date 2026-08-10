@@ -11,7 +11,7 @@ export type NavGroup = {
 
 export const navGroups: NavGroup[] = [
   {
-    group: "💰 Finance Calculators", // Renamed!
+    group: "Finance Calculators", // Renamed!
     tools: [
       { id: "tax-calculator", label: "Income Tax Calculator" }, // Global (Has toggle)
       { id: "currency-converter", label: "Currency Converter" },
@@ -23,7 +23,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    group: "📊 Finance Trackers", // Renamed!
+    group: "Finance Trackers", // Renamed!
     tools: [
       { id: "net-worth", label: "Net Worth Tracker" },
       { id: "budget-planner", label: "Zero-Based Budget" },
@@ -35,7 +35,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    group: "🧮 Math",
+    group: "Math",
     tools: [
       { id: "pct-calc", label: "Percentage Calculator" },
       { id: "unit-converter", label: "Metric / Unit Converter" },
@@ -45,7 +45,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    group: "⏱️ Time",
+    group: "Time",
     tools: [
       { id: "stopwatch", label: "Precision Stopwatch" },
       { id: "countdown", label: "Countdown Timer" },
@@ -55,7 +55,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    group: "📝 Text",
+    group: "Text",
     tools: [
       { id: "word-counter", label: "Word & Character Counter" },
       { id: "case-converter", label: "Text Case Converter" },
@@ -68,13 +68,13 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    group: "📄 Documents",
+    group: "Documents",
     tools: [
       { id: "pdf-studio", label: "PDF Studio (Merge & Edit)" },
     ],
   },
   {
-    group: "🛠️ Dev",
+    group: "Dev",
     tools: [
       { id: "json-format", label: "JSON Formatter / Minify" },
       { id: "base64", label: "Base64 Encoder / Decoder" },
@@ -85,7 +85,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    group: "🎲 Random",
+    group: "Random",
     tools: [
       { id: "password-gen", label: "Secure Password Generator" },
       { id: "num-gen", label: "Random Number Gen" },
@@ -96,7 +96,7 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    group: "🖼️ Media",
+    group: "Media",
     tools: [
       { id: "image-tools", label: "PNG & Image Studio" },
       { id: "jpg-tools", label: "JPEG Optimizer" },
