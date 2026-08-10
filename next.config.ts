@@ -1,10 +1,12 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'export',
-  basePath: '/NexaKit',
+  // Change 'OmniUtility' if your exact GitHub repository case-sensitivity differs
+  basePath: '/OmniUtility',
+  assetPrefix: '/OmniUtility/',
   images: {
-    unoptimized: true,
+    unoptimized: true, // Required for static GitHub Pages export
   },
 };
 
