@@ -1,166 +1,149 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { navGroups } from "../components/navData";
-import RollingMarquee from "../components/RollingMarquee";
+import { navGroups } from "../components/navData"; 
 
 export default function Home() {
-  const [region, setRegion] = useState("Global");
-  const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All Categories");
 
-  useEffect(() => {
-    const handleRegionSync = () => {
-      setRegion(localStorage.getItem("nexaRegion") || "Global");
-    };
-    handleRegionSync();
-    window.addEventListener("regionChange", handleRegionSync);
-    return () => window.removeEventListener("regionChange", handleRegionSync);
-  }, []);
+  const allCategories = ["All Categories", ...navGroups.map(g => g.group)];
 
-  // Filter groups and tools based on region, search query, and category filter pills
-  const filteredNavGroups = navGroups.map(g => ({
-    ...g,
-    tools: g.tools.filter(t => {
-      const matchesRegion = !t.regions || t.regions.includes(region) || t.regions.includes("Global");
-      const matchesSearch = searchQuery === "" || t.label.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === "All" || g.group.includes(activeCategory);
-      return matchesRegion && matchesSearch && matchesCategory;
-    })
-  })).filter(g => g.tools.length > 0);
-
-  // Simplified category name extractor
-  const categoryList = ["All", ...navGroups.map(g => g.group.replace(/[^a-zA-Z\s]/g, "").trim())];
+  const filteredGroups = navGroups.map(group => {
+    const filteredTools = group.tools.filter(tool =>
+      tool.label.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    return { ...group, tools: filteredTools };
+  }).filter(group => {
+    const matchesCategory = activeCategory === "All Categories" || group.group === activeCategory;
+    return matchesCategory && group.tools.length > 0;
+  });
 
   return (
-    <div className="flex flex-col gap-10 animate-in fade-in duration-300">
+    <div className="w-full flex flex-col items-center">
       
       {/* HERO SECTION */}
-      <div className="text-center py-10 md:py-14 bg-gradient-to-b from-slate-100/50 dark:from-slate-900/50 to-transparent rounded-3xl px-4 border border-slate-200/60 dark:border-slate-800/60 shadow-sm">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 text-xs font-bold mb-5 border border-blue-200 dark:border-blue-800/50 shadow-xs">
-          <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-sky-400 animate-pulse"></span>
+      <div className="w-full py-12 md:py-20 flex flex-col items-center text-center">
+        
+        {/* Status Pill */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-bold mb-8 shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
           ⚡ 30+ Professional Power Tools • Zero Server Lag
         </div>
-        
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
-          Instant utilities. <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-400 dark:from-sky-400 dark:to-blue-500">Zero friction.</span> Built for speed.
+
+        {/* Headline */}
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-slate-900 dark:text-white leading-tight">
+          Instant utilities. <span className="bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent">Zero friction.</span><br className="hidden md:block" /> Built for speed.
         </h1>
-        <p className="text-base md:text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed font-medium">
+
+        {/* Subheadline */}
+        <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mb-12 leading-relaxed">
           Instant financial calculators, text formatters, and data workflows running locally in your browser. No bloat, no accounts, and 100% private.
         </p>
 
-        {/* Search Bar */}
-        <div className="max-w-xl mx-auto relative mb-6">
-          <svg className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          <input 
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for any tool (e.g., Currency, Tax, QR Code, JSON)..."
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-all"
-          />
-          {searchQuery && (
-            <button 
-              onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-1 rounded-md"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-
-        <RollingMarquee />
-
-      </div>
-
-      {/* ========================================== */}
-      {/* INTERACTIVE CATEGORY FILTER PILLS BAR      */}
-      {/* ========================================== */}
-      <div>
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start md:justify-center">
-          {categoryList.map((cat, idx) => {
-            const isSelected = activeCategory === cat;
-            return (
-              <button
-                key={idx}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm ${
-                  isSelected 
-                    ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-md" 
-                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600"
-                }`}
-              >
-                {cat === "All" ? "All Categories" : cat}
-              </button>
-            );
-          })}
+        {/* Main Search Bar */}
+        <div className="w-full max-w-2xl relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-amber-500 rounded-2xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
+          <div className="relative flex items-center bg-white dark:bg-[#111115] border border-slate-200 dark:border-white/10 rounded-2xl px-5 shadow-xl transition-all group-hover:border-orange-500/40">
+            <svg className="w-6 h-6 text-slate-400 group-hover:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input
+              type="text"
+              placeholder="Search for any tool (e.g., Currency, Tax, QR Code, JSON)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent border-none outline-none px-4 py-5 text-slate-800 dark:text-slate-200 placeholder-slate-400 text-lg font-medium"
+            />
+          </div>
         </div>
       </div>
 
-      {/* ========================================== */}
-      {/* HORIZONTAL CLICKONTOOL ROW GRID LAYOUT     */}
-      {/* ========================================== */}
-      <div className="flex flex-col gap-12">
-        {filteredNavGroups.map((group, idx) => {
-          const cleanCategoryName = group.group.replace(/[^a-zA-Z\s]/g, "").trim();
-          return (
-            <div key={idx} className="flex flex-col gap-5">
-              
-              {/* Section Header */}
-              <div className="flex justify-between items-end pb-3 border-b border-slate-200 dark:border-slate-800">
-                <div>
-                  <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                    {group.group}
-                  </h2>
-                </div>
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
-                  {group.tools.length} Tools available
-                </span>
-              </div>
+      {/* CATEGORY FILTERS */}
+      <div className="w-full flex flex-wrap justify-center gap-2.5 mb-14">
+        {allCategories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+              activeCategory === cat
+                ? "bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg shadow-black/10 dark:shadow-white/10"
+                : "bg-white dark:bg-[#111115] border border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-orange-500/50 hover:text-orange-600 dark:hover:text-orange-400"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
 
-              {/* Horizontal Row Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {group.tools.map((tool) => {
-                  // Generate the URL-safe category slug for the link
-                  const categorySlug = group.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
-
-                  return (
-                    <Link
-                      key={tool.id}
-                      // Updated href to use the new route structure
-                      href={`/${categorySlug}/${tool.id}`}
-                      className="group flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-                    >
-                      {/* Left: Icon Badge + Title / Category Stack */}
-                      <div className="flex items-center gap-3.5 min-w-0 pr-2">
-                        <div className="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-sky-400 flex items-center justify-center font-bold text-base shadow-inner border border-blue-100 dark:border-blue-800/40 shrink-0 group-hover:scale-105 transition-transform">
-                          {tool.label.charAt(0)}
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-sky-400 transition-colors truncate">
-                            {tool.label}
-                          </span>
-                          <span className="text-xs font-medium text-slate-400 dark:text-slate-500 truncate mt-0.5">
-                            {cleanCategoryName}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Right: Clean Arrow Icon */}
-                      <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800/80 text-slate-400 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center transition-all shrink-0">
-                        <svg className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"></path></svg>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-
+      {/* TOOLS GRID */}
+      <div className="w-full flex flex-col gap-12">
+        {filteredGroups.map((group, idx) => (
+          <div key={idx} className="w-full">
+            
+            {/* Group Header */}
+            <div className="flex items-center justify-between mb-6 border-b border-slate-200 dark:border-white/[0.05] pb-3 px-2">
+              <h2 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-3">
+                {group.group === "Finance Calculators" && "💰"}
+                {group.group === "Finance Trackers" && "📊"}
+                {group.group === "Math" && "🧮"}
+                {group.group === "Time" && "⏱️"}
+                {group.group === "Text" && "📝"}
+                {group.group === "Documents" && "📄"}
+                {group.group === "Dev" && "⚙️"}
+                {group.group === "Random" && "🎲"}
+                {group.group === "Media" && "🖼️"}
+                {group.group === "Language" && "🗣️"}
+                {group.group}
+              </h2>
+              <span className="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-white/[0.03] px-3 py-1 rounded-full border border-slate-200 dark:border-white/5">
+                {group.tools.length} Tools
+              </span>
             </div>
-          );
-        })}
-      </div>
 
+            {/* Grid Items */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {group.tools.map((tool) => {
+                const categorySlug = group.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
+                
+                return (
+                  <Link
+                    key={tool.id}
+                    href={`/${categorySlug}/${tool.id}`}
+                    className="group flex items-center p-4 bg-white dark:bg-[#111115] border border-slate-200 dark:border-white/[0.05] rounded-[20px] hover:border-orange-500/50 dark:hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300"
+                  >
+                    {/* Tool Icon / Initial */}
+                    <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-white/[0.03] text-slate-500 dark:text-slate-400 group-hover:bg-orange-500/10 group-hover:text-orange-600 dark:group-hover:text-orange-500 flex items-center justify-center font-black text-2xl mr-4 transition-colors duration-300 shadow-inner">
+                      {tool.label.charAt(0)}
+                    </div>
+                    
+                    {/* Text Content */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-extrabold text-slate-900 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors truncate text-base">
+                        {tool.label}
+                      </h3>
+                      <p className="text-xs font-medium text-slate-500 dark:text-slate-500 truncate mt-1 uppercase tracking-wider">
+                        {group.group}
+                      </p>
+                    </div>
+                    
+                    {/* Hover Arrow */}
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-50 dark:bg-white/[0.02] text-slate-400 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300 shrink-0 transform group-hover:translate-x-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+            
+          </div>
+        ))}
+
+        {filteredGroups.length === 0 && (
+          <div className="text-center py-20 text-slate-500 dark:text-slate-400 font-medium">
+            No tools found matching "{searchQuery}".
+          </div>
+        )}
+      </div>
     </div>
   );
 }
