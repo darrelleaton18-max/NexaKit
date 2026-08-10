@@ -57,7 +57,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All Categories");
 
-  // Sync with global navbar search
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).nexaSearchQuery) {
       setSearchQuery((window as any).nexaSearchQuery);
@@ -108,16 +107,16 @@ export default function Home() {
 
       </div>
 
-      {/* CATEGORY FILTERS */}
+      {/* CATEGORY FILTERS (Added hover pop/lift animation) */}
       <div className="w-full flex flex-wrap justify-center gap-2.5 mb-10">
         {allCategories.map(cat => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`flex items-center px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+            className={`flex items-center px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 transform hover:-translate-y-0.5 ${
               activeCategory === cat
-                ? "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-lg shadow-black/10 dark:shadow-white/10"
-                : "bg-white dark:bg-neutral-900/40 border border-neutral-200 dark:border-white/5 text-neutral-600 dark:text-neutral-400 hover:border-orange-500/50 hover:text-orange-600 dark:hover:text-orange-400"
+                ? "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-lg shadow-black/10 dark:shadow-white/10 scale-105"
+                : "bg-white dark:bg-neutral-900/40 border border-neutral-200 dark:border-white/5 text-neutral-600 dark:text-neutral-400 hover:border-orange-500/50 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-neutral-50 dark:hover:bg-neutral-800"
             }`}
           >
             {cat}
@@ -153,21 +152,29 @@ export default function Home() {
                   <Link
                     key={tool.id}
                     href={`/${categorySlug}/${tool.id}`}
-                    className="group flex items-center p-5 bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] rounded-[24px] hover:border-orange-500/40 dark:hover:border-orange-500/40 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300"
+                    /* Added hover:-translate-y-1 hover:scale-[1.02] for that snappy pop animation */
+                    className="group flex items-center p-3.5 bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] rounded-2xl hover:border-orange-500/50 dark:hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"
                   >
-                    {/* LEFT COLUMN: Custom SVG Icon */}
-                    <div className="w-14 h-14 shrink-0 rounded-2xl bg-neutral-100 dark:bg-black/40 text-neutral-500 dark:text-neutral-400 group-hover:bg-orange-500/10 group-hover:text-orange-600 dark:group-hover:text-orange-500 flex items-center justify-center mr-4 transition-colors duration-300 shadow-inner">
-                      <ToolIcon toolName={tool.label} className="w-6 h-6" />
+                    {/* LEFT COLUMN: Icon */}
+                    <div className="w-11 h-11 shrink-0 rounded-xl bg-neutral-100 dark:bg-black/40 text-neutral-500 dark:text-neutral-400 group-hover:bg-orange-500/10 group-hover:text-orange-600 dark:group-hover:text-orange-500 flex items-center justify-center mr-3.5 transition-colors duration-300 shadow-inner">
+                      <ToolIcon toolName={tool.label} className="w-5 h-5" />
                     </div>
                     
-                    {/* RIGHT COLUMN: Title & Category Name */}
+                    {/* MIDDLE COLUMN: Title & Category Name */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-extrabold text-neutral-900 dark:text-neutral-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors text-[16px] truncate">
+                      <h3 className="font-extrabold text-neutral-900 dark:text-neutral-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors text-[14.5px] truncate">
                         {tool.label}
                       </h3>
-                      <p className="text-[11px] font-bold text-neutral-500 dark:text-neutral-500 truncate mt-1 uppercase tracking-wider">
+                      <p className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 truncate mt-0.5 uppercase tracking-wider">
                         {group.cleanName}
                       </p>
+                    </div>
+
+                    {/* RIGHT ARROW */}
+                    <div className="w-5 h-5 shrink-0 text-neutral-300 dark:text-neutral-600 group-hover:text-orange-500 group-hover:translate-x-1 transition-all duration-300 flex items-center justify-center ml-2">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
                     </div>
                   </Link>
                 );
