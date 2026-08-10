@@ -63,9 +63,9 @@ export default function Home() {
     }
     
     const handleSearch = (e: any) => setSearchQuery(e.detail);
-    window.addEventListener('nexa-search', handleSearch);
+    window.addEventListener('Omni-search', handleSearch);
     
-    return () => window.removeEventListener('nexa-search', handleSearch);
+    return () => window.removeEventListener('Omni-search', handleSearch);
   }, []);
 
   const allCategories = ["All Categories", ...navGroups.map(g => cleanCategoryName(g.group))];

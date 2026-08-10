@@ -132,7 +132,6 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Handle clicking outside of the search box to close the dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
@@ -148,7 +147,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       setIsDark(prefersDark);
 
-      const savedRegion = localStorage.getItem("nexaRegion");
+      const savedRegion = localStorage.getItem("omniRegion") || localStorage.getItem("nexaRegion");
       if (savedRegion) {
         setRegion(savedRegion);
       } else {
@@ -162,11 +161,11 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
         else if (tz.startsWith("Europe/")) detected = "EU";
         
         setRegion(detected);
-        localStorage.setItem("nexaRegion", detected);
+        localStorage.setItem("omniRegion", detected);
       }
 
       const handleRegionSync = () => {
-        setRegion(localStorage.getItem("nexaRegion") || "Global");
+        setRegion(localStorage.getItem("omniRegion") || localStorage.getItem("nexaRegion") || "Global");
       };
       window.addEventListener("regionChange", handleRegionSync);
       return () => window.removeEventListener("regionChange", handleRegionSync);
@@ -175,7 +174,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
 
   const handleRegionChange = (newRegion: string) => {
     setRegion(newRegion);
-    localStorage.setItem("nexaRegion", newRegion);
+    localStorage.setItem("omniRegion", newRegion);
     window.dispatchEvent(new Event("regionChange"));
   };
 
@@ -225,7 +224,6 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
     tools: g.tools.filter(t => !t.regions || t.regions.includes(region) || t.regions.includes("Global"))
   })).filter(g => g.tools.length > 0);
 
-  // Compile a flat list of all tools for the search dropdown
   const allTools = filteredNavGroups.flatMap(g => 
     g.tools.map(t => ({
       ...t,
@@ -244,35 +242,54 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
   return (
     <div className={`${isDark ? "dark" : ""} min-h-screen text-neutral-800 dark:text-neutral-100 selection:bg-orange-500 selection:text-white flex flex-col font-sans transition-colors duration-300 p-2 sm:p-4 md:p-6 lg:p-8`}>
       
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes spin-slow {
+          0% { transform: rotate3d(1, 1, 0, 0deg); }
+          100% { transform: rotate3d(1, 1, 0, 360deg); }
+        }
+        @keyframes spin-reverse {
+          0% { transform: rotate3d(0, 1, 1, 0deg); }
+          100% { transform: rotate3d(0, 1, 1, -360deg); }
+        }
+        @keyframes pulse-glow {
+          0%, 100% { filter: drop-shadow(0 0 4px rgba(249, 115, 22, 0.6)); }
+          50% { filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.9)); }
+        }
+        .animate-orbit-1 { animation: spin-slow 8s linear infinite; transform-origin: center; }
+        .animate-orbit-2 { animation: spin-reverse 6s linear infinite; transform-origin: center; }
+        .animate-orb { animation: pulse-glow 3s ease-in-out infinite; }
+      `}} />
+
       <div className="flex flex-1 w-full max-w-[1800px] mx-auto gap-4 lg:gap-8">
         
         <AdColumn side="left" layout={adLayout} />
 
         <div className="flex-1 flex flex-col bg-white dark:bg-neutral-950 rounded-[24px] md:rounded-[40px] shadow-2xl relative min-w-0 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
           
-          {/* FLOATING COMMAND CENTER HEADER */}
           <header className="sticky top-4 md:top-6 z-50 mx-4 md:mx-8 mb-6 backdrop-blur-2xl bg-white/90 dark:bg-neutral-900/90 border border-neutral-200 dark:border-white/10 rounded-2xl md:rounded-[2rem] px-6 lg:px-8 h-[72px] flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all">
             
             <div className="flex items-center gap-6">
-              <Link href="/" className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-400 flex items-center justify-center shadow-lg shadow-orange-500/20 text-white font-black text-xl">
-                  ⚡
+              <Link href="/" className="flex items-center gap-3 cursor-pointer group">
+                
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-neutral-900 via-neutral-800 to-neutral-900 border border-orange-500/30 flex items-center justify-center shadow-lg shadow-orange-500/20 relative overflow-hidden animate-orb">
+                  <div className="absolute w-4 h-4 rounded-full bg-gradient-to-tr from-orange-600 to-amber-400 shadow-md shadow-orange-500 z-10"></div>
+                  <div className="absolute w-7 h-7 rounded-full border border-neutral-400/60 animate-orbit-1 z-20"></div>
+                  <div className="absolute w-8 h-8 rounded-full border-2 border-dashed border-orange-500/80 animate-orbit-2 z-20"></div>
                 </div>
+
                 <div className="flex flex-col hidden sm:flex">
-                  <span className="font-extrabold text-xl tracking-tight text-neutral-900 dark:text-white">
-                    NexaKit
+                  <span className="font-extrabold text-xl tracking-tight text-neutral-900 dark:text-white group-hover:text-orange-500 transition-colors">
+                    Omni Utility
                   </span>
                 </div>
               </Link>
 
-              {/* EXPLORE TOOLS PILL (Dropdown) */}
               <div className="relative group hidden lg:block h-10 flex items-center">
                 <button className="flex items-center gap-2 h-full px-5 rounded-full border border-neutral-200 dark:border-neutral-700/50 text-sm font-semibold text-neutral-600 dark:text-neutral-300 hover:text-orange-600 dark:hover:text-white hover:border-orange-500/30 transition-all bg-neutral-50 dark:bg-white/[0.02]">
                   Explore
                   <svg className="w-4 h-4 opacity-70 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
 
-                {/* INVISIBLE BRIDGE APPLIED HERE (pt-2) */}
                 <div className="absolute top-10 left-0 pt-2 hidden group-hover:block w-[700px] z-50">
                   <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl shadow-2xl overflow-hidden">
                     <div className="p-8 grid grid-cols-3 gap-8 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-neutral-700">
@@ -306,7 +323,6 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
               </div>
             </div>
 
-            {/* REAL SEARCH INPUT WITH AUTOCOMPLETE DROPDOWN */}
             <div className="hidden md:flex items-center flex-1 max-w-lg mx-8 relative" ref={searchContainerRef}>
               <svg className="w-4 h-4 text-neutral-400 absolute left-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               <input
@@ -319,15 +335,14 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
                   setSearchQuery(e.target.value);
                   setIsSearchFocused(true);
                   if (typeof window !== 'undefined') {
-                    (window as any).nexaSearchQuery = e.target.value;
-                    window.dispatchEvent(new CustomEvent('nexa-search', { detail: e.target.value }));
+                    (window as any).omniSearchQuery = e.target.value;
+                    window.dispatchEvent(new CustomEvent('omni-search', { detail: e.target.value }));
                   }
                 }}
                 className="w-full bg-neutral-50 dark:bg-black/20 hover:bg-neutral-100 dark:hover:bg-white/[0.05] border border-neutral-200 dark:border-white/5 focus:border-orange-500/50 rounded-full pl-11 pr-16 py-2.5 text-sm text-neutral-800 dark:text-neutral-200 placeholder-neutral-500 dark:placeholder-neutral-400 transition-all shadow-inner outline-none ring-0"
               />
               <kbd className="absolute right-4 hidden sm:inline-block bg-white dark:bg-white/10 text-neutral-500 dark:text-neutral-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-neutral-200 dark:border-white/5 shadow-sm pointer-events-none">Ctrl K</kbd>
               
-              {/* SEARCH DROPDOWN */}
               {isSearchFocused && searchQuery.length > 0 && (
                 <div className="absolute top-[calc(100%+12px)] left-0 w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-2xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
                   {topResults.length > 0 ? (
@@ -338,7 +353,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
                           href={`/${tool.categorySlug}/${tool.id}`} 
                           onClick={() => {
                             setIsSearchFocused(false);
-                            setSearchQuery(""); // Clear search when they navigate
+                            setSearchQuery("");
                           }}
                           className="px-5 py-3.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/80 border-b border-neutral-100 dark:border-neutral-800/50 last:border-0 transition-colors flex items-center justify-between group"
                         >
@@ -447,7 +462,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
               .dark .goog-te-combo { color: #a3a3a3; background-color: #171717; border-color: rgba(255,255,255,0.1); }
             `}} />
             
-            <p>&copy; {new Date().getFullYear()} NexaKit Suite. 100% Private.</p>
+            <p>&copy; {new Date().getFullYear()} Omni Utility. 100% Private.</p>
 
             <div className="flex flex-wrap justify-center gap-6 font-semibold">
               <Link href="/" className="hover:text-orange-600 dark:hover:text-white transition">Home</Link>
