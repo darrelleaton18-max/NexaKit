@@ -1,6 +1,7 @@
 export type ToolItem = {
   id: string;
   label: string;
+  description?: string; // <--- Add this exact line! The '?' makes it optional.
   regions?: string[]; // E.g., ["UK", "US", "EU"] - If undefined, it shows everywhere
 };
 
@@ -98,9 +99,23 @@ export const navGroups: NavGroup[] = [
   {
     group: "Media",
     tools: [
-      { id: "image-tools", label: "PNG & Image Studio" },
-      { id: "jpg-tools", label: "JPEG Optimizer" },
-      { id: "gif-tools", label: "GIF Converter" },
+      { id: "image-compressor", label: "Image Compressor", description: "Reduce image file size quickly without losing quality." },
+      { id: "image-resizer", label: "Image Resizer", description: "Resize dimensions of PNG, JPG, or WEBP images." },
+      { id: "image-converter", label: "Image Converter", description: "Convert images between JPG, PNG, WEBP, and GIF." },
+      { id: "background-remover", label: "Background Remover", description: "Automatically remove the background from images." },
+      { id: "image-cropper", label: "Crop & Rotate", description: "Crop, flip, and rotate your photos instantly." },
+      { id: "watermark-image", label: "Watermark Image", description: "Add text or logo watermarks to your pictures." },
+      { id: "color-picker", label: "Image Color Picker", description: "Extract HEX and RGB color codes from any image." }
+    ],
+  },
+  {
+    group: "Audio & Video",
+    tools: [
+      { id: "audio-extractor", label: "Audio Extractor", description: "Extract MP3 or WAV audio tracks from any video file." },
+      { id: "video-to-gif", label: "Video to GIF", description: "Convert MP4 and WebM videos into optimized looping GIFs." },
+      { id: "media-trimmer", label: "Media Trimmer", description: "Cut and crop audio or video files to exact timestamps." },
+      { id: "format-converter", label: "Format Converter", description: "Convert media files between MP4, MP3, WAV, and WebM." },
+      { id: "volume-booster", label: "Volume Booster", description: "Increase the volume of quiet audio or video files." }
     ],
   },
 ];

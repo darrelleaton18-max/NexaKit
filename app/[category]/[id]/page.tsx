@@ -6,6 +6,7 @@ import DevTools from "../../../components/DevTools";
 import RandomTools from "../../../components/RandomTools";
 import MediaTools from "../../../components/MediaTools";
 import { navGroups } from "../../../components/navData";
+import AudioVideoTools from "../../../components/AudioVideoTools";
 
 // ==========================================
 // STATIC GENERATION FOR GITHUB PAGES
@@ -42,12 +43,16 @@ export default async function ToolPage({ params }: { params: Promise<{ category:
       <DevTools activeTool={activeTool} />
       <RandomTools activeTool={activeTool} />
       
-      {/* 
+      {/*  
         Note: The MediaTools component currently requires isDark as a prop. 
         If you want to keep the dark mode checkerboards, you may need to fetch isDark 
         via context or a client wrapper here. For now, we pass false.
       */}
       <MediaTools activeTool={activeTool} isDark={false} />
+      
+      {/* PART 3 GOES RIGHT HERE! */}
+      <AudioVideoTools activeTool={activeTool} />
+      
     </div>
   );
 }
