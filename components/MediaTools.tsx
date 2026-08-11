@@ -2,6 +2,12 @@
 
 import React from "react";
 import { navGroups } from "./navData";
+import ImageCompressor from "./MediaTools/ImageCompressor";
+import ImageResizer from "./MediaTools/ImageResizer";
+import ImageConverter from "./MediaTools/ImageConverter";
+import BackgroundRemover from "./MediaTools/BackgroundRemover";
+import ImageCropper from "./MediaTools/ImageCropper";
+import WatermarkImage from "./MediaTools/WatermarkImage";     // <-- Import
 
 // A reusable, functional upload zone for all the new image tools
 const ImageDropzone = ({ title = "Upload Image" }: { title?: string }) => {
@@ -50,22 +56,22 @@ export default function MediaTools({ activeTool, isDark }: { activeTool: string,
   switch (activeTool) {
     
     case "image-compressor":
-      return (
-        <div className="flex flex-col gap-8 animate-in fade-in duration-300">
-          <div>
-            <h2 className="text-3xl font-extrabold text-neutral-900 dark:text-white mb-2 tracking-tight">Image Compressor</h2>
-            <p className="text-neutral-500 dark:text-neutral-400">Reduce image file size quickly without losing quality. 100% processed in your browser.</p>
-          </div>
-          <ImageDropzone title="Upload Image to Compress" />
-          <div className="bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] rounded-3xl p-6 md:p-8">
-             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Compression Settings</h3>
-             <div className="flex items-center gap-4">
-               <input type="range" min="1" max="100" defaultValue="80" className="w-full accent-orange-500" />
-               <span className="font-bold text-orange-500 w-12 text-right">80%</span>
-             </div>
-          </div>
-        </div>
-      );
+      return <ImageCompressor />;
+    
+    case "image-resizer":
+      return <ImageResizer />;
+
+    case "image-converter":
+      return <ImageConverter />;
+
+    case "background-remover":
+      return <BackgroundRemover />;
+
+    case "image-cropper":
+      return <ImageCropper />;
+    
+    case "watermark-image":
+      return <WatermarkImage />;
 
     case "image-resizer":
       return (
@@ -157,6 +163,30 @@ export default function MediaTools({ activeTool, isDark }: { activeTool: string,
             <p className="text-neutral-500 dark:text-neutral-400">Extract exact HEX and RGB color codes from any uploaded picture.</p>
           </div>
           <ImageDropzone title="Upload Image to Pick Colors" />
+        </div>
+      );
+
+    case "watermark-remover":
+      return (
+        <div className="flex flex-col gap-8 animate-in fade-in duration-300">
+          <div>
+            <h2 className="text-3xl font-extrabold text-neutral-900 dark:text-white mb-2 tracking-tight">Watermark Remover</h2>
+            <p className="text-neutral-500 dark:text-neutral-400">Brush over unwanted watermarks, text, or objects to erase them seamlessly.</p>
+          </div>
+          
+          <ImageDropzone title="Upload Image to Clean" />
+          
+          <div className="bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] rounded-3xl p-6 md:p-8 opacity-50 cursor-not-allowed">
+             <div className="flex items-center gap-3 mb-4">
+               <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+               <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Healing Brush</h3>
+             </div>
+             <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">Upload an image first to activate the canvas and brush tools.</p>
+             
+             <button disabled className="w-full py-4 bg-orange-600/50 text-white font-extrabold rounded-2xl transition-all">
+               Erase Selection (Upload Required)
+             </button>
+          </div>
         </div>
       );
 
