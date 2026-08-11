@@ -7,6 +7,7 @@ import RandomTools from "../../../components/RandomTools";
 import MediaTools from "../../../components/MediaTools";
 import { navGroups } from "../../../components/navData";
 import AudioVideoTools from "../../../components/AudioVideoTools";
+import DocumentTools from "../../../components/DocumentTools";
 
 // ==========================================
 // STATIC GENERATION FOR GITHUB PAGES
@@ -36,23 +37,17 @@ export default async function ToolPage({ params }: { params: Promise<{ category:
 
   return (
     <div className="animate-in fade-in duration-300">
-      <FinancialTools activeTool={activeTool} />
-      <MathTools activeTool={activeTool} />
-      <TimeDateTools activeTool={activeTool} />
-      <TextTools activeTool={activeTool} />
-      <DevTools activeTool={activeTool} />
-      <RandomTools activeTool={activeTool} />
-      
-      {/*  
-        Note: The MediaTools component currently requires isDark as a prop. 
-        If you want to keep the dark mode checkerboards, you may need to fetch isDark 
-        via context or a client wrapper here. For now, we pass false.
-      */}
-      <MediaTools activeTool={activeTool} isDark={false} />
-      
-      {/* PART 3 GOES RIGHT HERE! */}
-      <AudioVideoTools activeTool={activeTool} />
-      
-    </div>
+    <FinancialTools activeTool={activeTool} />
+    <MathTools activeTool={activeTool} />
+    <TimeDateTools activeTool={activeTool} />
+    <TextTools activeTool={activeTool} />
+    <DevTools activeTool={activeTool} />
+    <RandomTools activeTool={activeTool} />
+    <MediaTools activeTool={activeTool} isDark={false} />
+    <AudioVideoTools activeTool={activeTool} />
+    
+    {/* ADD THE DOCUMENTS CATEGORY HERE */}
+    <DocumentTools activeTool={activeTool} />
+  </div>
   );
 }
