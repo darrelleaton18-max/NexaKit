@@ -23,7 +23,7 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
   const [gridCols, setGridCols] = useState<number>(2);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [presetWidth, setPresetWidth] = useState<string>("100%");
-  const [frameHeight, setFrameHeight] = useState<number>(550); // New: Global height control
+  const [frameHeight, setFrameHeight] = useState<number>(550);
 
   if (activeTool !== "multi-url-viewer") return null;
 
@@ -68,109 +68,118 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
   };
 
   return (
-    <div className={`w-full flex flex-col gap-6 animate-in fade-in duration-300 ${isFullScreen ? "fixed inset-0 z-[300] bg-neutral-950 p-4 md:p-6 overflow-y-auto" : ""}`}>
+    <div className={`w-full flex flex-col gap-6 animate-in fade-in duration-300 ${isFullScreen ? "fixed inset-0 z-[300] bg-[#0a0a0a] p-4 md:p-6 overflow-y-auto" : ""}`}>
       
-      {/* TOOL HEADER & CONTROLS */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 p-5 rounded-3xl shadow-sm">
-        <div>
-          <h2 className="text-xl md:text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight flex items-center gap-2">
-            Multi-URL Responsive Canvas
-            {isFullScreen && (
-              <span className="text-xs bg-orange-500/10 text-orange-500 border border-orange-500/20 px-2.5 py-0.5 rounded-full font-bold">
-                Focus Mode Active
-              </span>
-            )}
-          </h2>
-          <p className="text-xs md:text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Compare and interact with multiple pages side-by-side. You can drag the bottom-right corner of any frame to resize it.
-          </p>
-        </div>
-
-        {/* CONTROLS */}
-        <div className="flex flex-wrap items-center gap-3">
-          
-          {/* GLOBAL HEIGHT SLIDER */}
-          <div className="flex items-center gap-2 bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl px-3 py-1.5 text-xs font-bold">
-            <span className="text-neutral-400">Height:</span>
-            <input 
-              type="range" 
-              min="300" 
-              max="1000" 
-              step="50"
-              value={frameHeight}
-              onChange={(e) => setFrameHeight(Number(e.target.value))}
-              className="w-20 accent-orange-500"
-            />
-          </div>
-
-          {/* GRID COLUMNS SELECTOR */}
-          <div className="flex items-center bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl p-1 text-xs font-bold">
-            <span className="px-2 text-neutral-400">Layout:</span>
-            <button onClick={() => setGridCols(1)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 1 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="1 Column (e.g. 1x4)">1 Col</button>
-            <button onClick={() => setGridCols(2)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 2 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="2 Columns (e.g. 2x2)">2 Cols</button>
-            <button onClick={() => setGridCols(3)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 3 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="3 Columns">3 Cols</button>
-            <button onClick={() => setGridCols(4)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 4 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="4 Columns (e.g. 4x1)">4 Cols</button>
-          </div>
-
-          {/* DYNAMIC VIEWPORT PRESETS */}
-          <div className="flex flex-wrap items-center bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl p-1 text-xs font-bold">
-            {VIEWPORT_PRESETS.map((vp) => (
-              <button
-                key={vp.label}
-                onClick={() => setPresetWidth(vp.width)}
-                title={vp.width !== "100%" ? `${vp.width} width` : "Responsive Full Width"}
-                className={`px-3 py-1.5 rounded-xl transition whitespace-nowrap ${
-                  presetWidth === vp.width
-                    ? "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-sm"
-                    : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
-                }`}
-              >
-                {vp.label}
-              </button>
-            ))}
-          </div>
-
-          {/* FULL SCREEN TOGGLE */}
+      {/* 🔴 FLOATING EXIT BUTTON (ONLY SHOWS IN FOCUS MODE) */}
+      {isFullScreen && (
+        <div className="flex justify-end w-full sticky top-0 z-[310] -mb-2">
           <button
-            onClick={() => setIsFullScreen(!isFullScreen)}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-extrabold transition flex items-center gap-2 shadow-sm ${
-              isFullScreen
-                ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 hover:bg-orange-500/20"
-            }`}
+            onClick={() => setIsFullScreen(false)}
+            className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-full text-xs font-extrabold transition shadow-2xl flex items-center gap-2 border border-red-500/50"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d={isFullScreen ? "M9 9L4 4m0 0l5 0M4 4l0 5m11 0l5-5m0 0l-5 0m5 0l0 5m-5 11l5 5m0 0l-5 0m5 0l0-5m-11 0l-5 5m0 0l5 0m-5 0l0-5" : "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"} />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 9L4 4m0 0l5 0M4 4l0 5m11 0l5-5m0 0l-5 0m5 0l0 5m-5 11l5 5m0 0l-5 0m5 0l0-5m-11 0l-5 5m0 0l5 0m-5 0l0-5" />
             </svg>
-            {isFullScreen ? "Exit Focus Mode" : "Focus Mode"}
+            Exit Focus Mode
           </button>
         </div>
-      </div>
+      )}
 
-      {/* URL INPUT BAR */}
-      <form onSubmit={handleAddUrl} className="flex gap-3">
-        <input
-          type="text"
-          placeholder="Enter website URL (e.g., localhost:3000, youtube.com/watch?v=...)"
-          value={newUrl}
-          onChange={(e) => setNewUrl(e.target.value)}
-          className="flex-1 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-orange-500 transition shadow-inner"
-        />
-        <button
-          type="submit"
-          className="px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-2xl text-sm transition shadow-lg shadow-orange-500/20 shrink-0"
-        >
-          + Add Frame
-        </button>
-      </form>
+      {/* 🟢 TOOL CONTROLS (HIDES WHEN IN FOCUS MODE) */}
+      {!isFullScreen && (
+        <>
+          {/* TOOL HEADER & CONTROLS */}
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 p-5 rounded-3xl shadow-sm">
+            <div>
+              <h2 className="text-xl md:text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight flex items-center gap-2">
+                Multi-URL Responsive Canvas
+              </h2>
+              <p className="text-xs md:text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                Compare and interact with multiple pages side-by-side. You can drag the bottom-right corner of any frame to resize it.
+              </p>
+            </div>
 
-      {/* SECURITY NOTICE */}
-      <div className="text-[11px] text-neutral-400 dark:text-neutral-500 px-2 flex items-center gap-1.5">
-        <svg className="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-        <span>Note: External sites with strict iframe protection headers (like Google or X) will block embedding.</span>
-      </div>
+            <div className="flex flex-wrap items-center gap-3">
+              {/* GLOBAL HEIGHT SLIDER */}
+              <div className="flex items-center gap-2 bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl px-3 py-1.5 text-xs font-bold">
+                <span className="text-neutral-400">Height:</span>
+                <input 
+                  type="range" 
+                  min="300" 
+                  max="1000" 
+                  step="50"
+                  value={frameHeight}
+                  onChange={(e) => setFrameHeight(Number(e.target.value))}
+                  className="w-20 accent-orange-500"
+                />
+              </div>
+
+              {/* GRID COLUMNS SELECTOR */}
+              <div className="flex items-center bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl p-1 text-xs font-bold">
+                <span className="px-2 text-neutral-400">Layout:</span>
+                <button onClick={() => setGridCols(1)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 1 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="1 Column (e.g. 1x4)">1 Col</button>
+                <button onClick={() => setGridCols(2)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 2 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="2 Columns (e.g. 2x2)">2 Cols</button>
+                <button onClick={() => setGridCols(3)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 3 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="3 Columns">3 Cols</button>
+                <button onClick={() => setGridCols(4)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 4 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="4 Columns (e.g. 4x1)">4 Cols</button>
+              </div>
+
+              {/* DYNAMIC VIEWPORT PRESETS */}
+              <div className="flex flex-wrap items-center bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl p-1 text-xs font-bold">
+                {VIEWPORT_PRESETS.map((vp) => (
+                  <button
+                    key={vp.label}
+                    onClick={() => setPresetWidth(vp.width)}
+                    title={vp.width !== "100%" ? `${vp.width} width` : "Responsive Full Width"}
+                    className={`px-3 py-1.5 rounded-xl transition whitespace-nowrap ${
+                      presetWidth === vp.width
+                        ? "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-sm"
+                        : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
+                    }`}
+                  >
+                    {vp.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* FULL SCREEN ENTRY BUTTON */}
+              <button
+                onClick={() => setIsFullScreen(true)}
+                className="px-4 py-2.5 rounded-2xl text-xs font-extrabold transition flex items-center gap-2 shadow-sm bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 hover:bg-orange-500/20"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+                Focus Mode
+              </button>
+            </div>
+          </div>
+
+          {/* URL INPUT BAR */}
+          <form onSubmit={handleAddUrl} className="flex gap-3">
+            <input
+              type="text"
+              placeholder="Enter website URL (e.g., localhost:3000, youtube.com/watch?v=...)"
+              value={newUrl}
+              onChange={(e) => setNewUrl(e.target.value)}
+              className="flex-1 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-orange-500 transition shadow-inner"
+            />
+            <button
+              type="submit"
+              className="px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-2xl text-sm transition shadow-lg shadow-orange-500/20 shrink-0"
+            >
+              + Add Frame
+            </button>
+          </form>
+
+          {/* SECURITY NOTICE */}
+          <div className="text-[11px] text-neutral-400 dark:text-neutral-500 px-2 flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>Note: External sites with strict iframe protection headers (like Google or X) will block embedding.</span>
+          </div>
+        </>
+      )}
 
       {/* THE IFRAME GRID */}
       <div className={`grid ${gridClassMap[gridCols]} gap-6 w-full items-start`}>
