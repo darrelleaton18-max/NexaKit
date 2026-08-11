@@ -19,7 +19,8 @@ const VIEWPORT_PRESETS = [
 
 export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
   const [urls, setUrls] = useState<UrlItem[]>([
-    { id: "1", url: "https://www.youtube-nocookie.com/embed/jfKfPfyJRdk", title: "Lofi Beats" },
+    { id: "1", url: "https://example.com", title: "Site 1" },
+    { id: "2", url: "https://wikipedia.org", title: "Site 2" },
   ]);
   const [newUrl, setNewUrl] = useState("");
   const [gridCols, setGridCols] = useState<number>(2);
@@ -34,20 +35,21 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
 
     let formattedUrl = newUrl.trim();
 
-    // 1. SMART CONVERSION FOR YOUTUBE (Using privacy-enhanced nocookie domain to bypass blocks)
+    // 1. SMART CONVERSION FOR YOUTUBE
     if (formattedUrl.includes("youtube.com/watch?v=")) {
       const videoId = formattedUrl.split("v=")[1]?.split("&")[0];
       if (videoId) {
-        formattedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+        formattedUrl = `https://www.youtube.com/embed/${videoId}`;
       }
     } else if (formattedUrl.includes("youtu.be/")) {
       const videoId = formattedUrl.split("youtu.be/")[1]?.split("?")[0];
       if (videoId) {
-        formattedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+        formattedUrl = `https://www.youtube.com/embed/${videoId}`;
       }
     } 
-    // 2. CLEAN GOOGLE SITES URLs
+    // 2. CLEAN GOOGLE SITES URLs (Removes sharing parameters that cause refusal)
     else if (formattedUrl.includes("sites.google.com")) {
+      // Strip off query parameters like ?usp=sharing
       formattedUrl = formattedUrl.split("?")[0];
     } 
     else if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
@@ -150,7 +152,7 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
       <form onSubmit={handleAddUrl} className="flex gap-3">
         <input
           type="text"
-          placeholder="Enter website URL (e.g., localhost:3000, youtube.com/watch?v=...)"
+          placeholder="Enter website URL (e.g., localhost:3000, example.com)..."
           value={newUrl}
           onChange={(e) => setNewUrl(e.target.value)}
           className="flex-1 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-orange-500 transition shadow-inner"
@@ -212,8 +214,7 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
                 src={item.url}
                 title={item.title}
                 className="w-full h-full border-0 absolute inset-0 z-10"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+                sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"
                 loading="lazy"
               />
               
