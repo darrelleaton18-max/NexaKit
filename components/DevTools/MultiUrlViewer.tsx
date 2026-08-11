@@ -18,7 +18,11 @@ const VIEWPORT_PRESETS = [
 ];
 
 export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
-  const [urls, setUrls] = useState<UrlItem[]>([]);
+  // Added two working default examples so the canvas isn't empty on load
+  const [urls, setUrls] = useState<UrlItem[]>([
+    { id: "1", url: "https://en.wikipedia.org/wiki/Main_Page", title: "Frame 1" },
+    { id: "2", url: "https://www.openstreetmap.org/export/embed.html", title: "Frame 2" },
+  ]);
   const [newUrl, setNewUrl] = useState("");
   const [gridCols, setGridCols] = useState<number>(2);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -58,6 +62,10 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
 
   const handleRemoveUrl = (id: string) => {
     setUrls((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleClearAll = () => {
+    setUrls([]);
   };
 
   const gridClassMap: Record<number, string> = {
@@ -155,20 +163,30 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
           </div>
 
           {/* URL INPUT BAR */}
-          <form onSubmit={handleAddUrl} className="flex gap-3">
+          <form onSubmit={handleAddUrl} className="flex flex-wrap sm:flex-nowrap gap-3">
             <input
               type="text"
-              placeholder="Enter website URL (e.g., localhost:3000, youtube.com/watch?v=...)"
+              placeholder="Enter website URL (e.g., localhost:3000, script.google.com/macros/...)"
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}
-              className="flex-1 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-orange-500 transition shadow-inner"
+              className="flex-1 w-full sm:w-auto bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-orange-500 transition shadow-inner"
             />
-            <button
-              type="submit"
-              className="px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-2xl text-sm transition shadow-lg shadow-orange-500/20 shrink-0"
-            >
-              + Add Frame
-            </button>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <button
+                type="submit"
+                className="flex-1 sm:flex-none px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-bold rounded-2xl text-sm transition shadow-lg shadow-orange-500/20 whitespace-nowrap"
+              >
+                + Add Frame
+              </button>
+              <button
+                type="button"
+                onClick={handleClearAll}
+                disabled={urls.length === 0}
+                className="flex-1 sm:flex-none px-6 py-3 bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold rounded-2xl text-sm transition whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Clear All
+              </button>
+            </div>
           </form>
 
           {/* SECURITY NOTICE */}
