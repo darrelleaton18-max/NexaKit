@@ -3,19 +3,41 @@
 import React from "react";
 import { navGroups } from "./navData";
 
-// A reusable, highly polished upload zone for all the new image tools
-const ImageDropzone = ({ title = "Upload Image" }: { title?: string }) => (
-  <div className="w-full border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-orange-500 dark:hover:border-orange-500/50 rounded-3xl p-10 md:p-16 flex flex-col items-center justify-center bg-neutral-50 dark:bg-black/20 transition-all cursor-pointer group">
-    <div className="w-16 h-16 rounded-full bg-white dark:bg-neutral-800 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 group-hover:shadow-orange-500/20 transition-all">
-      <svg className="w-8 h-8 text-neutral-400 group-hover:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-      </svg>
+// A reusable, functional upload zone for all the new image tools
+const ImageDropzone = ({ title = "Upload Image" }: { title?: string }) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Temporary alert just to prove it works!
+      alert(`You selected: ${file.name}. \n\nNext step: We need to build the processing logic for this tool!`);
+    }
+  };
+
+  return (
+    <div 
+      onClick={() => fileInputRef.current?.click()}
+      className="w-full border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-orange-500 dark:hover:border-orange-500/50 rounded-3xl p-10 md:p-16 flex flex-col items-center justify-center bg-neutral-50 dark:bg-black/20 transition-all cursor-pointer group"
+    >
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFileChange} 
+        accept="image/*" 
+        className="hidden" 
+      />
+      <div className="w-16 h-16 rounded-full bg-white dark:bg-neutral-800 flex items-center justify-center mb-5 shadow-sm group-hover:scale-110 group-hover:shadow-orange-500/20 transition-all">
+        <svg className="w-8 h-8 text-neutral-400 group-hover:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+      </div>
+      <h3 className="text-xl font-extrabold text-neutral-900 dark:text-white mb-2">{title}</h3>
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">Drag & drop your file here, or click to browse</p>
+      <p className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-6 font-bold uppercase tracking-widest">Supports JPG, PNG, WEBP, GIF</p>
     </div>
-    <h3 className="text-xl font-extrabold text-neutral-900 dark:text-white mb-2">{title}</h3>
-    <p className="text-sm text-neutral-500 dark:text-neutral-400">Drag & drop your file here, or click to browse</p>
-    <p className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-6 font-bold uppercase tracking-widest">Supports JPG, PNG, WEBP, GIF</p>
-  </div>
-);
+  );
+};
 
 export default function MediaTools({ activeTool, isDark }: { activeTool: string, isDark?: boolean }) {
   
