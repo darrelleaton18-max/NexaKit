@@ -79,6 +79,7 @@ export const navGroups: NavGroup[] = [
       { id: "hash-gen", label: "Secure Hash Generator", description: "Generate MD5, SHA-1, and SHA-256 cryptographic text hashes." },
       { id: "color-conv", label: "Color Space Converter", description: "Convert design colors between HEX, RGB, HSL, and CMYK formats." },
       { id: "qr-maker", label: "QR Code Generator", description: "Create scannable, customized QR codes for links and text." },
+      { id: "multi-url-viewer", label: "Multi-URL Canvas", description: "Interact with multiple responsive sites side-by-side in Focus Mode." },
     ],
   },
   {
