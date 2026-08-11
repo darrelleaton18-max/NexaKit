@@ -272,7 +272,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
         .animate-orb { animation: pulse-glow 3s ease-in-out infinite; }
       `}} />
 
-      <div className="flex flex-1 w-full max-w-[1800px] mx-auto gap-4 lg:gap-8">
+      <div className="flex flex-1 w-full max-w-[1920px] mx-auto gap-1 lg:gap-2">
         
         <AdColumn side="left" />
 

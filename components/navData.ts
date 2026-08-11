@@ -75,6 +75,7 @@ export const navGroups: NavGroup[] = [
       { id: "json-format", label: "JSON Formatter / Minify", description: "Format, validate, and minify JSON code strings for production." },
       { id: "base64", label: "Base64 Encoder / Decoder", description: "Safely encode and decode text or files using Base64 formatting." },
       { id: "url-encode", label: "URL Encoder & Decoder", description: "Encode and decode URLs and query parameters for safe web transit." },
+      { id: "url-inspector", label: "URL & Domain Inspector", description: "Analyze URL syntax and check server reachability." }, // <--- Added here!
       { id: "hash-gen", label: "Secure Hash Generator", description: "Generate MD5, SHA-1, and SHA-256 cryptographic text hashes." },
       { id: "color-conv", label: "Color Space Converter", description: "Convert design colors between HEX, RGB, HSL, and CMYK formats." },
       { id: "qr-maker", label: "QR Code Generator", description: "Create scannable, customized QR codes for links and text." },
