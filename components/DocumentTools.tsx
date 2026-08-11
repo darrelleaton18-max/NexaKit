@@ -2,8 +2,9 @@
 
 import React from "react";
 import { navGroups } from "./navData";
-// If you have your PdfStudio file in a subfolder, import it here:
-// import PdfStudio from "./MediaTools/PdfStudio"; 
+
+// 1. We uncomment the import and point it to the correct new folder
+import PdfStudio from "./DocumentTools/PdfStudio"; 
 
 export default function DocumentTools({ activeTool }: { activeTool: string }) {
   
@@ -15,15 +16,8 @@ export default function DocumentTools({ activeTool }: { activeTool: string }) {
 
   switch (activeTool) {
     case "pdf-studio":
-      // return <PdfStudio />; // Uncomment this when your component is ready!
-      
-      // Temporary fallback until you link your custom component
-      return (
-        <div className="flex flex-col gap-8 animate-in fade-in duration-300">
-            <h2 className="text-3xl font-extrabold text-neutral-900 dark:text-white">PDF Studio</h2>
-            <p className="text-neutral-500">PDF processing tools are being connected...</p>
-        </div>
-      );
+      // 2. We remove the placeholder text and return the actual component!
+      return <PdfStudio />;
 
     default:
       return (

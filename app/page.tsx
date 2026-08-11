@@ -134,21 +134,23 @@ export default function Home() {
       </div>
 
       {/* TOOLS GRID */}
-      <div className="w-full flex flex-col gap-12">
+      <div className="w-full flex flex-col">
         {filteredGroups.map((group, idx) => (
           
-          <div key={idx} className="w-full bg-neutral-50 dark:bg-[#131313] border border-neutral-200 dark:border-white/5 rounded-[32px] p-6 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)]">
+          <div key={idx} className="w-full flex flex-col mb-14 last:mb-0 group/section">
             
-            <div className="flex items-center justify-between mb-8 pb-4 border-b border-neutral-200/60 dark:border-white/[0.05]">
-              <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+            {/* Sleek Header */}
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-neutral-100 dark:border-white/5 transition-colors group-hover/section:border-neutral-200 dark:group-hover/section:border-white/10">
+              <h2 className="text-xl md:text-2xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
                 {group.cleanName}
               </h2>
-              <span className="text-xs font-bold text-neutral-400 dark:text-neutral-500 bg-white dark:bg-black/20 px-4 py-1.5 rounded-full border border-neutral-200 dark:border-white/5 shadow-sm">
+              <span className="text-[10px] font-bold text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-white/5 px-3 py-1 rounded-full transition-colors group-hover/section:bg-orange-50 dark:group-hover/section:bg-orange-500/10 group-hover/section:text-orange-600 dark:group-hover/section:text-orange-400 uppercase tracking-widest">
                 {group.tools.length} Tools
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {/* Premium Grid: Uses 2 columns on tablets, 3 on desktops, 4 only on massive ultra-wide monitors */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-5">
               {group.tools.map((tool) => {
                 const categorySlug = group.cleanName.replace(/[^a-zA-Z]/g, "").toLowerCase();
                 
@@ -156,28 +158,30 @@ export default function Home() {
                   <Link
                     key={tool.id}
                     href={`/${categorySlug}/${tool.id}`}
-                    /* Added hover:-translate-y-1 hover:scale-[1.02] for that snappy pop animation */
-                    className="group flex items-center p-3.5 bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] rounded-2xl hover:border-orange-500/50 dark:hover:border-orange-500/50 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"
+                    className="group flex items-center p-4 bg-white dark:bg-[#121212] border border-neutral-200 dark:border-white/[0.05] rounded-2xl hover:bg-orange-50/50 dark:hover:bg-[#1a1a1a] hover:border-orange-400/50 dark:hover:border-orange-500/30 hover:shadow-xl hover:shadow-orange-500/5 transition-all duration-300"
                   >
-                    {/* LEFT COLUMN: Icon */}
-                    <div className="w-11 h-11 shrink-0 rounded-xl bg-neutral-100 dark:bg-black/40 text-neutral-500 dark:text-neutral-400 group-hover:bg-orange-500/10 group-hover:text-orange-600 dark:group-hover:text-orange-500 flex items-center justify-center mr-3.5 transition-colors duration-300 shadow-inner">
-                      <ToolIcon toolName={tool.label} className="w-5 h-5" />
+                    {/* Balanced Icon Box */}
+                    <div className="w-12 h-12 shrink-0 rounded-xl bg-neutral-50 dark:bg-[#1a1a1a] text-neutral-500 dark:text-neutral-400 group-hover:bg-orange-500 group-hover:text-white flex items-center justify-center mr-4 transition-all duration-300 shadow-sm border border-neutral-100 dark:border-white/5 group-hover:border-transparent">
+                      <ToolIcon toolName={tool.label} className="w-6 h-6" />
                     </div>
                     
-                    {/* MIDDLE COLUMN: Title & Category Name */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-extrabold text-neutral-900 dark:text-neutral-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors text-[14.5px] truncate">
+                    {/* Text Container - Allowed to breathe! */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <h3 className="font-extrabold text-neutral-900 dark:text-neutral-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors text-[14px] md:text-[15px] truncate">
                         {tool.label}
                       </h3>
-                      <p className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 truncate mt-0.5 uppercase tracking-wider">
-                        {group.cleanName}
+                      <p 
+                        className="text-[11px] md:text-[12px] font-medium text-neutral-400 dark:text-neutral-500 truncate mt-1" 
+                        title={tool.description}
+                      >
+                        {tool.description || group.cleanName.toUpperCase()}
                       </p>
                     </div>
 
-                    {/* RIGHT ARROW */}
-                    <div className="w-5 h-5 shrink-0 text-neutral-300 dark:text-neutral-600 group-hover:text-orange-500 group-hover:translate-x-1 transition-all duration-300 flex items-center justify-center ml-2">
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    {/* Right Arrow */}
+                    <div className="w-6 h-6 shrink-0 text-neutral-300 dark:text-neutral-600 group-hover:text-orange-500 group-hover:translate-x-1.5 transition-all duration-300 flex items-center justify-center ml-2">
+                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-5 h-5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
                   </Link>

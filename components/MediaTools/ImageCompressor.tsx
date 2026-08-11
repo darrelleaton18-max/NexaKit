@@ -1,23 +1,35 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 export default function ImageCompressor() {
   const [file, setFile] = useState<File | null>(null);
-  const [quality, setQuality] = useState<number>(80);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [quality, setQuality] = useState<number>(0.7); // 70% quality default
   
   const [compressedUrl, setCompressedUrl] = useState<string | null>(null);
-  const [compressedSize, setCompressedSize] = useState<number | null>(null);
-
+  const [compressedSize, setCompressedSize] = useState<number>(0);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // OPTIMIZATION 1: Destroy temporary URLs to prevent RAM leaks
+  useEffect(() => {
+    return () => {
+      if (compressedUrl) URL.revokeObjectURL(compressedUrl);
+    };
+  }, [compressedUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
     if (selected) {
       setFile(selected);
-      setCompressedUrl(null);
-      setCompressedSize(null);
+      
+      // OPTIMIZATION 2: Clear old compressed image if a new one is uploaded
+      if (compressedUrl) {
+        URL.revokeObjectURL(compressedUrl);
+        setCompressedUrl(null);
+        setCompressedSize(0);
+      }
     }
   };
 
@@ -26,44 +38,52 @@ export default function ImageCompressor() {
     setIsProcessing(true);
 
     try {
-      const imageURL = URL.createObjectURL(file);
+      const objectUrl = URL.createObjectURL(file);
       const img = new Image();
-      img.src = imageURL;
+      img.src = objectUrl;
 
-      // Wait for the image to load into memory
       await new Promise((resolve, reject) => {
         img.onload = resolve;
         img.onerror = reject;
       });
 
-      // Create a hidden canvas
+      // OPTIMIZATION 3: Safety check to prevent Safari/Mobile crashes
+      const MAX_DIMENSION = 4000;
+      if (img.naturalWidth > MAX_DIMENSION || img.naturalHeight > MAX_DIMENSION) {
+        alert(`Image is too large (${img.naturalWidth}x${img.naturalHeight}). Maximum dimension is ${MAX_DIMENSION}px.`);
+        URL.revokeObjectURL(objectUrl);
+        setIsProcessing(false);
+        return;
+      }
+
       const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
       const ctx = canvas.getContext("2d");
       
       if (!ctx) throw new Error("Could not get canvas context");
       
-      // Draw the original image onto the canvas
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      // Draw a white background first in case it's a transparent PNG being compressed to JPG
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
 
-      // Note: The canvas API ignores quality settings for PNGs. 
-      // If the user uploads a PNG, we convert it to WebP under the hood to force compression.
-      const outputType = file.type === "image/png" ? "image/webp" : file.type;
-      const extension = outputType === "image/webp" ? "webp" : file.name.split('.').pop();
+      // Free the original image memory instantly
+      URL.revokeObjectURL(objectUrl);
 
-      // Export the canvas as a compressed blob
       canvas.toBlob(
         (blob) => {
           if (blob) {
-            const url = URL.createObjectURL(blob);
-            setCompressedUrl(url);
+            // Clean up old preview before creating a new one
+            if (compressedUrl) URL.revokeObjectURL(compressedUrl);
+            
+            setCompressedUrl(URL.createObjectURL(blob));
             setCompressedSize(blob.size);
           }
           setIsProcessing(false);
         },
-        outputType,
-        quality / 100 // Convert 80% to 0.8
+        "image/jpeg", // Force JPEG for best compression results
+        quality
       );
     } catch (error) {
       console.error("Compression error:", error);
@@ -72,29 +92,27 @@ export default function ImageCompressor() {
     }
   };
 
-  // Utility to display clean file sizes (e.g., "1.2 MB")
+  // Helper to format bytes to MB/KB
   const formatBytes = (bytes: number) => {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ["Bytes", "KB", "MB"];
+    const sizes = ['Bytes', 'KB', 'MB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const getSavings = () => {
-    if (!file || !compressedSize) return 0;
-    const savings = ((file.size - compressedSize) / file.size) * 100;
-    return savings > 0 ? savings.toFixed(1) : 0;
-  };
+  // Calculate percentage saved
+  const savings = file && compressedSize > 0 
+    ? Math.round(((file.size - compressedSize) / file.size) * 100) 
+    : 0;
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-300">
       <div>
         <h2 className="text-3xl font-extrabold text-neutral-900 dark:text-white mb-2 tracking-tight">Image Compressor</h2>
-        <p className="text-neutral-500 dark:text-neutral-400">Reduce image file size quickly without losing quality. 100% processed in your browser.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">Reduce image file sizes instantly without uploading to a server.</p>
       </div>
 
-      {/* Upload Zone */}
       <div 
         onClick={() => !isProcessing && fileInputRef.current?.click()}
         className={`w-full border-2 border-dashed rounded-3xl p-10 md:p-16 flex flex-col items-center justify-center transition-all ${isProcessing ? 'border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 opacity-75 cursor-wait' : 'border-neutral-300 dark:border-neutral-700 hover:border-orange-500 dark:hover:border-orange-500/50 bg-neutral-50 dark:bg-black/20 cursor-pointer group'}`}
@@ -103,7 +121,7 @@ export default function ImageCompressor() {
           type="file" 
           ref={fileInputRef} 
           onChange={handleFileChange} 
-          accept="image/jpeg, image/png, image/webp" 
+          accept="image/*" 
           className="hidden" 
           disabled={isProcessing}
         />
@@ -122,27 +140,28 @@ export default function ImageCompressor() {
         </p>
       </div>
 
-      {/* Controls & Action */}
-      {file && !compressedUrl && (
+      {file && (
         <div className="flex flex-col gap-6">
           <div className="bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-white/[0.05] rounded-3xl p-6 md:p-8">
-            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Compression Settings</h3>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-4">
-                <input 
-                  type="range" 
-                  min="10" 
-                  max="100" 
-                  value={quality}
-                  onChange={(e) => setQuality(Number(e.target.value))}
-                  className="w-full accent-orange-500" 
-                />
-                <span className="font-bold text-orange-500 w-12 text-right">{quality}%</span>
-              </div>
-              <div className="flex justify-between text-xs text-neutral-500 font-bold uppercase tracking-widest mt-2">
-                <span>Smaller File</span>
-                <span>Better Quality</span>
-              </div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Compression Quality</h3>
+              <span className="px-3 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white font-bold rounded-lg text-sm">
+                {Math.round(quality * 100)}%
+              </span>
+            </div>
+            
+            <input 
+              type="range" 
+              min="0.1" 
+              max="1" 
+              step="0.05" 
+              value={quality}
+              onChange={(e) => setQuality(parseFloat(e.target.value))}
+              className="w-full accent-orange-500 cursor-pointer h-2 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none" 
+            />
+            <div className="flex justify-between mt-2 text-xs font-bold text-neutral-400 uppercase tracking-widest">
+              <span>Smaller File</span>
+              <span>Better Quality</span>
             </div>
           </div>
 
@@ -151,39 +170,37 @@ export default function ImageCompressor() {
             disabled={isProcessing}
             className="w-full py-4 bg-orange-600 hover:bg-orange-500 disabled:bg-neutral-300 dark:disabled:bg-neutral-800 disabled:text-neutral-500 text-white font-extrabold rounded-2xl shadow-lg shadow-orange-500/20 transition-all"
           >
-            {isProcessing ? "Compressing..." : "Compress Image Now"}
+            {isProcessing ? "Compressing..." : "Compress Image"}
           </button>
         </div>
       )}
 
-      {/* Results Zone */}
-      {file && compressedUrl && compressedSize && (
+      {file && compressedUrl && (
         <div className="bg-green-50 dark:bg-[#1a1a1a] border border-green-200 dark:border-white/[0.05] rounded-3xl p-6 md:p-8 flex flex-col items-center animate-in zoom-in duration-300">
-          <div className="w-full flex flex-col md:flex-row items-center justify-between gap-6 mb-8 bg-white dark:bg-black/20 p-6 rounded-2xl border border-neutral-200 dark:border-white/5">
-            <div className="text-center md:text-left">
-              <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Original Size</p>
-              <p className="text-xl font-bold text-neutral-900 dark:text-white">{formatBytes(file.size)}</p>
+          <div className="flex items-center justify-center gap-4 mb-6 w-full">
+            <div className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 text-center">
+              <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">Original</p>
+              <p className="text-lg font-extrabold text-neutral-900 dark:text-white">{formatBytes(file.size)}</p>
             </div>
             
-            <svg className="w-8 h-8 text-neutral-300 dark:text-neutral-600 rotate-90 md:rotate-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            <svg className="w-6 h-6 text-neutral-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             
-            <div className="text-center md:text-right">
-              <p className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-1">New Size</p>
-              <p className="text-xl font-bold text-green-600 dark:text-green-500">{formatBytes(compressedSize)}</p>
+            <div className="flex-1 bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-500/20 rounded-2xl p-4 text-center">
+              <p className="text-xs font-bold text-green-600 dark:text-green-500 uppercase tracking-widest mb-1">Compressed</p>
+              <p className="text-lg font-extrabold text-green-700 dark:text-green-400">{formatBytes(compressedSize)}</p>
             </div>
           </div>
 
-          <div className="text-center mb-8">
-            <span className="px-4 py-2 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 font-extrabold rounded-full text-sm">
-              Saved {getSavings()}%!
-            </span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 font-bold rounded-full text-sm mb-8">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+            Saved {savings}% space
           </div>
           
           <img src={compressedUrl} alt="Compressed preview" className="w-full max-w-md rounded-xl shadow-lg mb-8 border border-neutral-200 dark:border-neutral-800 object-contain max-h-64" />
           
           <a 
             href={compressedUrl} 
-            download={`compressed_${file.name.replace(/\.[^/.]+$/, "")}.${file.type === "image/png" ? "webp" : file.name.split('.').pop()}`}
+            download={`compressed_${file.name.split('.')[0]}.jpg`}
             className="px-8 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold rounded-xl hover:scale-105 transition-transform"
           >
             Download Compressed Image

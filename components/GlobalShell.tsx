@@ -9,8 +9,30 @@ type AdSize = "skyscraper" | "standard" | "banner";
 
 export const LazyAd = ({ index, type }: { index: number; type: AdSize }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [adVersion, setAdVersion] = useState(1);
   const adRef = useRef<HTMLDivElement>(null);
 
+  // 1. Simulate ad loading and automatic rotation
+  useEffect(() => {
+    // Initial load
+    const loadTimer = setTimeout(() => setIsVisible(true), 1000);
+
+    // Rotate every 15 seconds
+    const rotateTimer = setInterval(() => {
+      setIsVisible(false); // Trigger fade out
+      setTimeout(() => {
+        setAdVersion(prev => prev + 1); // Change version number
+        setIsVisible(true); // Trigger fade in
+      }, 800); // Show "Loading..." for 800ms between rotations
+    }, 15000);
+
+    return () => {
+      clearTimeout(loadTimer);
+      clearInterval(rotateTimer);
+    };
+  }, []);
+
+  // 2. Google Translate script
   useEffect(() => {
     if (document.getElementById("google-translate-script")) return;
     const userLang = navigator.language.split('-')[0];
@@ -52,10 +74,12 @@ export const LazyAd = ({ index, type }: { index: number; type: AdSize }) => {
         {isVisible ? (
           <>
             <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 tracking-widest uppercase mb-1">Advertisement</span>
-            <span className="text-neutral-600 dark:text-neutral-400 font-medium text-sm leading-tight">728x90 Leaderboard</span>
+            <span className="text-neutral-600 dark:text-neutral-400 font-medium text-sm leading-tight flex items-center justify-center">
+              728x90 Leaderboard <span className="opacity-50 text-[10px] ml-2 font-mono">v{adVersion}</span>
+            </span>
           </>
         ) : (
-          <span className="text-xs font-bold text-neutral-400 dark:text-neutral-600 animate-pulse">Lazy Loading Ad...</span>
+          <span className="text-xs font-bold text-neutral-400 dark:text-neutral-600 animate-pulse">Refreshing Ad...</span>
         )}
       </div>
     );
@@ -74,8 +98,11 @@ export const LazyAd = ({ index, type }: { index: number; type: AdSize }) => {
     >
       {isVisible ? (
         <>
-          <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 tracking-widest uppercase mb-2">Ad Slot {index + 1}</span>
-          <span className="text-neutral-600 dark:text-neutral-400 font-medium text-sm leading-tight" dangerouslySetInnerHTML={{ __html: textLabel.replace(" ", "<br/>") }} />
+          <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 tracking-widest uppercase mb-2">Ad Slot {index}</span>
+          <span className="text-neutral-600 dark:text-neutral-400 font-medium text-sm leading-tight flex flex-col items-center">
+            <span dangerouslySetInnerHTML={{ __html: textLabel.replace(" ", "<br/>") }} />
+            <span className="opacity-40 text-[10px] mt-2 font-mono">Refresh #{adVersion}</span>
+          </span>
         </>
       ) : (
         <span className="text-xs font-bold text-neutral-400 dark:text-neutral-600 animate-pulse">Loading...</span>
@@ -84,13 +111,15 @@ export const LazyAd = ({ index, type }: { index: number; type: AdSize }) => {
   );
 };
 
-const AdColumn = ({ side, layout }: { side: "left" | "right"; layout: AdSize[] }) => {
+const AdColumn = ({ side }: { side: "left" | "right" }) => {
   return (
-    <aside className="hidden xl:flex flex-col items-center gap-6 w-[160px] shrink-0 pt-6 pb-10 h-full relative">
-      <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-600 uppercase tracking-widest mb-[-10px]">Advertisement</span>
-      {layout.map((adSize, i) => (
-        <LazyAd key={`${side}-${i}-${adSize}`} index={i} type={adSize} />
-      ))}
+    <aside className="hidden xl:block w-[160px] shrink-0 relative">
+      <div className="sticky top-28 flex flex-col items-center gap-4">
+        <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-600 uppercase tracking-widest">
+          Advertisement
+        </span>
+        <LazyAd index={side === "left" ? 1 : 2} type="skyscraper" />
+      </div>
     </aside>
   );
 };
@@ -105,10 +134,20 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   
   const mainRef = useRef<HTMLElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [adLayout, setAdLayout] = useState<AdSize[]>(["standard"]);
+
+  // --- MEGA MENU STATE ---
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const toggleCategory = (categoryName: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(categoryName) 
+        ? prev.filter(c => c !== categoryName)
+        : [...prev, categoryName]
+    );
+  };
 
   let activeTool = "home";
   const pathParts = pathname.split("/").filter(Boolean);
@@ -144,8 +183,12 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setIsDark(prefersDark);
+      const savedTheme = localStorage.getItem("omniTheme");
+      if (savedTheme !== null) {
+        setIsDark(savedTheme === "dark");
+      } else {
+        setIsDark(false); 
+      }
 
       const savedRegion = localStorage.getItem("omniRegion") || localStorage.getItem("nexaRegion");
       if (savedRegion) {
@@ -181,43 +224,12 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");
-      document.body.style.backgroundColor = "#000000"; 
+      document.body.style.background = "#050505"; 
     } else {
       document.documentElement.classList.remove("dark");
-      document.body.style.backgroundColor = "#f5f5f5"; 
+      document.body.style.background = "#ffffff"; 
     }
   }, [isDark]);
-
-  useEffect(() => {
-    if (!mainRef.current) return;
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (activeTool === "privacy" || activeTool === "terms") {
-            setAdLayout([]);
-            continue;
-        }
-        const h = entry.contentRect.height;
-        const TALL_H = 624; 
-        const SHORT_H = 274; 
-        let bestLayout: AdSize[] = [];
-        let minWaste = h;
-        const maxTall = Math.floor(h / TALL_H);
-        for (let tallAds = 0; tallAds <= maxTall; tallAds++) {
-          const remainder = h - (tallAds * TALL_H);
-          const shortAds = Math.floor(remainder / SHORT_H);
-          const waste = remainder - (shortAds * SHORT_H);
-          if (waste < minWaste) {
-            minWaste = waste;
-            bestLayout = [...Array(tallAds).fill("skyscraper"), ...Array(shortAds).fill("standard")];
-          }
-        }
-        if (bestLayout.length === 0) bestLayout = ["standard"];
-        setAdLayout((prev) => JSON.stringify(prev) === JSON.stringify(bestLayout) ? prev : bestLayout);
-      }
-    });
-    resizeObserver.observe(mainRef.current);
-    return () => resizeObserver.disconnect();
-  }, [activeTool, children]);
 
   const filteredNavGroups = navGroups.map(g => ({
     ...g,
@@ -240,7 +252,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
   const hasMore = searchResults.length > 5;
 
   return (
-    <div className={`${isDark ? "dark" : ""} min-h-screen text-neutral-800 dark:text-neutral-100 selection:bg-orange-500 selection:text-white flex flex-col font-sans transition-colors duration-300 p-2 sm:p-4 md:p-6 lg:p-8`}>
+    <div className={`${isDark ? "dark" : ""} min-h-screen bg-gradient-to-br from-white via-neutral-50 to-orange-100/40 dark:from-neutral-950 dark:via-[#0a0a0a] dark:to-orange-950/20 text-neutral-800 dark:text-neutral-100 selection:bg-orange-500 selection:text-white flex flex-col font-sans transition-colors duration-300 p-2 sm:p-4 md:p-6 lg:p-8`}>
       
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes spin-slow {
@@ -262,9 +274,11 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
 
       <div className="flex flex-1 w-full max-w-[1800px] mx-auto gap-4 lg:gap-8">
         
-        <AdColumn side="left" layout={adLayout} />
+        <AdColumn side="left" />
 
-        <div className="flex-1 flex flex-col bg-white dark:bg-neutral-950 rounded-[24px] md:rounded-[40px] shadow-2xl relative min-w-0 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]">
+        <div className="flex-1 flex flex-col relative min-w-0">
+
+          <div className="sticky top-0 w-full h-4 md:h-6 z-40 bg-gradient-to-b from-white via-white/90 to-transparent dark:from-[#050505] dark:via-[#050505]/90 dark:to-transparent pointer-events-none"></div>
           
           <header className="sticky top-4 md:top-6 z-50 mx-4 md:mx-8 mb-6 backdrop-blur-2xl bg-white/90 dark:bg-neutral-900/90 border border-neutral-200 dark:border-white/10 rounded-2xl md:rounded-[2rem] px-6 lg:px-8 h-[72px] flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all">
             
@@ -293,14 +307,19 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
                 <div className="absolute top-10 left-0 pt-2 hidden group-hover:block w-[700px] z-50">
                   <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl shadow-2xl overflow-hidden">
                     <div className="p-8 grid grid-cols-3 gap-8 max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-neutral-700">
+                      
                       {filteredNavGroups.map((g, idx) => {
                         const categorySlug = g.group.replace(/[^a-zA-Z]/g, "").toLowerCase();
+                        const isExpanded = expandedCategories.includes(g.group);
+                        const visibleTools = isExpanded ? g.tools : g.tools.slice(0, 5);
+
                         return (
                           <div key={idx} className="flex flex-col gap-2.5">
                             <span className="text-[10px] font-extrabold text-orange-600 dark:text-orange-500 uppercase tracking-widest border-b border-neutral-100 dark:border-neutral-800/50 pb-1.5 mb-1">
                               {g.group}
                             </span>
-                            {g.tools.slice(0, 5).map(t => (
+                            
+                            {visibleTools.map(t => (
                               <Link
                                 key={t.id}
                                 href={`/${categorySlug}/${t.id}`}
@@ -309,14 +328,22 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
                                 {t.label}
                               </Link>
                             ))}
+                            
                             {g.tools.length > 5 && (
-                              <Link href="/" className="text-xs font-bold text-neutral-500 hover:text-orange-500 mt-1">
-                                + View all
-                              </Link>
+                              <button 
+                                onClick={(e) => {
+                                  e.preventDefault(); 
+                                  toggleCategory(g.group);
+                                }}
+                                className="text-left text-xs font-bold text-neutral-500 hover:text-orange-500 mt-1 transition-colors"
+                              >
+                                {isExpanded ? "- View less" : "+ View all"}
+                              </button>
                             )}
                           </div>
                         );
                       })}
+                      
                     </div>
                   </div>
                 </div>
@@ -355,7 +382,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
                             setIsSearchFocused(false);
                             setSearchQuery("");
                           }}
-                          className="px-5 py-3.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/80 border-b border-neutral-100 dark:border-neutral-800/50 last:border-0 transition-colors flex items-center justify-between group"
+                          className="px-5 py-3.5 hover:bg-neutral-50 dark:bg-neutral-800/80 border-b border-neutral-100 dark:border-neutral-800/50 last:border-0 transition-colors flex items-center justify-between group"
                         >
                           <div className="flex flex-col">
                             <span className="text-sm font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
@@ -391,6 +418,14 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
 
             <div className="flex items-center gap-3">
               
+              <button
+                onClick={() => setIsMobileSearchOpen(true)}
+                className="md:hidden p-3 rounded-full bg-neutral-50 dark:bg-white/[0.02] border border-neutral-200 dark:border-white/5 text-neutral-600 dark:text-neutral-300 hover:text-orange-500 transition-all shadow-sm flex items-center justify-center"
+                title="Open Search"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </button>
+
               <div className="relative hidden sm:block group">
                 <div className="flex items-center gap-2 bg-neutral-50 dark:bg-white/[0.02] border border-neutral-200 dark:border-white/5 text-neutral-600 dark:text-neutral-300 text-xs font-bold rounded-full px-4 py-2.5 cursor-pointer hover:bg-neutral-100 dark:hover:bg-white/[0.05] transition shadow-sm">
                   {region === "Global" && <span>🌎 Global</span>}
@@ -430,7 +465,11 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
               </div>
 
               <button
-                onClick={() => setIsDark(!isDark)}
+                onClick={() => {
+                  const newThemeState = !isDark;
+                  setIsDark(newThemeState);
+                  localStorage.setItem("omniTheme", newThemeState ? "dark" : "light");
+                }}
                 className="p-3 rounded-full bg-neutral-50 dark:bg-white/[0.02] hover:bg-neutral-100 dark:hover:bg-white/[0.05] border border-neutral-200 dark:border-white/5 text-amber-500 dark:text-amber-400 transition-all shadow-sm flex items-center justify-center"
                 title="Toggle Theme"
               >
@@ -451,7 +490,7 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
             <LazyAd index={99} type="banner" />
           </main>
 
-          <footer className="w-full bg-neutral-50 dark:bg-black/20 border-t border-neutral-100 dark:border-white/[0.05] text-neutral-500 dark:text-neutral-400 py-8 px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-6 text-sm relative z-50 rounded-b-[24px] md:rounded-b-[40px]">
+          <footer className="w-full bg-transparent border-t border-neutral-200 dark:border-white/[0.05] text-neutral-500 dark:text-neutral-400 py-8 px-6 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-6 text-sm relative z-50">
             
             <style dangerouslySetInnerHTML={{__html: `
               .skiptranslate > iframe.skiptranslate { display: none !important; }
@@ -475,9 +514,67 @@ export default function GlobalShell({ children }: { children: React.ReactNode })
 
         </div>
 
-        <AdColumn side="right" layout={adLayout} />
+        <AdColumn side="right" />
 
       </div>
+
+      {isMobileSearchOpen && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex flex-col p-4 animate-in fade-in duration-200">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-white font-bold text-xs tracking-widest uppercase">Search Utilities</span>
+            <button 
+              onClick={() => setIsMobileSearchOpen(false)}
+              className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          
+          <div className="relative w-full">
+            <svg className="w-5 h-5 text-neutral-400 absolute left-4 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input
+              autoFocus
+              type="text"
+              placeholder="Type to search tools..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                if (typeof window !== 'undefined') {
+                  (window as any).omniSearchQuery = e.target.value;
+                  window.dispatchEvent(new CustomEvent('omni-search', { detail: e.target.value }));
+                }
+              }}
+              className="w-full bg-neutral-900 border border-neutral-700 rounded-2xl pl-12 pr-4 py-3.5 text-base text-white placeholder-neutral-400 outline-none shadow-xl"
+            />
+          </div>
+
+          <div className="flex-1 overflow-y-auto mt-4 flex flex-col gap-2">
+            {searchResults.map(tool => (
+              <Link
+                key={tool.id}
+                href={`/${tool.categorySlug}/${tool.id}`}
+                onClick={() => {
+                  setIsMobileSearchOpen(false);
+                  setSearchQuery("");
+                }}
+                className="flex items-center justify-between p-4 bg-neutral-900/90 border border-neutral-800 rounded-2xl active:scale-95 transition-all"
+              >
+                <div className="flex flex-col">
+                  <span className="font-bold text-white text-sm">{tool.label}</span>
+                  <span className="text-[10px] font-bold text-orange-500 uppercase tracking-widest">{tool.categoryName}</span>
+                </div>
+                <svg className="w-4 h-4 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7"/></svg>
+              </Link>
+            ))}
+            {searchQuery.trim() !== "" && searchResults.length === 0 && (
+              <div className="text-center py-10 text-neutral-400 text-sm">
+                No tools found matching "{searchQuery}"
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
