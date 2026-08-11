@@ -61,6 +61,11 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All Categories");
 
+  // Automatically calculate total active tools and format into badge text (e.g., 33 -> "30+")
+  const totalToolsCount = navGroups.reduce((acc, group) => acc + group.tools.length, 0);
+  const roundedToolCount = Math.floor(totalToolsCount / 10) * 10;
+  const toolBadgeText = `${roundedToolCount}+`;
+
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).nexaSearchQuery) {
       setSearchQuery((window as any).nexaSearchQuery);
@@ -98,7 +103,7 @@ export default function Home() {
         
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-bold mb-6 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-          ⚡ 30+ Professional Power Tools • Zero Server Lag
+          ⚡ {toolBadgeText} Professional Power Tools • Zero Server Lag
         </div>
 
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-neutral-900 dark:text-white leading-tight">
@@ -149,8 +154,8 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Premium Grid: Uses 2 columns on tablets, 3 on desktops, 4 only on massive ultra-wide monitors */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-5">
+            {/* Premium Grid: Uses 2 columns on tablets, 3 on desktops */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
               {group.tools.map((tool) => {
                 const categorySlug = group.cleanName.replace(/[^a-zA-Z]/g, "").toLowerCase();
                 
