@@ -18,14 +18,12 @@ const VIEWPORT_PRESETS = [
 ];
 
 export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
-  const [urls, setUrls] = useState<UrlItem[]>([
-    { id: "1", url: "https://example.com", title: "Site 1" },
-    { id: "2", url: "https://wikipedia.org", title: "Site 2" },
-  ]);
+  const [urls, setUrls] = useState<UrlItem[]>([]);
   const [newUrl, setNewUrl] = useState("");
   const [gridCols, setGridCols] = useState<number>(2);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [presetWidth, setPresetWidth] = useState<string>("100%");
+  const [frameHeight, setFrameHeight] = useState<number>(550); // New: Global height control
 
   if (activeTool !== "multi-url-viewer") return null;
 
@@ -35,21 +33,16 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
 
     let formattedUrl = newUrl.trim();
 
-    // 1. SMART CONVERSION FOR YOUTUBE
+    // SMART CONVERSION FOR YOUTUBE
     if (formattedUrl.includes("youtube.com/watch?v=")) {
       const videoId = formattedUrl.split("v=")[1]?.split("&")[0];
-      if (videoId) {
-        formattedUrl = `https://www.youtube.com/embed/${videoId}`;
-      }
+      if (videoId) formattedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
     } else if (formattedUrl.includes("youtu.be/")) {
       const videoId = formattedUrl.split("youtu.be/")[1]?.split("?")[0];
-      if (videoId) {
-        formattedUrl = `https://www.youtube.com/embed/${videoId}`;
-      }
+      if (videoId) formattedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
     } 
-    // 2. CLEAN GOOGLE SITES URLs (Removes sharing parameters that cause refusal)
+    // CLEAN GOOGLE SITES URLs
     else if (formattedUrl.includes("sites.google.com")) {
-      // Strip off query parameters like ?usp=sharing
       formattedUrl = formattedUrl.split("?")[0];
     } 
     else if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
@@ -58,11 +51,7 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
 
     setUrls((prev) => [
       ...prev,
-      {
-        id: Date.now().toString(),
-        url: formattedUrl,
-        title: `Frame ${prev.length + 1}`,
-      },
+      { id: Date.now().toString(), url: formattedUrl, title: `Frame ${prev.length + 1}` },
     ]);
     setNewUrl("");
   };
@@ -93,24 +82,34 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
             )}
           </h2>
           <p className="text-xs md:text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-            Compare and interact with multiple pages side-by-side.
+            Compare and interact with multiple pages side-by-side. You can drag the bottom-right corner of any frame to resize it.
           </p>
         </div>
 
         {/* CONTROLS */}
         <div className="flex flex-wrap items-center gap-3">
+          
+          {/* GLOBAL HEIGHT SLIDER */}
+          <div className="flex items-center gap-2 bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl px-3 py-1.5 text-xs font-bold">
+            <span className="text-neutral-400">Height:</span>
+            <input 
+              type="range" 
+              min="300" 
+              max="1000" 
+              step="50"
+              value={frameHeight}
+              onChange={(e) => setFrameHeight(Number(e.target.value))}
+              className="w-20 accent-orange-500"
+            />
+          </div>
+
           {/* GRID COLUMNS SELECTOR */}
           <div className="flex items-center bg-neutral-100 dark:bg-black/40 border border-neutral-200 dark:border-white/5 rounded-2xl p-1 text-xs font-bold">
-            <span className="px-2 text-neutral-400">Cols:</span>
-            {[1, 2, 3, 4].map((num) => (
-              <button
-                key={num}
-                onClick={() => setGridCols(num)}
-                className={`px-3 py-1.5 rounded-xl transition ${gridCols === num ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`}
-              >
-                {num}
-              </button>
-            ))}
+            <span className="px-2 text-neutral-400">Layout:</span>
+            <button onClick={() => setGridCols(1)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 1 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="1 Column (e.g. 1x4)">1 Col</button>
+            <button onClick={() => setGridCols(2)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 2 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="2 Columns (e.g. 2x2)">2 Cols</button>
+            <button onClick={() => setGridCols(3)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 3 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="3 Columns">3 Cols</button>
+            <button onClick={() => setGridCols(4)} className={`px-2 py-1.5 rounded-xl transition ${gridCols === 4 ? "bg-orange-500 text-white shadow-sm" : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"}`} title="4 Columns (e.g. 4x1)">4 Cols</button>
           </div>
 
           {/* DYNAMIC VIEWPORT PRESETS */}
@@ -152,7 +151,7 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
       <form onSubmit={handleAddUrl} className="flex gap-3">
         <input
           type="text"
-          placeholder="Enter website URL (e.g., localhost:3000, example.com)..."
+          placeholder="Enter website URL (e.g., localhost:3000, youtube.com/watch?v=...)"
           value={newUrl}
           onChange={(e) => setNewUrl(e.target.value)}
           className="flex-1 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 py-3 text-sm text-neutral-800 dark:text-neutral-100 outline-none focus:border-orange-500 transition shadow-inner"
@@ -178,11 +177,15 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
         {urls.map((item) => (
           <div
             key={item.id}
-            className="flex flex-col bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 rounded-3xl overflow-hidden shadow-xl transition-all mx-auto w-full"
-            style={{ maxWidth: presetWidth === "100%" ? "100%" : presetWidth }}
+            className="flex flex-col bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 rounded-3xl shadow-xl transition-all mx-auto w-full resize-y overflow-hidden"
+            style={{ 
+              maxWidth: presetWidth === "100%" ? "100%" : presetWidth,
+              height: `${frameHeight}px`,
+              minHeight: "250px"
+            }}
           >
             {/* FRAME HEADER BAR */}
-            <div className="flex items-center justify-between px-4 py-3 bg-neutral-100 dark:bg-[#1a1a1a] border-b border-neutral-200 dark:border-neutral-800 gap-2">
+            <div className="flex items-center justify-between px-4 py-3 bg-neutral-100 dark:bg-[#1a1a1a] border-b border-neutral-200 dark:border-neutral-800 gap-2 shrink-0">
               <span className="text-xs font-bold text-neutral-700 dark:text-neutral-300 truncate max-w-[200px]" title={item.url}>
                 {item.url}
               </span>
@@ -209,12 +212,13 @@ export default function MultiUrlViewer({ activeTool }: { activeTool: string }) {
             </div>
 
             {/* IFRAME VIEWPORT WITH FALLBACK WARNING */}
-            <div className="relative w-full h-[550px] bg-neutral-50 dark:bg-black/40 flex flex-col items-center justify-center">
+            <div className="relative w-full flex-1 bg-neutral-50 dark:bg-black/40 flex flex-col items-center justify-center">
               <iframe
                 src={item.url}
                 title={item.title}
                 className="w-full h-full border-0 absolute inset-0 z-10"
-                sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
                 loading="lazy"
               />
               
