@@ -6,8 +6,7 @@ import DevTools from "../../../components/DevTools";
 import RandomTools from "../../../components/RandomTools";
 import MediaTools from "../../../components/MediaTools";
 import { navGroups } from "../../../components/navData";
-import dynamic from "next/dynamic";
-const AudioVideoTools = dynamic(() => import("../../../components/AudioVideoTools"), { ssr: false });
+import AudioVideoTools from "../../../components/AudioVideoTools";
 import DocumentTools from "../../../components/DocumentTools";
 
 // ==========================================

@@ -1,18 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AudioExtractor from "./AudioVideoTools/AudioExtractor";
 import VideoToGif from "./AudioVideoTools/VideoToGif";
 import MediaTrimmer from "./AudioVideoTools/MediaTrimmer";
 import FormatConverter from "./AudioVideoTools/FormatConverter";
-import VolumeBooster from "./AudioVideoTools/VolumeBooster"; // <-- Import the new tool
+import VolumeBooster from "./AudioVideoTools/VolumeBooster";
 import { navGroups } from "./navData";
 
 export default function AudioVideoTools({ activeTool, isDark }: { activeTool: string, isDark?: boolean }) {
   
+  // THE FIX: This prevents Next.js from trying to run WebAssembly on the Node.js server!
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isAudioVideoTool = navGroups.find(g => g.group === "Audio & Video")?.tools.some(t => t.id === activeTool);
 
-  if (!isAudioVideoTool) return null;
+  // If it's not a tool in this category OR the component hasn't mounted in the browser yet, stay hidden
+  if (!isAudioVideoTool || !mounted) return null;
 
   switch (activeTool) {
     case "audio-extractor":
@@ -27,7 +35,7 @@ export default function AudioVideoTools({ activeTool, isDark }: { activeTool: st
     case "format-converter":
       return <FormatConverter />;
 
-    case "volume-booster": // <-- Add the new case
+    case "volume-booster":
       return <VolumeBooster />;
 
     default:
