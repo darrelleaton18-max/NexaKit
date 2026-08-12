@@ -7,6 +7,7 @@ import MediaTrimmer from "./AudioVideoTools/MediaTrimmer";
 import FormatConverter from "./AudioVideoTools/FormatConverter";
 import VolumeBooster from "./AudioVideoTools/VolumeBooster";
 import { navGroups } from "./navData";
+import VideoMultiCutter from "./AudioVideoTools/VideoMultiCutter"; // <--- FIXED IMPORT PATH!
 
 export default function AudioVideoTools({ activeTool, isDark }: { activeTool: string, isDark?: boolean }) {
   
@@ -37,6 +38,9 @@ export default function AudioVideoTools({ activeTool, isDark }: { activeTool: st
 
     case "volume-booster":
       return <VolumeBooster />;
+
+    case "video-crop":
+      return <VideoMultiCutter activeTool={activeTool} />; // <--- ADDED MISSING PROP!
 
     default:
       return (

@@ -112,7 +112,8 @@ export const navGroups: NavGroup[] = [
       { id: "video-to-gif", label: "Video to GIF", description: "Convert MP4 and WebM videos into optimized, looping GIFs." },
       { id: "media-trimmer", label: "Media Trimmer", description: "Cut and crop audio or video files down to exact timestamps." },
       { id: "format-converter", label: "Format Converter", description: "Convert media files effortlessly between MP4, MP3, WAV, and WebM." },
-      { id: "volume-booster", label: "Volume Booster", description: "Increase the decibel volume of quiet audio or video files." }
+      { id: "volume-booster", label: "Volume Booster", description: "Increase the decibel volume of quiet audio or video files." },
+      { id: "video-crop", label: "Multi-Segment Video Cutter", description: "Remove multiple parts of a video and stitch the remainder together." },
     ],
   },
 ];
