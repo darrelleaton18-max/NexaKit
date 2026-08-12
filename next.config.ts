@@ -8,10 +8,10 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   
-  // ADDED: Silence the Turbopack warning so local dev works perfectly
+  // Silence the Turbopack warning so local dev works perfectly
   turbopack: {},
   
-  // 1. Tell Webpack not to bundle Node.js modules for the browser (used during the production build)
+  // 1. Tell Webpack not to bundle Node.js modules for the browser
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
@@ -22,20 +22,14 @@ const nextConfig: NextConfig = {
     return config;
   },
 
-  // 2. Set strict Cross-Origin headers for local WebAssembly testing
+  // 2. FFmpeg Security Headers
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'require-corp',
-          },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
         ],
       },
     ];
