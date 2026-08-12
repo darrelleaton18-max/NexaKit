@@ -4,18 +4,19 @@ import React, { useState, useRef } from "react";
 
 type CutRegion = {
   id: string;
-  startTime: number;
-  endTime: number;
+  startTime: number | string; // Allowed string to prevent typing bugs
+  endTime: number | string;
 };
 
-export default function VideoMultiCutter({ activeTool }: { activeTool: string }) {
+export default function VideoMultiCutter({ activeTool }: { activeTool?: string }) {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [duration, setDuration] = useState<number>(0);
   const [cuts, setCuts] = useState<CutRegion[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  if (activeTool !== "video-crop") return null;
+  // If used in a router, check activeTool. If used standalone, ignore.
+  if (activeTool && activeTool !== "video-crop") return null;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -43,37 +44,52 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
     setCuts((prev) => prev.filter((cut) => cut.id !== id));
   };
 
-  const updateCut = (id: string, field: "startTime" | "endTime", value: number) => {
+  // Fixed update logic: allows temporary invalid typing without forcing changes
+  const updateCut = (id: string, field: "startTime" | "endTime", value: string) => {
     setCuts((prev) =>
       prev.map((cut) => {
         if (cut.id === id) {
-          const newCut = { ...cut, [field]: value };
-          // Ensure start isn't greater than end
-          if (field === "startTime" && newCut.startTime >= newCut.endTime) newCut.startTime = newCut.endTime - 0.1;
-          if (field === "endTime" && newCut.endTime <= newCut.startTime) newCut.endTime = newCut.startTime + 0.1;
-          return newCut;
+          return { ...cut, [field]: value };
         }
         return cut;
       })
     );
   };
 
+  // NEW: Instantly grab the current paused time from the video player
+  const grabTimeFromVideo = (id: string, field: "startTime" | "endTime") => {
+    if (videoRef.current) {
+      const currentTime = Number(videoRef.current.currentTime.toFixed(2));
+      setCuts((prev) =>
+        prev.map((cut) => {
+          if (cut.id === id) return { ...cut, [field]: currentTime };
+          return cut;
+        })
+      );
+    }
+  };
+
   // Generate the complex FFmpeg command to cut and concatenate
   const generateFfmpegCommand = () => {
     if (!videoFile || cuts.length === 0) return "ffmpeg -i input.mp4 -c copy output.mp4";
 
-    // 1. Sort cuts by start time
-    const sortedCuts = [...cuts].sort((a, b) => a.startTime - b.startTime);
+    // Convert everything to strict numbers and filter out invalid cuts
+    const validCuts = cuts
+      .map(c => ({ start: Number(c.startTime), end: Number(c.endTime) }))
+      .filter(c => !isNaN(c.start) && !isNaN(c.end) && c.start < c.end)
+      .sort((a, b) => a.start - b.start);
 
-    // 2. Calculate the "Keep" regions
+    if (validCuts.length === 0) return "Error: No valid cuts defined.";
+
+    // Calculate the "Keep" regions
     const keepRegions: { start: number; end: number }[] = [];
     let currentStart = 0;
 
-    for (const cut of sortedCuts) {
-      if (cut.startTime > currentStart) {
-        keepRegions.push({ start: currentStart, end: cut.startTime });
+    for (const cut of validCuts) {
+      if (cut.start > currentStart) {
+        keepRegions.push({ start: currentStart, end: cut.start });
       }
-      currentStart = Math.max(currentStart, cut.endTime);
+      currentStart = Math.max(currentStart, cut.end);
     }
     if (currentStart < duration) {
       keepRegions.push({ start: currentStart, end: duration });
@@ -81,7 +97,6 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
 
     if (keepRegions.length === 0) return "Error: Entire video is cut out!";
 
-    // 3. Build the complex filter string
     let filterString = "";
     let concatString = "";
 
@@ -119,7 +134,8 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
           </label>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          
           {/* LEFT: Video Preview */}
           <div className="flex flex-col gap-4">
             <div className="bg-black rounded-3xl overflow-hidden shadow-xl border border-neutral-200 dark:border-neutral-800">
@@ -127,7 +143,7 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
                 ref={videoRef}
                 src={videoUrl}
                 controls
-                className="w-full h-auto max-h-[400px] object-contain"
+                className="w-full h-auto max-h-[450px] object-contain"
                 onLoadedMetadata={handleLoadedMetadata}
               />
             </div>
@@ -145,12 +161,17 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
 
           {/* RIGHT: Controls */}
           <div className="flex flex-col gap-6">
+            
+            {/* Cut Segments UI */}
             <div className="bg-white dark:bg-[#121212] border border-neutral-200 dark:border-neutral-800 p-6 rounded-3xl shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-extrabold text-neutral-900 dark:text-white">Segments to Remove</h3>
+                <div>
+                  <h3 className="font-extrabold text-neutral-900 dark:text-white">Segments to Remove</h3>
+                  <p className="text-[10px] text-neutral-500 mt-1">Pause video and click 📍 to grab exact times.</p>
+                </div>
                 <button
                   onClick={addCut}
-                  className="px-3 py-1.5 bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded-xl text-xs font-bold hover:bg-orange-500/20 transition"
+                  className="px-4 py-2 bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 rounded-xl text-xs font-bold hover:bg-orange-500/20 transition shrink-0"
                 >
                   + Add Cut
                 </button>
@@ -158,44 +179,75 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
 
               <div className="flex flex-col gap-3">
                 {cuts.length === 0 ? (
-                  <div className="text-xs text-neutral-400 italic text-center py-4 bg-neutral-50 dark:bg-black/30 rounded-2xl border border-neutral-100 dark:border-neutral-800/60">
+                  <div className="text-xs text-neutral-400 italic text-center py-6 bg-neutral-50 dark:bg-black/30 rounded-2xl border border-neutral-100 dark:border-neutral-800/60">
                     No cuts added. The full video will be kept.
                   </div>
                 ) : (
-                  cuts.map((cut, index) => (
-                    <div key={cut.id} className="flex items-center gap-3 bg-neutral-50 dark:bg-black/30 p-3 rounded-2xl border border-neutral-100 dark:border-neutral-800/60">
-                      <div className="flex-1 flex items-center gap-2">
-                        <div className="flex flex-col">
-                          <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">Start (s)</label>
-                          <input
-                            type="number"
-                            min="0"
-                            max={duration}
-                            step="0.1"
-                            value={cut.startTime}
-                            onChange={(e) => updateCut(cut.id, "startTime", Number(e.target.value))}
-                            className="w-20 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-700 rounded-lg px-2 py-1 text-sm outline-none focus:border-orange-500"
-                          />
+                  cuts.map((cut) => {
+                    const isError = Number(cut.startTime) >= Number(cut.endTime);
+                    
+                    return (
+                      <div key={cut.id} className={`flex flex-col gap-2 bg-neutral-50 dark:bg-black/30 p-4 rounded-2xl border ${isError ? 'border-red-500/50' : 'border-neutral-100 dark:border-neutral-800/60'}`}>
+                        <div className="flex items-start gap-4">
+                          
+                          {/* START TIME INPUT */}
+                          <div className="flex-1 flex flex-col gap-1.5">
+                            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest flex items-center justify-between">
+                              Start (s)
+                              <button 
+                                onClick={() => grabTimeFromVideo(cut.id, "startTime")}
+                                className="text-orange-500 hover:text-orange-600 font-extrabold flex items-center gap-1"
+                                title="Grab from video player"
+                              >
+                                📍 Grab
+                              </button>
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              max={duration}
+                              step="0.1"
+                              value={cut.startTime}
+                              onChange={(e) => updateCut(cut.id, "startTime", e.target.value)}
+                              className="w-full bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-sm outline-none focus:border-orange-500 font-mono"
+                            />
+                          </div>
+
+                          <span className="text-neutral-300 dark:text-neutral-600 font-bold mt-7">→</span>
+
+                          {/* END TIME INPUT */}
+                          <div className="flex-1 flex flex-col gap-1.5">
+                            <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest flex items-center justify-between">
+                              End (s)
+                              <button 
+                                onClick={() => grabTimeFromVideo(cut.id, "endTime")}
+                                className="text-orange-500 hover:text-orange-600 font-extrabold flex items-center gap-1"
+                                title="Grab from video player"
+                              >
+                                📍 Grab
+                              </button>
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              max={duration}
+                              step="0.1"
+                              value={cut.endTime}
+                              onChange={(e) => updateCut(cut.id, "endTime", e.target.value)}
+                              className="w-full bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-700 rounded-xl px-3 py-2 text-sm outline-none focus:border-orange-500 font-mono"
+                            />
+                          </div>
+
+                          <button onClick={() => removeCut(cut.id)} className="text-neutral-400 hover:text-red-500 transition mt-7 ml-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                          </button>
                         </div>
-                        <span className="text-neutral-400 mt-4">-</span>
-                        <div className="flex flex-col">
-                          <label className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1">End (s)</label>
-                          <input
-                            type="number"
-                            min="0"
-                            max={duration}
-                            step="0.1"
-                            value={cut.endTime}
-                            onChange={(e) => updateCut(cut.id, "endTime", Number(e.target.value))}
-                            className="w-20 bg-white dark:bg-[#181818] border border-neutral-200 dark:border-neutral-700 rounded-lg px-2 py-1 text-sm outline-none focus:border-orange-500"
-                          />
-                        </div>
+                        {isError && (
+                          <span className="text-[10px] font-bold text-red-500">Start time must be before end time!</span>
+                        )}
                       </div>
-                      <button onClick={() => removeCut(cut.id)} className="text-neutral-400 hover:text-red-500 transition mt-4">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                      </button>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -206,7 +258,7 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
                 Generated Filter
               </span>
               <p className="text-xs text-neutral-400 mb-3 font-medium">
-                To process this client-side via FFmpeg.wasm, or on your local terminal, run this exact command:
+                Currently, this app generates the strict FFmpeg cutting script. To process this locally on your machine via terminal, run:
               </p>
               <div className="bg-black/50 p-4 rounded-2xl overflow-x-auto">
                 <code className="text-xs text-emerald-400 font-mono whitespace-nowrap">
@@ -214,6 +266,7 @@ export default function VideoMultiCutter({ activeTool }: { activeTool: string })
                 </code>
               </div>
             </div>
+
           </div>
         </div>
       )}
